@@ -1,0 +1,32 @@
+{
+	"name": "cypress-portfolio",
+	"version": "1.0.0",
+	"description": "Alben Trang's portfolio showcasing Cypress projects.",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"cy:open": "cypress open"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/albentrang/cypress-portfolio.git"
+	},
+	"keywords": [],
+	"author": "Alben Trang",
+	"license": "MIT",
+	"type": "commonjs",
+	"bugs": {
+		"url": "https://github.com/albentrang/cypress-portfolio/issues"
+	},
+	"homepage": "https://github.com/albentrang/cypress-portfolio#readme",
+	"devDependencies": {
+		"@eslint/js": "^9.24.0",
+		"cypress": "^14.2.1",
+		"eslint": "^9.24.0",
+		"eslint-config-prettier": "^10.1.1",
+		"eslint-plugin-cypress": "^4.2.1",
+		"eslint-plugin-prettier": "^5.2.6",
+		"globals": "^16.0.0",
+		"prettier": "3.5.3"
+	}
+}

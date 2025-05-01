@@ -1,0 +1,7 @@
+# Ignore cache directory for GitLab builds
+/cache
+
+# Ignore artifacts:
+data
+build
+coverage
