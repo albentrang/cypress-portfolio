@@ -1,0 +1,8 @@
+{
+	"singleDeckShuffled": {
+		"id": 55,
+		"shuffle": true,
+		"deckCount": 1,
+		"jokersEnabled": false
+	}
+}

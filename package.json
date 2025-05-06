@@ -1,11 +1,12 @@
 {
 	"name": "cypress-portfolio",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Alben Trang's portfolio showcasing Cypress projects.",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"cy:open": "cypress open"
+		"cy:open": "cypress open",
+		"deck_of_cards_api:open": "cypress open --config-file deck_of_cards_api.config.js"
 	},
 	"repository": {
 		"type": "git",

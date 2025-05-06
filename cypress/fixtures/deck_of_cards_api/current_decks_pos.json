@@ -1,0 +1,29 @@
+{
+	"singleDeck": {
+		"id": "0"
+	},
+	"singleDeckWithJokers": {
+		"id": "0",
+		"jokersEnabled": true
+	},
+	"singleDeckShuffled": {
+		"id": "0",
+		"shuffle": true
+	},
+	"singleDeckShuffledWithJokers": {
+		"id": "0",
+		"shuffle": true,
+		"jokersEnabled": true
+	},
+	"doubleDeckShuffled": {
+		"id": "0",
+		"shuffle": true,
+		"deckCount": 2
+	},
+	"doubleDeckShuffledWithJokers": {
+		"id": "0",
+		"shuffle": true,
+		"deckCount": 2,
+		"jokersEnabled": true
+	}
+}
