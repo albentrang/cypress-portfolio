@@ -1,8 +1,15 @@
 # Deck of Cards API Test Plan
 
-## Summary
+## Test Objective
 
 This document plans the positive and negative test cases when using the [Deck of Cards API](https://www.deckofcardsapi.com/). Each test case uses REST API requests and checks their responses for using different functions that are listed in the Deck of Cards API website.
+
+## Test Approach
+
+- Testing will be automated end-to-end REST API black-box testing.
+- Every test, both positive and negative, needs to pass.
+- Tests are done using JavaScript and Cypress.
+- Deliverable will be a generated report using Mocha.
 
 ## Positive Tests
 
@@ -38,7 +45,10 @@ This document plans the positive and negative test cases when using the [Deck of
 
 - [ ] Draw a card from a deck that does not exist
 - [ ] Make a new deck with "deck_count" equal to 0
+- [ ] Draw cards from a deck until no more cards can be drawn
+- [ ] Draw cards with jokers from a deck until no more cards can be drawn
 - [ ] Add no specified cards to a pile
+- [ ] Draw cards from a pile until no more cards can be drawn
 
 ## Notes
 

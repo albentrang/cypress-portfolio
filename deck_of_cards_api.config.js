@@ -3,6 +3,7 @@ const { defineConfig } = require('cypress')
 module.exports = defineConfig({
 	e2e: {
 		baseUrl: 'https://www.deckofcardsapi.com/',
-		defaultBrowser: 'firefox'
+		defaultBrowser: 'firefox',
+		watchForFileChanges: false
 	}
 })

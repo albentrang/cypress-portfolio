@@ -1,8 +1,14 @@
 {
 	"singleDeckShuffled": {
-		"id": 55,
+		"id": "i5omad549zlv",
 		"shuffle": true,
 		"deckCount": 1,
 		"jokersEnabled": false
+	},
+	"singleDeckShuffledWithJokers": {
+		"id": "syejt00x3y2s",
+		"shuffle": true,
+		"deckCount": 1,
+		"jokersEnabled": true
 	}
 }

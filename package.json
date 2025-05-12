@@ -6,7 +6,9 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"cy:open": "cypress open",
-		"deck_of_cards_api:open": "cypress open --config-file deck_of_cards_api.config.js"
+		"cy:run": "cypress run",
+		"deck_of_cards_api:open": "cypress open --config-file deck_of_cards_api.config.js",
+		"deck_of_cards_api:run": "cypress run --config-file deck_of_cards_api.config.js --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\""
 	},
 	"repository": {
 		"type": "git",
@@ -29,5 +31,9 @@
 		"eslint-plugin-prettier": "^5.2.6",
 		"globals": "^16.0.0",
 		"prettier": "3.5.3"
+	},
+	"dependencies": {
+		"cypress-plugin-api": "^2.11.2",
+		"cypress-plugin-steps": "^1.2.0"
 	}
 }
