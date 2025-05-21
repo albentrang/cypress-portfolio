@@ -1,14 +1,14 @@
 {
 	"name": "cypress-portfolio",
-	"version": "1.0.1",
+	"version": "1.0.0",
 	"description": "Alben Trang's portfolio showcasing Cypress projects.",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"cy:open": "cypress open",
 		"cy:run": "cypress run",
-		"deck_of_cards_api:open": "cypress open --config-file deck_of_cards_api.config.js",
-		"deck_of_cards_api:run": "cypress run --config-file deck_of_cards_api.config.js --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\""
+		"deck_of_cards_api:open": "cypress open --config baseUrl=https://www.deckofcardsapi.com/",
+		"deck_of_cards_api:run": "cypress run --config baseUrl=https://www.deckofcardsapi.com/ --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\""
 	},
 	"repository": {
 		"type": "git",
@@ -25,6 +25,7 @@
 	"devDependencies": {
 		"@eslint/js": "^9.24.0",
 		"cypress": "^14.2.1",
+		"cypress-mochawesome-reporter": "^3.8.2",
 		"eslint": "^9.24.0",
 		"eslint-config-prettier": "^10.1.1",
 		"eslint-plugin-cypress": "^4.2.1",
