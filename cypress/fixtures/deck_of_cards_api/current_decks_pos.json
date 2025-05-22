@@ -1,29 +1,29 @@
 {
-  "singleDeck": {
-    "id": "6wjbognlbnjg"
-  },
-  "singleDeckWithJokers": {
-    "id": "im1q46xggm4d",
-    "jokersEnabled": true
-  },
-  "singleDeckShuffled": {
-    "id": "b5zywrhoktxt",
-    "shuffle": true
-  },
-  "singleDeckShuffledWithJokers": {
-    "id": "0yzqlq2otitj",
-    "shuffle": true,
-    "jokersEnabled": true
-  },
-  "doubleDeckShuffled": {
-    "id": "x9cudbwsfk3y",
-    "shuffle": true,
-    "deckCount": 2
-  },
-  "doubleDeckShuffledWithJokers": {
-    "id": "hm1hp30uwnhg",
-    "shuffle": true,
-    "deckCount": 2,
-    "jokersEnabled": true
-  }
+	"singleDeck": {
+		"id": "6wjbognlbnjg"
+	},
+	"singleDeckWithJokers": {
+		"id": "im1q46xggm4d",
+		"jokersEnabled": true
+	},
+	"singleDeckShuffled": {
+		"id": "b5zywrhoktxt",
+		"shuffled": true
+	},
+	"singleDeckShuffledWithJokers": {
+		"id": "0yzqlq2otitj",
+		"shuffled": true,
+		"jokersEnabled": true
+	},
+	"doubleDeckShuffled": {
+		"id": "x9cudbwsfk3y",
+		"shuffled": true,
+		"deckCount": 2
+	},
+	"doubleDeckShuffledWithJokers": {
+		"id": "hm1hp30uwnhg",
+		"shuffled": true,
+		"deckCount": 2,
+		"jokersEnabled": true
+	}
 }
