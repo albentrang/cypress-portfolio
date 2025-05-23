@@ -80,17 +80,26 @@ class DeckHandler {
 	 * @param {string} deckId The ID of the deck.
 	 * @param {number} drawCount The number of cards to be drawn as a
 	 * positive, whole number.
+	 * @param {boolean} [isNegative] Set this to true if this method is
+	 * expected to fail.
 	 */
-	drawCardFromDeck(deckId, drawCount) {
+	drawCardFromDeck(deckId, drawCount, isNegative = false) {
 		const drawDeckCardUrl = `api/deck/${deckId}/draw/?count=${Math.trunc(drawCount)}`
-		cy.step(`Drawing ${drawCount} card(s) from deck ID ${deckId}`)
-		cy.api(drawDeckCardUrl).as('recentDrawDeckResp')
+
+		if (isNegative) {
+			cy.api({ url: drawDeckCardUrl, failOnStatusCode: false }).as(
+				'recentDrawDeckResp'
+			)
+		} else {
+			cy.step(`Drawing ${drawCount} card(s) from deck ID ${deckId}`)
+			cy.api(drawDeckCardUrl).as('recentDrawDeckResp')
+		}
 	}
 
 	/**
 	 * Reshuffle a deck of cards.
 	 * @param {string} deckId The ID of the deck.
-	 * @param {string} remaining Set this to true to shuffle cards only in
+	 * @param {string} [remaining] Set this to true to shuffle cards only in
 	 * main stack while ignoring any piles or drawn cards (optional).
 	 */
 	reshuffleDeck(deckId, remaining = ``) {
@@ -132,29 +141,25 @@ class DeckHandler {
 	 * Draw cards in a pile from a deck by using card codes or card count.
 	 * @param {string} deckId The ID of the deck.
 	 * @param {string} pileName The name of the pile from the deck.
-	 * @param {object} options The options for drawing a card from the pile
-	 * in this JS object format:
-	 * {
-	 * 	drawMethod: "", // Set as either "bottom" or "random"
-	 * 	cardsToGet: ""  // Either a string of comma-separated card codes or a number
-	 * }
+	 * @param {string} drawMethod Set as either "bottom" to draw a card from the bottom
+	 * of the pile or "random" to draw a random card from a pile.
+	 * @param {string | number} cardsToGet Either get specific cards from a pile using
+	 * a string of comma-separated card codes or some number of cards using a number.
 	 */
-	drawCardFromPile(deckId, pileName, options) {
+	drawCardFromPile(deckId, pileName, drawMethod, cardsToGet) {
 		let drawPileCardUrl = `api/deck/${deckId}/pile/${pileName}/draw/`
-		if (options.drawMethod) {
-			drawPileCardUrl += `${options.drawMethod}/`
+		if (drawMethod) {
+			drawPileCardUrl += `${drawMethod}/`
 		}
-		switch (typeof options.cardsToGet) {
+		switch (typeof cardsToGet) {
 			case 'string':
-				drawPileCardUrl += `?cards=${options.cardsToGet}`
+				drawPileCardUrl += `?cards=${cardsToGet}`
 				break
 			case 'number':
-				drawPileCardUrl += `?count=${Math.trunc(options.cardsToGet)}`
+				drawPileCardUrl += `?count=${Math.trunc(cardsToGet)}`
 				break
 		}
-		cy.step(
-			`Draw card(s) from deck id ${deckId} in pile ${pileName} with options ${options.toString()}`
-		)
+		cy.step(`Draw card(s) from deck id ${deckId} in pile ${pileName}`)
 		cy.api(drawPileCardUrl).as('recentDrawPileResp')
 	}
 
@@ -172,9 +177,9 @@ class DeckHandler {
 	/**
 	 * Return the cards that are either drawn or in a pile back to the deck.
 	 * @param {string} deckId The ID of the deck.
-	 * @param {string} cards The cards to be put in the pile as a
+	 * @param {string} [cards] The cards to be put in the pile as a
 	 * comma-separated string of card codes (optional).
-	 * @param {string} pileName The name of the pile from the deck (optional).
+	 * @param {string} [pileName] The name of the pile from the deck (optional).
 	 */
 	returnCards(deckId, cards = '', pileName = '') {
 		let returnCardsUrl = `api/deck/${deckId}/`

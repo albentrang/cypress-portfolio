@@ -13,8 +13,8 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Positive Tests
 
-- [ ] Check each card is in order for an unshuffled deck
-- [ ] Check each card is in order for an unshuffled deck with jokers
+- [x] Check each card is in order for an unshuffled deck
+- [x] Check each card is in order for an unshuffled deck with jokers
 - [ ] Draw 1 card at a time from a shuffled deck until all cards are drawn
 - [ ] Draw 1 card at a time from a shuffled deck with jokers until all cards are drawn
 - [ ] Draw 1 card at a time from two shuffled decks until all cards are drawn
@@ -57,7 +57,7 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Negative Tests
 
-- [ ] Draw a card from a deck that does not exist
+- [x] Draw a card from a deck that does not exist
 - [ ] Make a new deck with "deck_count" equal to 0
 - [ ] Make a new deck with "deck_count" equal to -1
 - [ ] Draw -1 cards from a shuffled deck
