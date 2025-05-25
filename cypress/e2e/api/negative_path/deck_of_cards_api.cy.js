@@ -1,5 +1,6 @@
 describe('Deck of Cards API Tests (Negative)', () => {
 	const decksPath = 'cypress/fixtures/deck_of_cards_api/current_decks_neg.json'
+	// const deckKeys = ['singleDeckShuffled', 'singleDeckShuffledWithJokers']
 	// const maxCardCount = 52
 	// const maxCardCountWithJokers = 54
 

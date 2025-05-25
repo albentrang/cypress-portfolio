@@ -80,20 +80,13 @@ class DeckHandler {
 	 * @param {string} deckId The ID of the deck.
 	 * @param {number} drawCount The number of cards to be drawn as a
 	 * positive, whole number.
-	 * @param {boolean} [isNegative] Set this to true if this method is
-	 * expected to fail.
 	 */
-	drawCardFromDeck(deckId, drawCount, isNegative = false) {
+	drawCardFromDeck(deckId, drawCount) {
 		const drawDeckCardUrl = `api/deck/${deckId}/draw/?count=${Math.trunc(drawCount)}`
+		const apiOptions = { url: drawDeckCardUrl, failOnStatusCode: false }
 
-		if (isNegative) {
-			cy.api({ url: drawDeckCardUrl, failOnStatusCode: false }).as(
-				'recentDrawDeckResp'
-			)
-		} else {
-			cy.step(`Drawing ${drawCount} card(s) from deck ID ${deckId}`)
-			cy.api(drawDeckCardUrl).as('recentDrawDeckResp')
-		}
+		cy.step(`Drawing ${drawCount} card(s) from deck ID ${deckId}`)
+		cy.api(apiOptions).as('recentDrawDeckResp')
 	}
 
 	/**

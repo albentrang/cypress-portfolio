@@ -15,14 +15,14 @@ This document plans the positive and negative test cases when using the [Deck of
 
 - [x] Check each card is in order for an unshuffled deck
 - [x] Check each card is in order for an unshuffled deck with jokers
-- [ ] Draw 1 card at a time from a shuffled deck until all cards are drawn
-- [ ] Draw 1 card at a time from a shuffled deck with jokers until all cards are drawn
-- [ ] Draw 1 card at a time from two shuffled decks until all cards are drawn
-- [ ] Draw 1 card at a time from two shuffled decks with jokers until all cards are drawn
-- [ ] Draw all the cards at once from a shuffled deck
-- [ ] Draw all the cards at once from a shuffled deck with jokers
-- [ ] Draw all the cards at once from two shuffled decks
-- [ ] Draw all the cards at once from two shuffled decks with jokers
+- [x] Draw 1 card at a time from a shuffled deck until 10 cards are drawn
+- [x] Draw 1 card at a time from a shuffled deck with jokers until 10 cards are drawn
+- [x] Draw 2 card at a time from two shuffled decks until 20 cards are drawn
+- [x] Draw 2 card at a time from two shuffled decks with jokers until 20 cards are drawn
+- [x] Draw all the cards at once from a shuffled deck
+- [x] Draw all the cards at once from a shuffled deck with jokers
+- [x] Draw all the cards at once from two shuffled decks
+- [x] Draw all the cards at once from two shuffled decks with jokers
 - [ ] Reshuffle deck without the drawn cards after drawing 0 cards
 - [ ] Reshuffle deck without the drawn cards after drawing 1 card
 - [ ] Reshuffle deck without the drawn cards after drawing half the cards
