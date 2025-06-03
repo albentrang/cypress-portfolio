@@ -5,10 +5,24 @@ let instance
  * Deck of Cards API.
  */
 class DeckHandler {
+	#maxCardCount
+	#maxCardCountWithJokers
+
 	constructor() {
 		if (!instance) {
 			instance = this
 		}
+
+		this.#maxCardCount = 52
+		this.#maxCardCountWithJokers = 54
+	}
+
+	get maxCardCount() {
+		return this.#maxCardCount
+	}
+
+	get maxCardCountWithJokers() {
+		return this.#maxCardCountWithJokers
 	}
 
 	/**
