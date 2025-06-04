@@ -188,7 +188,7 @@ Cypress.Commands.addAll({
 					)
 					cy.wrap(reshuffleResp.body.remaining).should(
 						'equal',
-						DeckHandler.maxCardCountWithJokers
+						DeckHandler.maxCardCountWithJokers * deckCount
 					)
 				} else if (
 					drawCount ===
@@ -212,7 +212,7 @@ Cypress.Commands.addAll({
 					cy.step('Verify reshuffle main stack with no cards drawn')
 					cy.wrap(reshuffleResp.body.remaining).should(
 						'equal',
-						DeckHandler.maxCardCount
+						DeckHandler.maxCardCount * deckCount
 					)
 				} else if (drawCount === DeckHandler.maxCardCount * deckCount) {
 					cy.step('Verify reshuffle main stack with all cards drawn')

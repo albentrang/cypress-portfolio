@@ -25,18 +25,20 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Draw all the cards at once from two shuffled decks with jokers
 - [x] Reshuffle deck without the drawn cards after drawing no cards
 - [x] Reshuffle deck that has jokers without the drawn cards after drawing no cards
-- [ ] Reshuffle deck without the drawn cards after drawing 1 card
-- [ ] Reshuffle deck that has jokers without the drawn cards after drawing 1 card
-- [ ] Reshuffle deck without the drawn cards after drawing half the cards
-- [ ] Reshuffle deck that has jokers without the drawn cards after drawing half the cards
-- [ ] Reshuffle deck without the drawn cards after drawing all the cards
-- [ ] Reshuffle deck that has jokers without the drawn cards after drawing all the cards
-- [ ] Reshuffle two decks without the drawn cards after 1 card
-- [ ] Reshuffle two decks that have jokers without the drawn cards after 1 card
-- [ ] Reshuffle two decks without the drawn cards after drawing half the cards
-- [ ] Reshuffle two decks that have jokers without the drawn cards after drawing half the cards
-- [ ] Reshuffle two decks without the drawn cards after drawing all the cards
-- [ ] Reshuffle two decks that have jokers without the drawn cards after drawing all the cards
+- [x] Reshuffle deck without the drawn cards after drawing 1 card
+- [x] Reshuffle deck that has jokers without the drawn cards after drawing 1 card
+- [x] Reshuffle deck without the drawn cards after drawing half the cards
+- [x] Reshuffle deck that has jokers without the drawn cards after drawing half the cards
+- [x] Reshuffle deck without the drawn cards after drawing all the cards
+- [x] Reshuffle deck that has jokers without the drawn cards after drawing all the cards
+- [x] Reshuffle two decks without the drawn cards after drawing no cards
+- [x] Reshuffle two decks that has jokers without the drawn cards after drawing no cards
+- [x] Reshuffle two decks without the drawn cards after 1 card
+- [x] Reshuffle two decks that have jokers without the drawn cards after 1 card
+- [x] Reshuffle two decks without the drawn cards after drawing half the cards
+- [x] Reshuffle two decks that have jokers without the drawn cards after drawing half the cards
+- [x] Reshuffle two decks without the drawn cards after drawing all the cards
+- [x] Reshuffle two decks that have jokers without the drawn cards after drawing all the cards
 - [ ] A partial deck has the specified cards where one card is from each suit
 - [ ] A partial deck has the specified cards where one card is from each suit plus two jokers
 - [ ] Draw one card from a one-card pile by count

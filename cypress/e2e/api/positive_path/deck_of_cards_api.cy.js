@@ -1,5 +1,5 @@
 describe('Deck of Cards API Tests (Positive)', () => {
-	const deckKeys = ['singleDeck', 'singleDeckWithJokers']
+	const orderedDeckKeys = ['singleDeck', 'singleDeckWithJokers']
 	const shuffledDeckKeys = [
 		'singleDeckShuffled',
 		'singleDeckShuffledWithJokers',
@@ -15,12 +15,12 @@ describe('Deck of Cards API Tests (Positive)', () => {
 	})
 
 	it('Check each card is in order for an unshuffled deck', function () {
-		cy.drawCardFromDeck(deckKeys[0], maxCardCount)
+		cy.drawCardFromDeck(orderedDeckKeys[0], maxCardCount)
 		cy.verifyOrderedDeck()
 	})
 
 	it('Check each card is in order for an unshuffled deck with jokers', function () {
-		cy.drawCardFromDeck(deckKeys[1], maxCardCountWithJokers)
+		cy.drawCardFromDeck(orderedDeckKeys[1], maxCardCountWithJokers)
 		cy.verifyOrderedDeck()
 	})
 
@@ -80,41 +80,107 @@ describe('Deck of Cards API Tests (Positive)', () => {
 		cy.verifyShuffledDeck(2, maxCardCountWithJokers * 2)
 	})
 
-	it.only('Reshuffle deck without the drawn cards after drawing no cards', function () {
+	it('Reshuffle deck without the drawn cards after drawing no cards', function () {
 		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
 		cy.verifyRemainingCards()
 	})
 
-	it.only('Reshuffle deck that has jokers without the drawn cards after drawing no cards', function () {
+	it('Reshuffle deck that has jokers without the drawn cards after drawing no cards', function () {
 		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
 		cy.verifyRemainingCards(true)
 	})
 
-	it.only('Reshuffle deck without the drawn cards after drawing 1 card', function () {
+	it('Reshuffle deck without the drawn cards after drawing 1 card', function () {
 		const cardsToDraw = 1
 		cy.drawCardFromDeck(shuffledDeckKeys[0], cardsToDraw)
 		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
 		cy.verifyRemainingCards(false, cardsToDraw)
 	})
 
-	it.only('Reshuffle deck without the drawn cards after drawing half the card', function () {
+	it('Reshuffle deck that has jokers without the drawn cards after drawing 1 card', function () {
+		const cardsToDraw = 1
+		cy.drawCardFromDeck(shuffledDeckKeys[1], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
+		cy.verifyRemainingCards(true, cardsToDraw)
+	})
+
+	it('Reshuffle deck without the drawn cards after drawing half the card', function () {
 		const cardsToDraw = maxCardCount / 2
 		cy.drawCardFromDeck(shuffledDeckKeys[0], cardsToDraw)
 		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
 		cy.verifyRemainingCards(false, cardsToDraw)
 	})
 
-	it.only('Reshuffle two decks without the drawn cards after 1 card', function () {
+	it('Reshuffle deck that has jokers without the drawn cards after drawing half the cards', function () {
+		const cardsToDraw = maxCardCountWithJokers / 2
+		cy.drawCardFromDeck(shuffledDeckKeys[1], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
+		cy.verifyRemainingCards(true, cardsToDraw)
+	})
+
+	it('Reshuffle deck without the drawn cards after drawing all the cards', function () {
+		const cardsToDraw = maxCardCount
+		cy.drawCardFromDeck(shuffledDeckKeys[0], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
+		cy.verifyRemainingCards(false, cardsToDraw)
+	})
+
+	it('Reshuffle deck that has jokers without the drawn cards after drawing all the cards', function () {
+		const cardsToDraw = maxCardCountWithJokers
+		cy.drawCardFromDeck(shuffledDeckKeys[1], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
+		cy.verifyRemainingCards(true, cardsToDraw)
+	})
+
+	it('Reshuffle two decks without the drawn cards after drawing no cards', function () {
+		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
+		cy.verifyRemainingCards(false, 0, 2)
+	})
+
+	it('Reshuffle two decks that has jokers without the drawn cards after drawing no cards', function () {
+		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
+		cy.verifyRemainingCards(true, 0, 2)
+	})
+
+	it('Reshuffle two decks without the drawn cards after drawing 1 card', function () {
 		const cardsToDraw = 1
 		cy.drawCardFromDeck(shuffledDeckKeys[2], cardsToDraw)
 		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
 		cy.verifyRemainingCards(false, cardsToDraw, 2)
 	})
 
-	it.only('Reshuffle two decks without the drawn cards after drawing half the cards', function () {
+	it('Reshuffle two decks that has jokers without the drawn cards after drawing 1 card', function () {
+		const cardsToDraw = 1
+		cy.drawCardFromDeck(shuffledDeckKeys[3], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
+		cy.verifyRemainingCards(true, cardsToDraw, 2)
+	})
+
+	it('Reshuffle two decks without the drawn cards after drawing half the card', function () {
 		const cardsToDraw = maxCardCount / 2
 		cy.drawCardFromDeck(shuffledDeckKeys[2], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
+		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
 		cy.verifyRemainingCards(false, cardsToDraw, 2)
+	})
+
+	it('Reshuffle two decks that has jokers without the drawn cards after drawing half the cards', function () {
+		const cardsToDraw = maxCardCountWithJokers / 2
+		cy.drawCardFromDeck(shuffledDeckKeys[3], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
+		cy.verifyRemainingCards(true, cardsToDraw, 2)
+	})
+
+	it('Reshuffle two decks without the drawn cards after drawing all the cards', function () {
+		const cardsToDraw = maxCardCount
+		cy.drawCardFromDeck(shuffledDeckKeys[2], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
+		cy.verifyRemainingCards(false, cardsToDraw, 2)
+	})
+
+	it('Reshuffle two decks that has jokers without the drawn cards after drawing all the cards', function () {
+		const cardsToDraw = maxCardCountWithJokers
+		cy.drawCardFromDeck(shuffledDeckKeys[3], cardsToDraw)
+		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
+		cy.verifyRemainingCards(true, cardsToDraw, 2)
 	})
 })
