@@ -1,186 +1,203 @@
 describe('Deck of Cards API Tests (Positive)', () => {
-	const orderedDeckKeys = ['singleDeck', 'singleDeckWithJokers']
-	const shuffledDeckKeys = [
-		'singleDeckShuffled',
-		'singleDeckShuffledWithJokers',
-		'doubleDeckShuffled',
-		'doubleDeckShuffledWithJokers'
-	]
+	const orderedDeckKeys = Object.freeze({
+		SD: 'singleDeck',
+		SDJ: 'singleDeckWithJokers'
+	})
+	const shuffledDeckKeys = Object.freeze({
+		SDS: 'singleDeckShuffled',
+		SDSJ: 'singleDeckShuffledWithJokers',
+		DDS: 'doubleDeckShuffled',
+		DDSJ: 'doubleDeckShuffledWithJokers'
+	})
 	const decksPath = 'cypress/fixtures/deck_of_cards_api/current_decks_pos.json'
 	const maxCardCount = 52
 	const maxCardCountWithJokers = 54
 
-	beforeEach(() => {
+	before(() => {
 		cy.checkDecks(decksPath)
 	})
 
-	it('Check each card is in order for an unshuffled deck', function () {
-		cy.drawCardFromDeck(orderedDeckKeys[0], maxCardCount)
-		cy.verifyOrderedDeck()
-	})
-
-	it('Check each card is in order for an unshuffled deck with jokers', function () {
-		cy.drawCardFromDeck(orderedDeckKeys[1], maxCardCountWithJokers)
-		cy.verifyOrderedDeck()
-	})
-
-	it('Draw 1 card at a time from a shuffled deck until 10 cards are drawn', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		for (let i = 0; i < 10; i++) {
-			cy.drawCardFromDeck(shuffledDeckKeys[0], 1)
-			cy.verifyShuffledDeck()
+	beforeEach(() => {
+		cy.section('Reshuffle the shuffled decks to their full stacks')
+		for (let key in shuffledDeckKeys) {
+			cy.reshuffleDeck(`${shuffledDeckKeys[key]}`)
 		}
+		cy.section('Beginning the test case')
 	})
 
-	it('Draw 1 card at a time from a shuffled deck with jokers until 10 cards are drawn', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		for (let i = 0; i < 10; i++) {
-			cy.drawCardFromDeck(shuffledDeckKeys[1], 1)
-			cy.verifyShuffledDeck(1, maxCardCountWithJokers)
-		}
+	context('Unshuffled Decks', () => {
+		it('Check each card is in order for an unshuffled deck', () => {
+			cy.drawCardFromDeck(orderedDeckKeys.SD, maxCardCount)
+			cy.verifyOrderedDeck()
+		})
+
+		it('Check each card is in order for an unshuffled deck with jokers', () => {
+			cy.drawCardFromDeck(orderedDeckKeys.SDJ, maxCardCountWithJokers)
+			cy.verifyOrderedDeck()
+		})
 	})
 
-	it('Draw 2 card at a time from two shuffled decks until 20 cards are drawn', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		for (let i = 0; i < 20; i += 2) {
-			cy.drawCardFromDeck(shuffledDeckKeys[2], 2)
-			cy.verifyShuffledDeck(2, maxCardCount * 2)
-		}
+	context('Drawing Cards', () => {
+		it('Draw 1 card at a time from a shuffled deck until 10 cards are drawn', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			for (let i = 0; i < 10; i++) {
+				cy.drawCardFromDeck(shuffledDeckKeys.SDS, 1)
+				cy.verifyCardsDrawn()
+			}
+		})
+
+		it('Draw 1 card at a time from a shuffled deck with jokers until 10 cards are drawn', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			for (let i = 0; i < 10; i++) {
+				cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, 1)
+				cy.verifyCardsDrawn(1, maxCardCountWithJokers)
+			}
+		})
+
+		it('Draw 2 card at a time from two shuffled decks until 20 cards are drawn', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			for (let i = 0; i < 20; i += 2) {
+				cy.drawCardFromDeck(shuffledDeckKeys.DDS, 2)
+				cy.verifyCardsDrawn(2, maxCardCount * 2)
+			}
+		})
+
+		it('Draw 2 card at a time from a shuffled deck with jokers until 20 cards are drawn', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			for (let i = 0; i < 20; i += 2) {
+				cy.drawCardFromDeck(shuffledDeckKeys.DDSJ, 2)
+				cy.verifyCardsDrawn(2, maxCardCountWithJokers * 2)
+			}
+		})
+
+		it('Draw all the cards at once from a shuffled deck', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, maxCardCount)
+			cy.verifyCardsDrawn(1, maxCardCount)
+		})
+
+		it('Draw all the cards at once from a shuffled deck with jokers', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, maxCardCountWithJokers)
+			cy.verifyCardsDrawn(1, maxCardCountWithJokers)
+		})
+
+		it('Draw all the cards at once from two shuffled deck', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			cy.drawCardFromDeck(shuffledDeckKeys.DDS, maxCardCount * 2)
+			cy.verifyCardsDrawn(2, maxCardCount * 2)
+		})
+
+		it('Draw all the cards at once from two shuffled deck with jokers', () => {
+			cy.wrap([]).as('verifiedCardCodes')
+			cy.drawCardFromDeck(shuffledDeckKeys.DDSJ, maxCardCountWithJokers * 2)
+			cy.verifyCardsDrawn(2, maxCardCountWithJokers * 2)
+		})
 	})
 
-	it('Draw 2 card at a time from a shuffled deck with jokers until 20 cards are drawn', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		for (let i = 0; i < 20; i += 2) {
-			cy.drawCardFromDeck(shuffledDeckKeys[3], 2)
-			cy.verifyShuffledDeck(2, maxCardCountWithJokers * 2)
-		}
-	})
+	context('Reshuffle Main Stack of Deck Only', () => {
+		it('Reshuffle deck without the drawn cards after drawing no cards', () => {
+			cy.reshuffleDeck(shuffledDeckKeys.SDS, 'true')
+			cy.verifyReshuffleRemainingNoDrawnCards()
+		})
 
-	it('Draw all the cards at once from a shuffled deck', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		cy.drawCardFromDeck(shuffledDeckKeys[0], maxCardCount)
-		cy.verifyShuffledDeck(1, maxCardCount)
-	})
+		it('Reshuffle deck that has jokers without the drawn cards after drawing no cards', () => {
+			cy.reshuffleDeck(shuffledDeckKeys.SDSJ, 'true')
+			cy.verifyReshuffleRemainingNoDrawnCards(true)
+		})
 
-	it('Draw all the cards at once from a shuffled deck with jokers', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		cy.drawCardFromDeck(shuffledDeckKeys[1], maxCardCountWithJokers)
-		cy.verifyShuffledDeck(1, maxCardCountWithJokers)
-	})
+		it('Reshuffle deck without the drawn cards after drawing 1 card', () => {
+			const cardsToDraw = 1
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.SDS, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.SDS)
+		})
 
-	it('Draw all the cards at once from two shuffled deck', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		cy.drawCardFromDeck(shuffledDeckKeys[2], maxCardCount * 2)
-		cy.verifyShuffledDeck(2, maxCardCount * 2)
-	})
+		it('Reshuffle deck that has jokers without the drawn cards after drawing 1 card', () => {
+			const cardsToDraw = 1
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.SDSJ, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.SDSJ)
+		})
 
-	it('Draw all the cards at once from two shuffled deck with jokers', function () {
-		cy.wrap([]).as('verifiedCardCodes')
-		cy.drawCardFromDeck(shuffledDeckKeys[3], maxCardCountWithJokers * 2)
-		cy.verifyShuffledDeck(2, maxCardCountWithJokers * 2)
-	})
+		it('Reshuffle deck without the drawn cards after drawing half the cards', () => {
+			const cardsToDraw = maxCardCount / 2
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.SDS, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.SDS)
+		})
 
-	it('Reshuffle deck without the drawn cards after drawing no cards', function () {
-		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
-		cy.verifyRemainingCards()
-	})
+		it('Reshuffle deck that has jokers without the drawn cards after drawing half the cards', () => {
+			const cardsToDraw = maxCardCountWithJokers / 2
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.SDSJ, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.SDSJ)
+		})
 
-	it('Reshuffle deck that has jokers without the drawn cards after drawing no cards', function () {
-		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
-		cy.verifyRemainingCards(true)
-	})
+		it('Reshuffle deck without the drawn cards after drawing all the cards', () => {
+			const cardsToDraw = maxCardCount
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.SDS, 'true')
+			cy.verifyReshuffleRemainingAllDrawnCards()
+		})
 
-	it('Reshuffle deck without the drawn cards after drawing 1 card', function () {
-		const cardsToDraw = 1
-		cy.drawCardFromDeck(shuffledDeckKeys[0], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
-		cy.verifyRemainingCards(false, cardsToDraw)
-	})
+		it('Reshuffle deck that has jokers without the drawn cards after drawing all the cards', () => {
+			const cardsToDraw = maxCardCountWithJokers
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.SDSJ, 'true')
+			cy.verifyReshuffleRemainingAllDrawnCards(true)
+		})
 
-	it('Reshuffle deck that has jokers without the drawn cards after drawing 1 card', function () {
-		const cardsToDraw = 1
-		cy.drawCardFromDeck(shuffledDeckKeys[1], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
-		cy.verifyRemainingCards(true, cardsToDraw)
-	})
+		it('Reshuffle two decks without the drawn cards after drawing no cards', () => {
+			cy.reshuffleDeck(shuffledDeckKeys.DDS, 'true')
+			cy.verifyReshuffleRemainingNoDrawnCards(false, 2)
+		})
 
-	it('Reshuffle deck without the drawn cards after drawing half the card', function () {
-		const cardsToDraw = maxCardCount / 2
-		cy.drawCardFromDeck(shuffledDeckKeys[0], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
-		cy.verifyRemainingCards(false, cardsToDraw)
-	})
+		it('Reshuffle two decks that has jokers without the drawn cards after drawing no cards', () => {
+			cy.reshuffleDeck(shuffledDeckKeys.DDSJ, 'true')
+			cy.verifyReshuffleRemainingNoDrawnCards(true, 2)
+		})
 
-	it('Reshuffle deck that has jokers without the drawn cards after drawing half the cards', function () {
-		const cardsToDraw = maxCardCountWithJokers / 2
-		cy.drawCardFromDeck(shuffledDeckKeys[1], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
-		cy.verifyRemainingCards(true, cardsToDraw)
-	})
+		it('Reshuffle two decks without the drawn cards after drawing 1 card', () => {
+			const cardsToDraw = 1
+			cy.drawCardFromDeck(shuffledDeckKeys.DDS, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.DDS, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.DDS)
+		})
 
-	it('Reshuffle deck without the drawn cards after drawing all the cards', function () {
-		const cardsToDraw = maxCardCount
-		cy.drawCardFromDeck(shuffledDeckKeys[0], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[0], 'true')
-		cy.verifyRemainingCards(false, cardsToDraw)
-	})
+		it('Reshuffle two decks that has jokers without the drawn cards after drawing 1 card', () => {
+			const cardsToDraw = 1
+			cy.drawCardFromDeck(shuffledDeckKeys.DDSJ, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.DDSJ, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.DDSJ)
+		})
 
-	it('Reshuffle deck that has jokers without the drawn cards after drawing all the cards', function () {
-		const cardsToDraw = maxCardCountWithJokers
-		cy.drawCardFromDeck(shuffledDeckKeys[1], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[1], 'true')
-		cy.verifyRemainingCards(true, cardsToDraw)
-	})
+		it('Reshuffle two decks without the drawn cards after drawing half the card', () => {
+			const cardsToDraw = maxCardCount / 2
+			cy.drawCardFromDeck(shuffledDeckKeys.DDS, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.DDS, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.DDS)
+		})
 
-	it('Reshuffle two decks without the drawn cards after drawing no cards', function () {
-		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
-		cy.verifyRemainingCards(false, 0, 2)
-	})
+		it('Reshuffle two decks that has jokers without the drawn cards after drawing half the cards', () => {
+			const cardsToDraw = maxCardCountWithJokers / 2
+			cy.drawCardFromDeck(shuffledDeckKeys.DDSJ, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.DDSJ, 'true')
+			cy.verifyRemainingCards(shuffledDeckKeys.DDSJ)
+		})
 
-	it('Reshuffle two decks that has jokers without the drawn cards after drawing no cards', function () {
-		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
-		cy.verifyRemainingCards(true, 0, 2)
-	})
+		it('Reshuffle two decks without the drawn cards after drawing all the cards', () => {
+			const cardsToDraw = maxCardCount * 2
+			cy.drawCardFromDeck(shuffledDeckKeys.DDS, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.DDS, 'true')
+			cy.verifyReshuffleRemainingAllDrawnCards(false, 2)
+		})
 
-	it('Reshuffle two decks without the drawn cards after drawing 1 card', function () {
-		const cardsToDraw = 1
-		cy.drawCardFromDeck(shuffledDeckKeys[2], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
-		cy.verifyRemainingCards(false, cardsToDraw, 2)
-	})
-
-	it('Reshuffle two decks that has jokers without the drawn cards after drawing 1 card', function () {
-		const cardsToDraw = 1
-		cy.drawCardFromDeck(shuffledDeckKeys[3], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
-		cy.verifyRemainingCards(true, cardsToDraw, 2)
-	})
-
-	it('Reshuffle two decks without the drawn cards after drawing half the card', function () {
-		const cardsToDraw = maxCardCount / 2
-		cy.drawCardFromDeck(shuffledDeckKeys[2], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
-		cy.verifyRemainingCards(false, cardsToDraw, 2)
-	})
-
-	it('Reshuffle two decks that has jokers without the drawn cards after drawing half the cards', function () {
-		const cardsToDraw = maxCardCountWithJokers / 2
-		cy.drawCardFromDeck(shuffledDeckKeys[3], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
-		cy.verifyRemainingCards(true, cardsToDraw, 2)
-	})
-
-	it('Reshuffle two decks without the drawn cards after drawing all the cards', function () {
-		const cardsToDraw = maxCardCount
-		cy.drawCardFromDeck(shuffledDeckKeys[2], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[2], 'true')
-		cy.verifyRemainingCards(false, cardsToDraw, 2)
-	})
-
-	it('Reshuffle two decks that has jokers without the drawn cards after drawing all the cards', function () {
-		const cardsToDraw = maxCardCountWithJokers
-		cy.drawCardFromDeck(shuffledDeckKeys[3], cardsToDraw)
-		cy.reshuffleDeck(shuffledDeckKeys[3], 'true')
-		cy.verifyRemainingCards(true, cardsToDraw, 2)
+		it('Reshuffle two decks that has jokers without the drawn cards after drawing all the cards', () => {
+			const cardsToDraw = maxCardCountWithJokers * 2
+			cy.drawCardFromDeck(shuffledDeckKeys.DDSJ, cardsToDraw)
+			cy.reshuffleDeck(shuffledDeckKeys.DDSJ, 'true')
+			cy.verifyReshuffleRemainingAllDrawnCards(true, 2)
+		})
 	})
 })

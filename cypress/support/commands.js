@@ -12,9 +12,8 @@ Cypress.Commands.addAll({
 	 * @param {string} decksPath Path from the project to the decks file.
 	 */
 	checkDecks(decksPath) {
-		cy.section('Before test case')
+		cy.section('Checking decks still exist or not')
 		DeckHandler.checkDecks(decksPath)
-		cy.section('Test case will now begin')
 	},
 	// Positive commands
 	/**
@@ -144,7 +143,7 @@ Cypress.Commands.addAll({
 	 * @param {number} [deckCount=1] The number of decks in the entire given deck.
 	 * @param {number} [maxCardsExpected=52] The total number of cards from the given deck.
 	 */
-	verifyShuffledDeck(deckCount = 1, maxCardsExpected = 52) {
+	verifyCardsDrawn(deckCount = 1, maxCardsExpected = 52) {
 		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 			cy.section(`Verifications for drawing shuffled deck cards`)
 			cy.get('@verifiedCardCodes').then((knownCardCodes) => {
@@ -172,61 +171,85 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to verify that reshuffling a deck without the drawn cards should
-	 * not have those cards in the deck.
+	 * Command to verify that reshuffling the main stack of the deck and drawing
+	 * no cards should have the deck at its full number of cards.
 	 * @param {boolean} [jokers] Set this to true if joker cards are in the deck.
 	 * @param {number} [drawCount] The number of cards that have been drawn at once.
-	 * @param {number} [deckCount] The number of decks that are in the whole deck.
 	 */
-	verifyRemainingCards(jokers = false, drawCount = 0, deckCount = 1) {
-		cy.section(`Verifications for reshuffling the deck without drawn cards`)
+	verifyReshuffleRemainingNoDrawnCards(jokers = false, deckCount = 1) {
+		cy.section(
+			`Verifications for reshuffling the main stack only that has ${deckCount} deck(s) only`
+		)
 		cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
 			if (jokers === true) {
-				if (drawCount === 0) {
-					cy.step(
-						'Verify reshuffle main stack that has jokers with no cards drawn'
-					)
-					cy.wrap(reshuffleResp.body.remaining).should(
-						'equal',
-						DeckHandler.maxCardCountWithJokers * deckCount
-					)
-				} else if (
-					drawCount ===
+				cy.step(
+					`Verify reshuffle main stack that has jokers with no cards drawn`
+				)
+				cy.wrap(reshuffleResp.body.remaining).should(
+					'equal',
 					DeckHandler.maxCardCountWithJokers * deckCount
-				) {
-					cy.step(
-						'Verify reshuffle main stack that has jokers with all cards drawn'
-					)
-					cy.wrap(reshuffleResp.body.remaining).should('equal', 0)
-				} else {
-					cy.step(
-						`Verify reshuffle main stack that has jokers after drawing ${drawCount} cards`
-					)
-					cy.wrap(reshuffleResp.body.remaining).should(
-						'equal',
-						DeckHandler.maxCardCountWithJokers * deckCount - drawCount
-					)
-				}
+				)
 			} else {
-				if (drawCount === 0) {
-					cy.step('Verify reshuffle main stack with no cards drawn')
-					cy.wrap(reshuffleResp.body.remaining).should(
-						'equal',
-						DeckHandler.maxCardCount * deckCount
-					)
-				} else if (drawCount === DeckHandler.maxCardCount * deckCount) {
-					cy.step('Verify reshuffle main stack with all cards drawn')
-					cy.wrap(reshuffleResp.body.remaining).should('equal', 0)
-				} else {
-					cy.step(
-						`Verify reshuffle main stack after drawing ${drawCount} cards`
-					)
-					cy.wrap(reshuffleResp.body.remaining).should(
-						'equal',
-						DeckHandler.maxCardCount * deckCount - drawCount
-					)
-				}
+				cy.step(`Verify reshuffle main stack with no cards drawn`)
+				cy.wrap(reshuffleResp.body.remaining).should(
+					'equal',
+					DeckHandler.maxCardCount * deckCount
+				)
 			}
+		})
+	},
+	/**
+	 * Command to verify that reshuffling the main stack of the deck and drawing
+	 * all cards should have no cards in the main stack.
+	 * @param {boolean} [jokers] Set this to true if joker cards are in the deck.
+	 * @param {number} [drawCount] The number of cards that have been drawn at once.
+	 */
+	verifyReshuffleRemainingAllDrawnCards(jokers = false, deckCount = 1) {
+		cy.section(
+			`Verifications for reshuffling the main stack only that has ${deckCount} deck(s) only`
+		)
+		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+			if (jokers === true) {
+				cy.step(
+					'Verify reshuffle main stack that has jokers with max number of cards drawn'
+				)
+				cy.wrap(drawDeckResp.body.cards).should(
+					'have.length',
+					DeckHandler.maxCardCountWithJokers * deckCount
+				)
+			} else {
+				cy.step('Verify reshuffle main stack with max number of cards drawn')
+				cy.wrap(drawDeckResp.body.cards).should(
+					'have.length',
+					DeckHandler.maxCardCount * deckCount
+				)
+			}
+			cy.step('Verify draw card response shows remaining cards as 0')
+			cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
+			cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
+				cy.step('Verify main stack has no cards left')
+				cy.wrap(reshuffleResp.body.remaining).should('equal', 0)
+			})
+		})
+	},
+	/**
+	 * Command to verify that reshuffling a deck without the drawn cards should
+	 * not have those cards in the main stack.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 */
+	verifyRemainingCards(deckKey) {
+		cy.section(`Verifications for reshuffling the deck without drawn cards`)
+		cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
+			const cardsToDrawFromMain = reshuffleResp.body.remaining
+			cy.get('@recentDrawDeckResp').then((initialDrawDeckResp) => {
+				cy.drawCardFromDeck(deckKey, cardsToDrawFromMain)
+				cy.get('@recentDrawDeckResp').then((remainingDrawDeckResp) => {
+					cy.wrap(remainingDrawDeckResp.body.cards).should(
+						'not.have.all.deep.keys',
+						initialDrawDeckResp.body.cards
+					)
+				})
+			})
 		})
 	},
 	// Negative commands
