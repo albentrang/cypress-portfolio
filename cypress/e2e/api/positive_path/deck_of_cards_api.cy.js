@@ -9,7 +9,11 @@ describe('Deck of Cards API Tests (Positive)', () => {
 		DDS: 'doubleDeckShuffled',
 		DDSJ: 'doubleDeckShuffledWithJokers'
 	})
+	const partialDeckKeys = Object.freeze({
+		PD: 'partialDeck'
+	})
 	const decksPath = 'cypress/fixtures/deck_of_cards_api/current_decks_pos.json'
+	const decksFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 	const maxCardCount = 52
 	const maxCardCountWithJokers = 54
 
@@ -198,6 +202,17 @@ describe('Deck of Cards API Tests (Positive)', () => {
 			cy.drawCardFromDeck(shuffledDeckKeys.DDSJ, cardsToDraw)
 			cy.reshuffleDeck(shuffledDeckKeys.DDSJ, 'true')
 			cy.verifyReshuffleRemainingAllDrawnCards(true, 2)
+		})
+	})
+
+	context('Partial Decks', () => {
+		it('A partial deck has the specified cards where one card is from each suit', () => {
+			cy.fixture(decksFixturePath).then((decks) => {
+				const partialDeckCards = decks[partialDeckKeys.PD].cards.split(',')
+				const cardsExpectedToDraw = partialDeckCards.length
+				cy.drawCardFromDeck(partialDeckKeys.PD, cardsExpectedToDraw)
+				cy.verifyPartialDeck(partialDeckCards)
+			})
 		})
 	})
 })

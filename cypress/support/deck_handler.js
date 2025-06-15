@@ -56,22 +56,28 @@ class DeckHandler {
 							cy.api(`api/deck/${deck[1].id}/return/`)
 						}
 					} else {
-						// Make a new deck and save its deck ID.
-						cy.step('Make new deck')
 						let newDeckUrl = 'api/deck/new/'
 
-						// Additional sub directory for shuffling the new deck.
-						if (deck[1].shuffled) {
-							newDeckUrl += 'shuffle/'
-						}
+						if (deck[1].cards) {
+							// Make a new partial deck using the card IDs in the 'cards' attribute and save its deck ID.
+							cy.step('Make new partial deck')
+							newDeckUrl += `?cards=${deck[1].cards}`
+						} else {
+							cy.step('Make new deck')
 
-						// Query parameters for multiple decks and/or enabling joker cards.
-						if (deck[1].deckCount > 0 && deck[1].jokersEnabled) {
-							newDeckUrl += `?deck_count=${deck[1].deckCount}&jokers_enabled=true`
-						} else if (deck[1].deckCount > 0) {
-							newDeckUrl += `?deck_count=${deck[1].deckCount}`
-						} else if (deck[1].jokersEnabled) {
-							newDeckUrl += `?jokers_enabled=true`
+							// Additional sub directory for shuffling the new deck.
+							if (deck[1].shuffled) {
+								newDeckUrl += 'shuffle/'
+							}
+
+							// Query parameters for multiple decks and/or enabling joker cards.
+							if (deck[1].deckCount > 0 && deck[1].jokersEnabled) {
+								newDeckUrl += `?deck_count=${deck[1].deckCount}&jokers_enabled=true`
+							} else if (deck[1].deckCount > 0) {
+								newDeckUrl += `?deck_count=${deck[1].deckCount}`
+							} else if (deck[1].jokersEnabled) {
+								newDeckUrl += `?jokers_enabled=true`
+							}
 						}
 
 						// Update the deck ID for the specified object in the fixture file.

@@ -39,8 +39,7 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Reshuffle two decks that have jokers without the drawn cards after drawing half the cards
 - [x] Reshuffle two decks without the drawn cards after drawing all the cards
 - [x] Reshuffle two decks that have jokers without the drawn cards after drawing all the cards
-- [ ] A partial deck has the specified cards where one card is from each suit
-- [ ] A partial deck has the specified cards where one card is from each suit plus two jokers
+- [x] A partial deck has the specified cards where one card is from each suit
 - [ ] Draw one card from a one-card pile by count
 - [ ] Draw one card from a one-card pile by its card code
 - [ ] Draw all cards from a whole-deck pile one at a time by count
@@ -91,5 +90,6 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Notes
 
+- Partial decks cannot contain joker cards.
 - Setting the "count" query parameter to 0 when drawing from piles will actually draw all the cards from the pile.
 - The function that returns drawn cards to the deck does not work with multiple decks because that function does not take duplicate cards that are already in the deck.

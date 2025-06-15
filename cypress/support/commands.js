@@ -252,6 +252,21 @@ Cypress.Commands.addAll({
 			})
 		})
 	},
+	/**
+	 * Command to check a partial deck has the cards set from.
+	 */
+	verifyPartialDeck(cardsExpected) {
+		cy.section('Verifications for partial deck')
+
+		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+			cy.wrap(drawDeckResp.body.cards).each((card, idx) => {
+				cy.step(`Verifing card ${card.code} at index ${idx}`)
+				cy.wrap(card.code).should('equal', cardsExpected[idx])
+			})
+			cy.step('Verify all cards are drawn')
+			cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
+		})
+	},
 	// Negative commands
 	/**
 	 * Command to verify error handling for drawing a card
