@@ -61,35 +61,14 @@ Cypress.Commands.addAll({
 	addCardsToPile(deckKey, pileName, cards) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.addCardsToPile(decks[deckKey].id, pileName, cards)
-		})
-	},
-	/**
-	 * Command to list cards in a pile from a deck.
-	 * @param {string} deckKey The key (deck name) defined from a decks file.
-	 * @param {string} pileName Name of the pile that's part of the given deck.
-	 */
-	listCardsInPile(deckKey, pileName) {
-		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.listCardsInPile(decks[deckKey].id, pileName)
-		})
-	},
-	/**
-	 * Command to draw cards in a pile from a deck by using card codes or card count.
-	 * @param {string} deckKey The key (deck name) defined from a decks file.
-	 * @param {string} pileName Name of the pile that's part of the given deck.
-	 * @param {string} drawMethod Set as either "bottom" to draw a card from the bottom
-	 * of the pile or "random" to draw a random card from a pile.
-	 * @param {string | number} cardsToGet Either get specific cards from a pile using
-	 * a string of comma-separated card codes or some number of cards using a number.
-	 */
-	drawCardFromPile(deckKey, pileName, drawMethod, cardsToGet) {
-		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.drawCardFromPile(
-				decks[deckKey].id,
-				pileName,
-				drawMethod,
-				cardsToGet
-			)
+			cy.get('@recentAddPileResp').then((addPileResp) => {
+				cy.step('Initial verifications for adding cards to a pile successfully')
+				cy.wrap(addPileResp.status).should('equal', 200)
+				cy.wrap(addPileResp.statusText).should('equal', 'OK')
+				cy.wrap(addPileResp.body.success).should('equal', true)
+				cy.wrap(addPileResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(addPileResp.body.piles).should('have.key', pileName)
+			})
 		})
 	},
 	/**
@@ -100,6 +79,68 @@ Cypress.Commands.addAll({
 	reshufflePile(deckKey, pileName) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.reshufflePile(decks[deckKey].id, pileName)
+			cy.get('@recentReshufflePileResp').then((reshufflePileResp) => {
+				cy.step(
+					'Initial verifications for shuffling cards in a pile successfully'
+				)
+				cy.wrap(reshufflePileResp.status).should('equal', 200)
+				cy.wrap(reshufflePileResp.statusText).should('equal', 'OK')
+				cy.wrap(reshufflePileResp.body.success).should('equal', true)
+				cy.wrap(reshufflePileResp.body.deck_id).should(
+					'equal',
+					decks[deckKey].id
+				)
+				cy.wrap(reshufflePileResp.body.piles).should('have.key', pileName)
+			})
+		})
+	},
+	/**
+	 * Command to list cards in a pile from a deck.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 * @param {string} pileName Name of the pile that's part of the given deck.
+	 */
+	listCardsInPile(deckKey, pileName) {
+		cy.fixture(decksPosFixturePath).then((decks) => {
+			DeckHandler.listCardsInPile(decks[deckKey].id, pileName)
+			cy.get('@recentListPileResp').then((listPileResp) => {
+				cy.step(
+					'Initial verifications for listing cards for a pile successfully'
+				)
+				cy.wrap(listPileResp.status).should('equal', 200)
+				cy.wrap(listPileResp.statusText).should('equal', 'OK')
+				cy.wrap(listPileResp.body.success).should('equal', true)
+				cy.wrap(listPileResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(listPileResp.body.piles).should('have.key', pileName)
+			})
+		})
+	},
+	/**
+	 * Command to draw cards in a pile from a deck by using card codes or card count.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 * @param {string} pileName Name of the pile that's part of the given deck.
+	 * @param {string | number} cardsToGet Either get specific cards from a pile using
+	 * a string of comma-separated card codes or some number of cards using a number.
+	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
+	 * of the pile or "random" to draw a random card from a pile (optional).
+	 */
+	drawCardFromPile(deckKey, pileName, cardsToGet, drawMethod) {
+		cy.fixture(decksPosFixturePath).then((decks) => {
+			DeckHandler.drawCardFromPile(
+				decks[deckKey].id,
+				pileName,
+				cardsToGet,
+				drawMethod
+			)
+			cy.get('@recentDrawPileResp').then((drawPileResp) => {
+				cy.step(
+					'Initial verifications for drawing cards from a pile successfully'
+				)
+				cy.wrap(drawPileResp.status).should('equal', 200)
+				cy.wrap(drawPileResp.statusText).should('equal', 'OK')
+				cy.wrap(drawPileResp.body.success).should('equal', true)
+				cy.wrap(drawPileResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(drawPileResp.body.piles).should('have.key', pileName)
+			})
 		})
 	},
 	/**

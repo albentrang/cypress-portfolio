@@ -42,14 +42,10 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] A partial deck has the specified cards where one card is from each suit
 - [ ] Draw one card from a one-card pile by count
 - [ ] Draw one card from a one-card pile by its card code
-- [ ] Draw all cards from a whole-deck pile one at a time by count
-- [ ] Draw all cards from a whole-deck pile one at a time by their card codes
-- [ ] Draw all cards from a whole-deck shuffled pile all at once
-- [ ] Draw all cards from a whole-deck shuffled pile that includes jokers all at once
-- [ ] Draw all cards from a whole-deck pile one at a time from the bottom of the pile
-- [ ] Draw all cards from a whole-deck pile one at a time at random
-- [ ] Put half of the shuffled deck in one pile and the rest of the cards are in another pile, then draw all cards in each pile by their card codes
-- [ ] Put half of the shuffled deck in one shuffled pile and the rest of the cards are in another shuffled pile, then draw all cards in each pile by count
+- [ ] Draw all cards from a whole-deck shuffled pile by count
+- [ ] Draw all cards from a whole-deck shuffled pile that includes jokers by count
+- [ ] Put half of the shuffled deck in one pile, shuffle the cards in the first pile, bring those cards in the first pile to a second pile, and then draw all cards in the second pile from the bottom of it by card count
+- [ ] Put half of the shuffled deck in one pile, bring those cards in the first pile to a second pile, shuffle the cards in the second pile, take those cards back to the first pile, shuffle the cards in the first pile, and then draw all cards in the first pile randomly by card count
 - [ ] Draw a card from a shuffled deck and then return it to the deck
 - [ ] Draw all cards from a shuffled deck and then return it to the deck
 - [ ] Draw all cards from a shuffled deck with jokers and then return it to the deck
@@ -91,5 +87,6 @@ This document plans the positive and negative test cases when using the [Deck of
 ## Notes
 
 - Partial decks cannot contain joker cards.
+- Using the function that lists cards from a pile by specifying its name will have an attribute called "cards" that lists all the cards in that pile. The other piles will not have that attribute.
 - Setting the "count" query parameter to 0 when drawing from piles will actually draw all the cards from the pile.
 - The function that returns drawn cards to the deck does not work with multiple decks because that function does not take duplicate cards that are already in the deck.

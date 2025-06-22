@@ -215,4 +215,48 @@ describe('Deck of Cards API Tests (Positive)', () => {
 			})
 		})
 	})
+
+	context('Piles', () => {
+		it.only('Draw one card from a one-card pile by count', () => {
+			const cardsToDrawFromDeck = 1
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDrawFromDeck)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				const pileName = 'test_pile'
+				const cardCode = `${drawDeckResp.body.cards[0].code}`
+				cy.section('Verify adding and listing a pile card')
+				cy.step(`Add card ${cardCode} to pile ${pileName}`)
+				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
+				cy.get('@recentAddPileResp').then((addPileResp) => {
+					cy.wrap(addPileResp.body.piles[pileName].remaining).should(
+						'equal',
+						cardsToDrawFromDeck
+					)
+					cy.step(`List the cards in pile ${pileName}`)
+					cy.listCardsInPile(shuffledDeckKeys.SDS, pileName)
+					cy.get('@recentListPileResp').then((listPileResp) => {
+						cy.wrap(listPileResp.body.piles[pileName].cards[0].image).should(
+							'equal',
+							drawDeckResp.body.cards[0].image
+						)
+						cy.wrap(listPileResp.body.piles[pileName].cards[0].value).should(
+							'equal',
+							drawDeckResp.body.cards[0].value
+						)
+						cy.wrap(listPileResp.body.piles[pileName].cards[0].suit).should(
+							'equal',
+							drawDeckResp.body.cards[0].suit
+						)
+						cy.wrap(listPileResp.body.piles[pileName].cards[0].code).should(
+							'equal',
+							drawDeckResp.body.cards[0].code
+						)
+						cy.wrap(listPileResp.body.piles[pileName].remaining).should(
+							'equal',
+							cardsToDrawFromDeck
+						)
+					})
+				})
+			})
+		})
+	})
 })

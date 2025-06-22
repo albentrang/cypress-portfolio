@@ -47,13 +47,37 @@ class DeckHandler {
 					failOnStatusCode: false
 				}).then((response) => {
 					if (response.body.success) {
+						let expectedFullDeck
+						if (deck[1].cards) {
+							expectedFullDeck = deck[1].cards.split(',').length
+						} else if (deck[1].jokersEnabled) {
+							expectedFullDeck = this.#maxCardCountWithJokers
+						} else {
+							expectedFullDeck = this.#maxCardCount
+						}
+
 						// Shuffle or return the drawn cards to the deck.
 						if (deck[1].shuffled) {
+							if (deck[1].deckCount) {
+								expectedFullDeck *= deck[1].deckCount
+							}
 							cy.step('Shuffle deck with drawn cards')
-							cy.api(`api/deck/${deck[1].id}/shuffle/`)
+							cy.api(`api/deck/${deck[1].id}/shuffle/`).then((shuffleResp) => {
+								cy.step(`Verify shuffled deck ${deck[1].id} is at a full stack`)
+								cy.wrap(shuffleResp.body.remaining).should(
+									'equal',
+									expectedFullDeck
+								)
+							})
 						} else {
 							cy.step('Return drawn cards to deck')
-							cy.api(`api/deck/${deck[1].id}/return/`)
+							cy.api(`api/deck/${deck[1].id}/return/`).then((orderedResp) => {
+								cy.step(`Verify ordered deck ${deck[1].id} is at a full stack`)
+								cy.wrap(orderedResp.body.remaining).should(
+									'equal',
+									expectedFullDeck
+								)
+							})
 						}
 					} else {
 						let newDeckUrl = 'api/deck/new/'
@@ -136,7 +160,18 @@ class DeckHandler {
 	addCardsToPile(deckId, pileName, cards) {
 		const addPileCardsUrl = `api/deck/${deckId}/pile/${pileName}/add/?cards=${cards}`
 		cy.step(`Adding cards ${cards} from deck id ${deckId} in pile ${pileName}`)
-		cy.api(addPileCardsUrl).as('@recentAddPileResp')
+		cy.api(addPileCardsUrl).as('recentAddPileResp')
+	}
+
+	/**
+	 * Reshuffled a pile from a deck.
+	 * @param {string} deckId The ID of the deck.
+	 * @param {string} pileName The name of the pile from the deck.
+	 */
+	reshufflePile(deckId, pileName) {
+		const reshufflePileUrl = `api/deck/${deckId}/pile/${pileName}/shuffle/`
+		cy.step(`Reshuffle pile ${pileName} from deck id ${deckId}`)
+		cy.api(reshufflePileUrl).as('recentReshufflePileResp')
 	}
 
 	/**
@@ -147,19 +182,19 @@ class DeckHandler {
 	listCardsInPile(deckId, pileName) {
 		const listPileCardsUrl = `api/deck/${deckId}/pile/${pileName}/list/`
 		cy.step(`Listing cards in pile ${pileName} from deck id ${deckId}`)
-		cy.api(listPileCardsUrl).as('@recentListPileResp')
+		cy.api(listPileCardsUrl).as('recentListPileResp')
 	}
 
 	/**
 	 * Draw cards in a pile from a deck by using card codes or card count.
 	 * @param {string} deckId The ID of the deck.
 	 * @param {string} pileName The name of the pile from the deck.
-	 * @param {string} drawMethod Set as either "bottom" to draw a card from the bottom
-	 * of the pile or "random" to draw a random card from a pile.
 	 * @param {string | number} cardsToGet Either get specific cards from a pile using
 	 * a string of comma-separated card codes or some number of cards using a number.
+	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
+	 * of the pile or "random" to draw a random card from a pile (optional).
 	 */
-	drawCardFromPile(deckId, pileName, drawMethod, cardsToGet) {
+	drawCardFromPile(deckId, pileName, cardsToGet, drawMethod = '') {
 		let drawPileCardUrl = `api/deck/${deckId}/pile/${pileName}/draw/`
 		if (drawMethod) {
 			drawPileCardUrl += `${drawMethod}/`
@@ -174,17 +209,6 @@ class DeckHandler {
 		}
 		cy.step(`Draw card(s) from deck id ${deckId} in pile ${pileName}`)
 		cy.api(drawPileCardUrl).as('recentDrawPileResp')
-	}
-
-	/**
-	 * Reshuffled a pile from a deck.
-	 * @param {string} deckId The ID of the deck.
-	 * @param {string} pileName The name of the pile from the deck.
-	 */
-	reshufflePile(deckId, pileName) {
-		const reshufflePileUrl = `api/deck/${deckId}/pile/${pileName}/shuffle/`
-		cy.step(`Reshuffle pile ${pileName} from deck id ${deckId}`)
-		cy.api(reshufflePileUrl).as('recentReshufflePileResp')
 	}
 
 	/**
