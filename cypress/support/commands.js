@@ -67,7 +67,10 @@ Cypress.Commands.addAll({
 				cy.wrap(addPileResp.statusText).should('equal', 'OK')
 				cy.wrap(addPileResp.body.success).should('equal', true)
 				cy.wrap(addPileResp.body.deck_id).should('equal', decks[deckKey].id)
-				cy.wrap(addPileResp.body.piles).should('have.key', pileName)
+				cy.wrap(addPileResp.body.piles[pileName]).should(
+					'have.key',
+					'remaining'
+				)
 			})
 		})
 	},
@@ -90,7 +93,10 @@ Cypress.Commands.addAll({
 					'equal',
 					decks[deckKey].id
 				)
-				cy.wrap(reshufflePileResp.body.piles).should('have.key', pileName)
+				cy.wrap(reshufflePileResp.body.piles[pileName]).should(
+					'have.key',
+					'remaining'
+				)
 			})
 		})
 	},
@@ -123,7 +129,7 @@ Cypress.Commands.addAll({
 	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
 	 * of the pile or "random" to draw a random card from a pile (optional).
 	 */
-	drawCardFromPile(deckKey, pileName, cardsToGet, drawMethod) {
+	drawCardFromPile(deckKey, pileName, cardsToGet, drawMethod = '') {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.drawCardFromPile(
 				decks[deckKey].id,
@@ -139,7 +145,10 @@ Cypress.Commands.addAll({
 				cy.wrap(drawPileResp.statusText).should('equal', 'OK')
 				cy.wrap(drawPileResp.body.success).should('equal', true)
 				cy.wrap(drawPileResp.body.deck_id).should('equal', decks[deckKey].id)
-				cy.wrap(drawPileResp.body.piles).should('have.key', pileName)
+				cy.wrap(drawPileResp.body.piles[pileName]).should(
+					'have.key',
+					'remaining'
+				)
 			})
 		})
 	},
@@ -295,6 +304,7 @@ Cypress.Commands.addAll({
 	},
 	/**
 	 * Command to check a partial deck has the cards set from.
+	 * @param {string[]} cardsExpected The array of card codes expected.
 	 */
 	verifyPartialDeck(cardsExpected) {
 		cy.section('Verifications for partial deck')
@@ -306,6 +316,114 @@ Cypress.Commands.addAll({
 			})
 			cy.step('Verify all cards are drawn')
 			cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
+		})
+	},
+	/**
+	 * Command to check a pile has the expected remaining cards in it
+	 * after adding cards to the pile.
+	 * @param {string} pileName The name of the pile being checked.
+	 * @param {number} pileRemainingExpected The expected number of
+	 * remaining cards in the given pile.
+	 */
+	verifyAddToPile(pileName, pileRemainingExpected) {
+		cy.section('Verifications for adding cards to a pile')
+		cy.get('@recentAddPileResp').then((addPileResp) => {
+			cy.step(`Check remaining cards in pile ${pileName}`)
+			cy.wrap(addPileResp.body.piles[pileName].remaining).should(
+				'equal',
+				pileRemainingExpected
+			)
+		})
+	},
+	/**
+	 * Command to check a pile has the expected remaining cards in it
+	 * after shuffling cards in the pile.
+	 * @param {string} pileName The name of the pile being checked.
+	 * @param {number} pileRemainingExpected The expected number of
+	 * remaining cards in the given pile.
+	 */
+	verifyShufflePile(pileName, pileRemainingExpected) {
+		cy.section('Verifications for shuffling cards in a pile')
+		cy.get('@recentReshufflePileResp').then((shufflePileResp) => {
+			cy.step(`Check remaining cards in pile ${pileName}`)
+			cy.wrap(shufflePileResp.body.piles[pileName].remaining).should(
+				'equal',
+				pileRemainingExpected
+			)
+		})
+	},
+	/**
+	 * Command to check a pile that has listed all of its cards while also
+	 * checking all piles associated with the deck and their remaining cards.
+	 * Note: assume all the cards drawn from the main deck have been added
+	 * all at once to the pile to be listed.
+	 * @param {string} pileToList The pile that has listed its cards.
+	 * @param {Object[]} allPilesExpected All of the piles and their remaining
+	 * cards associated with the deck being used.
+	 */
+	verifyListingPile(pileToList, allPilesExpected) {
+		cy.section('Verifications for listing cards in a pile')
+		cy.get('@recentListPileResp').then((listPileResp) => {
+			cy.step(`Check listed cards in pile ${pileToList}`)
+			cy.get('@recentDrawDeckResp').then((drawResp) => {
+				cy.wrap(listPileResp.body.piles[pileToList].cards).each(
+					(card, index) => {
+						cy.wrap(card.code).should('equal', drawResp.body.cards[index].code)
+					}
+				)
+				cy.step('Check remaining cards in each pile of the current deck')
+				cy.wrap(allPilesExpected).each((pileExpected) => {
+					cy.wrap(listPileResp.body.piles[pileExpected.name].remaining).should(
+						'equal',
+						pileExpected.remaining
+					)
+				})
+			})
+		})
+	},
+	/**
+	 * Command to check a pile and the drawn cards. If the cards drawn
+	 * used a string of comma-separated card codes, then it will check
+	 * for the same cards drawn from the pile. If a number of cards
+	 * were drawn, then it will check for the number of cards drawn
+	 * and the remaining number of cards in the pile.
+	 * @param {string} pileName The pile that had its cards drawn.
+	 * @param {string | number} cardsDrawn Either a string of comman-
+	 * separated card codes or the number of cards drawn from the given
+	 * pile.
+	 */
+	verifyDrawFromPile(pileName, cardsDrawn) {
+		cy.section('Verifications for drawing cards from a pile')
+		cy.get('@recentDrawPileResp').then((drawPileResp) => {
+			switch (typeof cardsDrawn) {
+				case 'string': {
+					const cardCodesArray = cardsDrawn.split(',')
+					cy.wrap(drawPileResp.body.cards).each((card, index) => {
+						cy.wrap(card.code).should('equal', cardCodesArray[index])
+					})
+					break
+				}
+				case 'number': {
+					// There needed to have been cards to draw from the pile in the first place.
+					cy.get('@recentAddPileResp').then((addPileResp) => {
+						/* Check that the remaining cards in the pile is at least 0 and equal 
+						to the remaining cards of the pile from the last request to add
+						cards to the pile minus the cards drawn from the pile. */
+						cy.wrap(drawPileResp.body.piles[pileName].remaining)
+							.should('be.greaterThan', -1)
+							.and(
+								'equal',
+								addPileResp.body.piles[pileName].remaining - cardsDrawn
+							)
+					})
+					break
+				}
+				default: {
+					throw new TypeError(
+						`The 'cardsDrawn' variable ${cardsDrawn} is not a string or number.`
+					)
+				}
+			}
 		})
 	},
 	// Negative commands

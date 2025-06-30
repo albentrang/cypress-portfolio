@@ -40,12 +40,12 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Reshuffle two decks without the drawn cards after drawing all the cards
 - [x] Reshuffle two decks that have jokers without the drawn cards after drawing all the cards
 - [x] A partial deck has the specified cards where one card is from each suit
-- [ ] Draw one card from a one-card pile by count
-- [ ] Draw one card from a one-card pile by its card code
-- [ ] Draw all cards from a whole-deck shuffled pile by count
-- [ ] Draw all cards from a whole-deck shuffled pile that includes jokers by count
-- [ ] Put half of the shuffled deck in one pile, shuffle the cards in the first pile, bring those cards in the first pile to a second pile, and then draw all cards in the second pile from the bottom of it by card count
-- [ ] Put half of the shuffled deck in one pile, bring those cards in the first pile to a second pile, shuffle the cards in the second pile, take those cards back to the first pile, shuffle the cards in the first pile, and then draw all cards in the first pile randomly by card count
+- [x] Draw one card from a one-card pile by count
+- [x] Draw one card from a one-card pile by its card code
+- [x] Draw all cards from a whole-deck shuffled pile by count
+- [x] Draw all cards from a whole-deck shuffled pile that includes jokers by their card codes
+- [x] Put half of the shuffled deck in one pile, shuffle the cards in the first pile, bring half of those cards in the first pile to a second pile, and then draw all cards in the second pile from the bottom of it by card count
+- [x] Put half of the shuffled deck in one pile, bring half of those cards in the first pile to a second pile, shuffle the cards in the second pile, take those cards back to the first pile, shuffle the cards in the first pile, and then draw all cards in the first pile randomly by card count
 - [ ] Draw a card from a shuffled deck and then return it to the deck
 - [ ] Draw all cards from a shuffled deck and then return it to the deck
 - [ ] Draw all cards from a shuffled deck with jokers and then return it to the deck
