@@ -46,18 +46,18 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Draw all cards from a whole-deck shuffled pile that includes jokers by their card codes
 - [x] Put half of the shuffled deck in one pile, shuffle the cards in the first pile, bring half of those cards in the first pile to a second pile, and then draw all cards in the second pile from the bottom of it by card count
 - [x] Put half of the shuffled deck in one pile, bring half of those cards in the first pile to a second pile, shuffle the cards in the second pile, take those cards back to the first pile, shuffle the cards in the first pile, and then draw all cards in the first pile randomly by card count
-- [ ] Draw a card from a shuffled deck and then return it to the deck
-- [ ] Draw all cards from a shuffled deck and then return it to the deck
-- [ ] Draw all cards from a shuffled deck with jokers and then return it to the deck
-- [ ] Draw a card from a shuffled deck, put it in a pile, and then return it to the deck
-- [ ] Draw all cards from a shuffled deck, put them in a pile, and then return it to the deck
-- [ ] Draw all cards from a shuffled deck with jokers, put them in a pile, and then return it to the deck
-- [ ] Draw a card from a shuffled deck and then return it to the deck using its card code
-- [ ] Draw all cards from a shuffled deck and then return it to the deck using their card codes
-- [ ] Draw all cards from a shuffled deck with jokers and then return it to the deck using their card codes
-- [ ] Draw a card from a shuffled deck, put it in a pile, and then return it to the deck using its card code
-- [ ] Draw all cards from a shuffled deck, put them in a pile, and then return it to the deck using their card codes
-- [ ] Draw all cards from a shuffled deck with jokers, put them in a pile, and then return it to the deck using their card codes
+- [x] Draw a card from a shuffled deck and then return it to the deck
+- [x] Draw all cards from a shuffled deck and then return all cards to the deck
+- [x] Draw all cards from a shuffled deck with jokers and then return all cards to the deck
+- [x] Draw a card from a shuffled deck, put it in a pile, and then return it to the deck
+- [x] Draw all cards from a shuffled deck, put half of them in a pile, and then return all of the pile cards to the deck
+- [x] Draw all cards from a shuffled deck with jokers, put all of them in a pile, and then return all of the pile cards to the deck
+- [x] Draw a card from a shuffled deck and then return it to the deck using its card code
+- [x] Draw all cards from a shuffled deck and then return half of them to the deck using their card codes
+- [x] Draw all cards from a shuffled deck with jokers and then return half of them to the deck using their card codes
+- [x] Draw a card from a shuffled deck, put it in a pile, and then return it to the deck using its card code
+- [x] Draw all cards from a shuffled deck, put half of them in a pile, and then return half of the pile cards to the deck using their card codes
+- [x] Draw all cards from a shuffled deck with jokers, put them half of them in a pile, and then return half of the pile cards to the deck using their card codes
 
 ## Negative Tests
 
@@ -90,3 +90,4 @@ This document plans the positive and negative test cases when using the [Deck of
 - Using the function that lists cards from a pile by specifying its name will have an attribute called "cards" that lists all the cards in that pile. The other piles will not have that attribute.
 - Setting the "count" query parameter to 0 when drawing from piles will actually draw all the cards from the pile.
 - The function that returns drawn cards to the deck does not work with multiple decks because that function does not take duplicate cards that are already in the deck.
+- The function that returns cards, either drawn or from a pile, to the deck does not put those cards in order on top of the deck if the deck has been shuffled.

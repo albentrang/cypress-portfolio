@@ -162,6 +162,13 @@ Cypress.Commands.addAll({
 	returnCards(deckKey, cards = '', pileName = '') {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.returnCards(decks[deckKey].id, cards, pileName)
+			cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
+				cy.step('Initial verifications for returning cards successfully')
+				cy.wrap(returnCardsResp.status).should('equal', 200)
+				cy.wrap(returnCardsResp.statusText).should('equal', 'OK')
+				cy.wrap(returnCardsResp.body.success).should('equal', true)
+				cy.wrap(returnCardsResp.body.deck_id).should('equal', decks[deckKey].id)
+			})
 		})
 	},
 	/**
@@ -424,6 +431,58 @@ Cypress.Commands.addAll({
 					)
 				}
 			}
+		})
+	},
+	/**
+	 * Command to check that the returned cards are put back to the deck
+	 * based on the remaining number of cards in it and in the same order.
+	 * Optionally, it can also check the remaining cards of a pile after
+	 * it had its cards returned to the deck.
+	 * @param {number} deckRemainingExpected The remaining number of cards expected
+	 * after returning cards to the deck.
+	 * @param {string} [pileName] The name of the pile that had its cards returned
+	 * to the deck (optional).
+	 * @param {number} [pileRemainingExpected = 0] The expected remaining number of
+	 * cards in the pile after returning cards to the deck (optional).
+	 * @param {string} [cardsReturned] The cards that were returned to the deck
+	 * as a comma-separated string of card codes (optional).
+	 * @param {string} [deckId] The ID of the deck that had its cards returned
+	 * to it (optional).
+	 */
+	verifyReturnCards(
+		deckRemainingExpected,
+		pileName = '',
+		pileRemainingExpected = 0,
+		cardsReturned = '',
+		deckId = ''
+	) {
+		cy.section('Verifications for returning cards')
+		cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
+			if (pileName) {
+				if (cardsReturned && deckId) {
+					const cardsReturnedArray = cardsReturned.split(',')
+
+					cy.step(`Check specified cards returned from pile ${pileName}`)
+					cy.listCardsInPile(deckId, pileName)
+					cy.get('@recentListPileResp').then((listPileResp) => {
+						cy.wrap(listPileResp.body.piles[pileName].cards).each((card) => {
+							cy.wrap(cardsReturnedArray).should('not.include', card.code)
+						})
+					})
+				}
+
+				cy.step(`Check remaining cards in pile ${pileName}`)
+				cy.wrap(returnCardsResp.body.piles[pileName].remaining).should(
+					'equal',
+					pileRemainingExpected
+				)
+			}
+
+			cy.step('Check remaining cards in the deck')
+			cy.wrap(returnCardsResp.body.remaining).should(
+				'equal',
+				deckRemainingExpected
+			)
 		})
 	},
 	// Negative commands

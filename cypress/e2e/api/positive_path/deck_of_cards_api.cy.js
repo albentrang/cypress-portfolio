@@ -407,4 +407,247 @@ describe('Deck of Cards API Tests (Positive)', () => {
 			})
 		})
 	})
+
+	context('Return Cards', () => {
+		it('Draw a card from a shuffled deck and then return it to the deck', () => {
+			const cardsToDraw = 1
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.returnCards(shuffledDeckKeys.SDS)
+			cy.verifyReturnCards(maxCardCount)
+		})
+
+		it('Draw all cards from a shuffled deck and then return all cards to the deck', () => {
+			const cardsToDraw = maxCardCount
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.returnCards(shuffledDeckKeys.SDS)
+			cy.verifyReturnCards(maxCardCount)
+		})
+
+		it('Draw all cards from a shuffled deck with jokers and then return all cards to the deck', () => {
+			const cardsToDraw = maxCardCountWithJokers
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.returnCards(shuffledDeckKeys.SDSJ)
+			cy.verifyReturnCards(maxCardCountWithJokers)
+		})
+
+		it('Draw a card from a shuffled deck, put it in a pile, and then return it to the deck', () => {
+			const cardsToDraw = 1
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				const cardCode = `${drawDeckResp.body.cards[0].code}`
+				const pileName = 'test_pile'
+
+				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
+				cy.returnCards(shuffledDeckKeys.SDS, '', pileName)
+				cy.verifyReturnCards(maxCardCount, pileName)
+			})
+		})
+
+		it('Draw all cards from a shuffled deck, put half of them in a pile, and then return all of the pile cards to the deck', () => {
+			const cardsToDraw = maxCardCount
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				let cardCodes = ``
+				const pileName = 'test_pile'
+				const halfDeckLength = drawDeckResp.body.cards.length / 2
+
+				for (let index = 0; index < halfDeckLength; index++) {
+					cardCodes += drawDeckResp.body.cards[index].code
+					if (index < halfDeckLength - 1) {
+						cardCodes += `,`
+					}
+				}
+
+				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCodes)
+				cy.returnCards(shuffledDeckKeys.SDS, cardCodes, pileName)
+				cy.verifyReturnCards(maxCardCount / 2, pileName)
+			})
+		})
+
+		it('Draw all cards from a shuffled deck with jokers, put all of them in a pile, and then return all of the pile cards to the deck', () => {
+			const cardsToDraw = maxCardCountWithJokers
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				let cardCodes = ``
+				const pileName = 'test_pile'
+
+				for (let index = 0; index < drawDeckResp.body.cards.length; index++) {
+					cardCodes += drawDeckResp.body.cards[index].code
+					if (index < drawDeckResp.body.cards.length - 1) {
+						cardCodes += `,`
+					}
+				}
+
+				cy.addCardsToPile(shuffledDeckKeys.SDSJ, pileName, cardCodes)
+				cy.returnCards(shuffledDeckKeys.SDSJ, cardCodes, pileName)
+				cy.verifyReturnCards(maxCardCountWithJokers, pileName)
+			})
+		})
+
+		it('Draw a card from a shuffled deck and then return it to the deck using its card code', () => {
+			const cardsToDraw = 1
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				const cardCode = `${drawDeckResp.body.cards[0].code}`
+
+				cy.returnCards(shuffledDeckKeys.SDS, cardCode)
+				cy.verifyReturnCards(maxCardCount)
+			})
+		})
+
+		it('Draw all cards from a shuffled deck and then return half of them to the deck using their card codes', () => {
+			const cardsToDraw = maxCardCount
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				let cardCodes = ``
+
+				for (
+					let index = 0;
+					index < drawDeckResp.body.cards.length / 2;
+					index++
+				) {
+					cardCodes += drawDeckResp.body.cards[index].code
+					if (index < drawDeckResp.body.cards.length - 1) {
+						cardCodes += `,`
+					}
+				}
+
+				cy.returnCards(shuffledDeckKeys.SDS, cardCodes)
+				cy.verifyReturnCards(maxCardCount / 2)
+			})
+		})
+
+		it('Draw all cards from a shuffled deck with jokers and then return half of them to the deck using their card codes', () => {
+			const cardsToDraw = maxCardCountWithJokers
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				let cardCodes = ``
+
+				for (
+					let index = 0;
+					index < drawDeckResp.body.cards.length / 2;
+					index++
+				) {
+					cardCodes += drawDeckResp.body.cards[index].code
+					if (index < drawDeckResp.body.cards.length - 1) {
+						cardCodes += `,`
+					}
+				}
+
+				cy.returnCards(shuffledDeckKeys.SDSJ, cardCodes)
+				cy.verifyReturnCards(maxCardCountWithJokers / 2)
+			})
+		})
+
+		it('Draw a card from a shuffled deck, put it in a pile, and then return it to the deck using its card code', () => {
+			const cardsToDraw = 1
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				const cardCode = `${drawDeckResp.body.cards[0].code}`
+				const pileName = 'test_pile'
+
+				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
+				cy.returnCards(shuffledDeckKeys.SDS, cardCode, pileName)
+				cy.verifyReturnCards(
+					maxCardCount,
+					pileName,
+					0,
+					cardCode,
+					shuffledDeckKeys.SDS
+				)
+			})
+		})
+
+		it('Draw all cards from a shuffled deck, put half of them in a pile, and then return half of the pile cards to the deck using their card codes', () => {
+			const cardsToDraw = maxCardCount
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				let cardCodes = ``
+				const pileName = 'test_pile'
+				const halfDeckLength = drawDeckResp.body.cards.length / 2
+
+				for (let index = 0; index < halfDeckLength; index++) {
+					cardCodes += drawDeckResp.body.cards[index].code
+					if (index < halfDeckLength - 1) {
+						cardCodes += `,`
+					}
+				}
+
+				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCodes)
+				cy.listCardsInPile(shuffledDeckKeys.SDS, pileName)
+				cy.get('@recentListPileResp').then((listPileResp) => {
+					let pileCardCodes = ``
+					const halfPileLength = cardCodes.split(',').length / 2
+
+					for (let index = 0; index < halfPileLength; index++) {
+						pileCardCodes += listPileResp.body.piles[pileName].cards[index].code
+						if (index < halfPileLength - 1) {
+							pileCardCodes += `,`
+						}
+					}
+
+					cy.returnCards(shuffledDeckKeys.SDS, pileCardCodes, pileName)
+					cy.verifyReturnCards(
+						halfPileLength,
+						pileName,
+						halfPileLength,
+						pileCardCodes,
+						shuffledDeckKeys.SDS
+					)
+				})
+			})
+		})
+
+		it('Draw all cards from a shuffled deck with jokers, put them half of them in a pile, and then return half of the pile cards to the deck using their card codes', () => {
+			const cardsToDraw = maxCardCountWithJokers
+
+			cy.drawCardFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				let cardCodes = ``
+				const pileName = 'test_pile'
+				const halfDeckLength = drawDeckResp.body.cards.length / 2
+
+				for (let index = 0; index < halfDeckLength; index++) {
+					cardCodes += drawDeckResp.body.cards[index].code
+					if (index < halfDeckLength - 1) {
+						cardCodes += `,`
+					}
+				}
+
+				cy.addCardsToPile(shuffledDeckKeys.SDSJ, pileName, cardCodes)
+				cy.listCardsInPile(shuffledDeckKeys.SDSJ, pileName)
+				cy.get('@recentListPileResp').then((listPileResp) => {
+					let pileCardCodes = ``
+					const halfPileLength = Math.round(cardCodes.split(',').length / 2)
+
+					for (let index = 0; index < halfPileLength; index++) {
+						pileCardCodes += listPileResp.body.piles[pileName].cards[index].code
+						if (index < halfPileLength - 1) {
+							pileCardCodes += `,`
+						}
+					}
+
+					cy.returnCards(shuffledDeckKeys.SDSJ, pileCardCodes, pileName)
+					cy.verifyReturnCards(
+						halfPileLength,
+						pileName,
+						halfPileLength - 1,
+						pileCardCodes,
+						shuffledDeckKeys.SDSJ
+					)
+				})
+			})
+		})
+	})
 })

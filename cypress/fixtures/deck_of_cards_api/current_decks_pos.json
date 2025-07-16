@@ -1,9 +1,9 @@
 {
   "singleDeck": {
-    "id": "6wjbognlbnjg"
+    "id": "zvuzzyt3964g"
   },
   "singleDeckWithJokers": {
-    "id": "im1q46xggm4d",
+    "id": "wed455zkbcot",
     "jokersEnabled": true
   },
   "singleDeckShuffled": {
@@ -11,23 +11,23 @@
     "shuffled": true
   },
   "singleDeckShuffledWithJokers": {
-    "id": "0yzqlq2otitj",
+    "id": "c8068s22wuvi",
     "shuffled": true,
     "jokersEnabled": true
   },
   "doubleDeckShuffled": {
-    "id": "x9cudbwsfk3y",
+    "id": "zw1gwjxf1g2w",
     "shuffled": true,
     "deckCount": 2
   },
   "doubleDeckShuffledWithJokers": {
-    "id": "hm1hp30uwnhg",
+    "id": "b0xzx1g2n1kh",
     "shuffled": true,
     "deckCount": 2,
     "jokersEnabled": true
   },
   "partialDeck": {
-    "id": "6lrhd731csa7",
+    "id": "ebcon7ml8vxo",
     "cards": "AS,JH,QC,KD"
   }
 }
