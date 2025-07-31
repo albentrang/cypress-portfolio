@@ -125,7 +125,7 @@ class DeckHandler {
 	 * @param {number} drawCount The number of cards to be drawn as a
 	 * positive, whole number.
 	 */
-	drawCardFromDeck(deckId, drawCount) {
+	drawCardsFromDeck(deckId, drawCount) {
 		const drawDeckCardUrl = `api/deck/${deckId}/draw/?count=${Math.trunc(drawCount)}`
 		const apiOptions = { url: drawDeckCardUrl, failOnStatusCode: false }
 
@@ -194,7 +194,7 @@ class DeckHandler {
 	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
 	 * of the pile or "random" to draw a random card from a pile (optional).
 	 */
-	drawCardFromPile(deckId, pileName, cardsToGet, drawMethod = '') {
+	drawCardsFromPile(deckId, pileName, cardsToGet, drawMethod = '') {
 		let drawPileCardUrl = `api/deck/${deckId}/pile/${pileName}/draw/`
 		if (drawMethod) {
 			drawPileCardUrl += `${drawMethod}/`

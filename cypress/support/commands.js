@@ -21,9 +21,9 @@ Cypress.Commands.addAll({
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
 	 * @param {number} drawCount Number of cards to draw.
 	 */
-	drawCardFromDeck(deckKey, drawCount) {
+	drawCardsFromDeck(deckKey, drawCount) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.drawCardFromDeck(decks[deckKey].id, drawCount)
+			DeckHandler.drawCardsFromDeck(decks[deckKey].id, drawCount)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				cy.step('Initial verifications for drawing deck card successfully')
 				cy.wrap(drawDeckResp.status).should('equal', 200)
@@ -129,9 +129,9 @@ Cypress.Commands.addAll({
 	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
 	 * of the pile or "random" to draw a random card from a pile (optional).
 	 */
-	drawCardFromPile(deckKey, pileName, cardsToGet, drawMethod = '') {
+	drawCardsFromPile(deckKey, pileName, cardsToGet, drawMethod = '') {
 		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.drawCardFromPile(
+			DeckHandler.drawCardsFromPile(
 				decks[deckKey].id,
 				pileName,
 				cardsToGet,
@@ -172,6 +172,67 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
+	 * Command to both draw cards from a deck and verify each unique card is less than or equal to the number
+	 * of decks from the entire deck.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 * @param {number} cardsPerDraw The number of cards to draw each time.
+	 * @param {number} totalDraws: The number of times to draw cards from the deck.
+	 */
+	verifyAfterDrawCardsFromDeck(deckKey, cardsPerDraw, totalDraws) {
+		// Set up the alias for the cards that will be verified.
+		cy.wrap([]).as('verifiedCardCodes')
+
+		cy.fixture(decksPosFixturePath).then((decks) => {
+			let deckCount
+			let deckTypeMaxCards
+			let maxCardsExpected
+
+			if (typeof decks[deckKey].deckCount === 'number') {
+				deckCount = decks[deckKey].deckCount
+			} else {
+				deckCount = 1
+			}
+			if (decks[deckKey].jokersEnabled === true) {
+				deckTypeMaxCards = 54
+			} else {
+				deckTypeMaxCards = 52
+			}
+			maxCardsExpected = deckTypeMaxCards * deckCount
+
+			for (let i = 0; i < totalDraws; i++) {
+				cy.drawCardsFromDeck(deckKey, cardsPerDraw)
+
+				cy.section(`Verifications for drawing shuffled deck cards`)
+				cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+					cy.get('@verifiedCardCodes').then((knownCardCodes) => {
+						for (const card of drawDeckResp.body.cards) {
+							knownCardCodes.push(card.code)
+						}
+
+						const remainingActual = drawDeckResp.body.remaining
+						const remainingExpected = maxCardsExpected - knownCardCodes.length
+
+						cy.wrap(drawDeckResp.body.cards).each((card) => {
+							let numOfCurrentCard = 0
+							for (const knownCode of knownCardCodes) {
+								if (knownCode === card.code) {
+									numOfCurrentCard += 1
+								}
+							}
+
+							cy.step(`Verifying ${deckCount} of ${card.code} cards`)
+							cy.wrap(numOfCurrentCard).should('be.lte', deckCount)
+						})
+
+						cy.step('Verify remaining cards')
+						cy.wrap(remainingActual).should('equal', remainingExpected)
+						cy.wrap(knownCardCodes).as('verifiedCardCodes')
+					})
+				})
+			}
+		})
+	},
+	/**
 	 * Command to check an ordered deck.
 	 */
 	verifyOrderedDeck() {
@@ -191,39 +252,6 @@ Cypress.Commands.addAll({
 				})
 				cy.step('Verify all cards are drawn')
 				cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
-			})
-		})
-	},
-	/**
-	 * Command to verify each unique card is less than or equal to the number
-	 * of decks from the entire deck.
-	 * @param {number} [deckCount=1] The number of decks in the entire given deck.
-	 * @param {number} [maxCardsExpected=52] The total number of cards from the given deck.
-	 */
-	verifyCardsDrawn(deckCount = 1, maxCardsExpected = 52) {
-		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-			cy.section(`Verifications for drawing shuffled deck cards`)
-			cy.get('@verifiedCardCodes').then((knownCardCodes) => {
-				for (const card of drawDeckResp.body.cards) {
-					knownCardCodes.push(card.code)
-				}
-				cy.wrap(drawDeckResp.body.cards).each((card) => {
-					let numOfCurrentCard = 0
-					for (const knownCode of knownCardCodes) {
-						if (knownCode === card.code) {
-							numOfCurrentCard += 1
-						}
-					}
-
-					cy.step(`Verifying ${deckCount} of ${card.code} cards`)
-					cy.wrap(numOfCurrentCard).should('be.lte', deckCount)
-					cy.step('Verify remaining cards')
-				})
-				cy.wrap(drawDeckResp.body.remaining).should(
-					'equal',
-					maxCardsExpected - knownCardCodes.length
-				)
-				cy.wrap(knownCardCodes).as('verifiedCardCodes')
 			})
 		})
 	},
@@ -299,7 +327,7 @@ Cypress.Commands.addAll({
 		cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
 			const cardsToDrawFromMain = reshuffleResp.body.remaining
 			cy.get('@recentDrawDeckResp').then((initialDrawDeckResp) => {
-				cy.drawCardFromDeck(deckKey, cardsToDrawFromMain)
+				cy.drawCardsFromDeck(deckKey, cardsToDrawFromMain)
 				cy.get('@recentDrawDeckResp').then((remainingDrawDeckResp) => {
 					cy.wrap(remainingDrawDeckResp.body.cards).should(
 						'not.have.all.deep.keys',
@@ -490,7 +518,7 @@ Cypress.Commands.addAll({
 	 * Command to verify error handling for drawing a card
 	 * from a deck that does not exist.
 	 */
-	drawCardFromNoDeck() {
-		DeckHandler.drawCardFromDeck('0', 1)
+	drawCardsFromNoDeck() {
+		DeckHandler.drawCardsFromDeck('0', 1)
 	}
 })

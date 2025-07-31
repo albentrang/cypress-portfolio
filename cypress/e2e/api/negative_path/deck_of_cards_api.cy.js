@@ -9,7 +9,7 @@ describe('Deck of Cards API Tests (Negative)', () => {
 	})
 
 	it('Draw a card from a deck that does not exist', function () {
-		cy.drawCardFromNoDeck()
+		cy.drawCardsFromNoDeck()
 		cy.step('Verify error handling for drawing card from no deck')
 		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 			cy.wrap(drawDeckResp.status).should('equal', 404)
