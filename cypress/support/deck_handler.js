@@ -26,97 +26,36 @@ class DeckHandler {
 	}
 
 	/**
-	 * Checks if the given list of decks that were created are
-	 * still available. If not, create those decks using each
-	 * deck's defined attributes.
-	 * @param {string} path The file path that goes to the file
-	 * containing an object with other objects for the decks
-	 * to be used.
+	 * Create a new deck of cards or a partial deck based on the given
+	 * properties in the deck object.
+	 * @param {object} deckObj The deck object containing the properties.
 	 */
-	checkDecks(path) {
-		// Read the decks saved on the given fixture file.
-		cy.readFile(path).then((decksJson) => {
-			/* Utilize arrays instead of objects because it's easier for Cypress to handle.
-			 * Each deck array has the name of the original object as deck[0], and
-			 * the actual object is deck[1].
-			 */
-			cy.wrap(Object.entries(decksJson)).each((deck) => {
-				// Use an API call to check if the deck exists.
-				cy.api({
-					url: `api/deck/${deck[1].id}/`,
-					failOnStatusCode: false
-				}).then((response) => {
-					if (response.body.success) {
-						let expectedFullDeck
-						if (deck[1].cards) {
-							expectedFullDeck = deck[1].cards.split(',').length
-						} else if (deck[1].jokersEnabled) {
-							expectedFullDeck = this.#maxCardCountWithJokers
-						} else {
-							expectedFullDeck = this.#maxCardCount
-						}
+	createNewDeck(deckObj) {
+		let newDeckUrl = 'api/deck/new/'
 
-						// Shuffle or return the drawn cards to the deck.
-						if (deck[1].shuffled) {
-							if (deck[1].deckCount) {
-								expectedFullDeck *= deck[1].deckCount
-							}
-							cy.step('Shuffle deck with drawn cards')
-							cy.api(`api/deck/${deck[1].id}/shuffle/`).then((shuffleResp) => {
-								cy.step(`Verify shuffled deck ${deck[1].id} is at a full stack`)
-								cy.wrap(shuffleResp.body.remaining).should(
-									'equal',
-									expectedFullDeck
-								)
-							})
-						} else {
-							cy.step('Return drawn cards to deck')
-							cy.api(`api/deck/${deck[1].id}/return/`).then((orderedResp) => {
-								cy.step(`Verify ordered deck ${deck[1].id} is at a full stack`)
-								cy.wrap(orderedResp.body.remaining).should(
-									'equal',
-									expectedFullDeck
-								)
-							})
-						}
-					} else {
-						let newDeckUrl = 'api/deck/new/'
+		if (deckObj.cards) {
+			// Make a new partial deck using the card IDs in the 'cards' attribute and save its deck ID.
+			cy.step('Make new partial deck')
+			newDeckUrl += `?cards=${deckObj.cards}`
+		} else {
+			cy.step('Make new deck')
 
-						if (deck[1].cards) {
-							// Make a new partial deck using the card IDs in the 'cards' attribute and save its deck ID.
-							cy.step('Make new partial deck')
-							newDeckUrl += `?cards=${deck[1].cards}`
-						} else {
-							cy.step('Make new deck')
+			// Additional sub directory for shuffling the new deck.
+			if (deckObj.shuffled) {
+				newDeckUrl += 'shuffle/'
+			}
 
-							// Additional sub directory for shuffling the new deck.
-							if (deck[1].shuffled) {
-								newDeckUrl += 'shuffle/'
-							}
+			// Query parameters for multiple decks and/or enabling joker cards.
+			if (deckObj.deckCount > 0 && deckObj.jokersEnabled) {
+				newDeckUrl += `?deck_count=${deckObj.deckCount}&jokers_enabled=true`
+			} else if (deckObj.deckCount > 0) {
+				newDeckUrl += `?deck_count=${deckObj.deckCount}`
+			} else if (deckObj.jokersEnabled) {
+				newDeckUrl += `?jokers_enabled=true`
+			}
+		}
 
-							// Query parameters for multiple decks and/or enabling joker cards.
-							if (deck[1].deckCount > 0 && deck[1].jokersEnabled) {
-								newDeckUrl += `?deck_count=${deck[1].deckCount}&jokers_enabled=true`
-							} else if (deck[1].deckCount > 0) {
-								newDeckUrl += `?deck_count=${deck[1].deckCount}`
-							} else if (deck[1].jokersEnabled) {
-								newDeckUrl += `?jokers_enabled=true`
-							}
-						}
-
-						// Update the deck ID for the specified object in the fixture file.
-						cy.api(newDeckUrl).then((newDeckResp) => {
-							let objCopy = {}
-							deck[1].id = newDeckResp.body.deck_id
-							Object.defineProperty(objCopy, `${deck[0]}`, {
-								value: { ...deck[1] }
-							})
-							cy.writeFile(path, Object.assign(decksJson, objCopy))
-						})
-					}
-				})
-			})
-		})
+		cy.api(newDeckUrl).as('newDeckResp')
 	}
 
 	/**
@@ -134,20 +73,22 @@ class DeckHandler {
 	}
 
 	/**
-	 * Reshuffle a deck of cards.
+	 * Shuffle a deck of cards.
 	 * @param {string} deckId The ID of the deck.
 	 * @param {string} [remaining] Set this to true to shuffle cards only in
 	 * main stack while ignoring any piles or drawn cards (optional).
 	 */
-	reshuffleDeck(deckId, remaining = ``) {
-		let reshuffleDeckUrl = `api/deck/${deckId}/shuffle/`
+	shuffleDeck(deckId, remaining = ``) {
+		let shuffleDeckUrl = `api/deck/${deckId}/shuffle/`
+
 		/* The string for "remaining" can be omitted the query parameter
 		or set as any string for testing positive and negative scenarios. */
 		if (remaining) {
-			reshuffleDeckUrl += `?remaining=${remaining}`
+			shuffleDeckUrl += `?remaining=${remaining}`
 		}
-		cy.step(`Reshuffle deck ID ${deckId} with 'remaining' set to ${remaining}`)
-		cy.api(reshuffleDeckUrl).as('recentReshuffleDeckResp')
+
+		cy.step(`Shuffle deck ID ${deckId} with 'remaining' set to ${remaining}`)
+		cy.api(shuffleDeckUrl).as('recentShuffleDeckResp')
 	}
 
 	/**
@@ -159,19 +100,21 @@ class DeckHandler {
 	 */
 	addCardsToPile(deckId, pileName, cards) {
 		const addPileCardsUrl = `api/deck/${deckId}/pile/${pileName}/add/?cards=${cards}`
+
 		cy.step(`Adding cards ${cards} from deck id ${deckId} in pile ${pileName}`)
 		cy.api(addPileCardsUrl).as('recentAddPileResp')
 	}
 
 	/**
-	 * Reshuffled a pile from a deck.
+	 * Shuffle a pile from a deck.
 	 * @param {string} deckId The ID of the deck.
 	 * @param {string} pileName The name of the pile from the deck.
 	 */
-	reshufflePile(deckId, pileName) {
-		const reshufflePileUrl = `api/deck/${deckId}/pile/${pileName}/shuffle/`
-		cy.step(`Reshuffle pile ${pileName} from deck id ${deckId}`)
-		cy.api(reshufflePileUrl).as('recentReshufflePileResp')
+	shufflePile(deckId, pileName) {
+		const shufflePileUrl = `api/deck/${deckId}/pile/${pileName}/shuffle/`
+
+		cy.step(`Shuffle pile ${pileName} from deck id ${deckId}`)
+		cy.api(shufflePileUrl).as('recentShufflePileResp')
 	}
 
 	/**
@@ -181,6 +124,7 @@ class DeckHandler {
 	 */
 	listCardsInPile(deckId, pileName) {
 		const listPileCardsUrl = `api/deck/${deckId}/pile/${pileName}/list/`
+
 		cy.step(`Listing cards in pile ${pileName} from deck id ${deckId}`)
 		cy.api(listPileCardsUrl).as('recentListPileResp')
 	}
@@ -196,9 +140,11 @@ class DeckHandler {
 	 */
 	drawCardsFromPile(deckId, pileName, cardsToGet, drawMethod = '') {
 		let drawPileCardUrl = `api/deck/${deckId}/pile/${pileName}/draw/`
+
 		if (drawMethod) {
 			drawPileCardUrl += `${drawMethod}/`
 		}
+
 		switch (typeof cardsToGet) {
 			case 'string':
 				drawPileCardUrl += `?cards=${cardsToGet}`
@@ -207,6 +153,7 @@ class DeckHandler {
 				drawPileCardUrl += `?count=${Math.trunc(cardsToGet)}`
 				break
 		}
+
 		cy.step(`Draw card(s) from deck id ${deckId} in pile ${pileName}`)
 		cy.api(drawPileCardUrl).as('recentDrawPileResp')
 	}
@@ -220,13 +167,17 @@ class DeckHandler {
 	 */
 	returnCards(deckId, cards = '', pileName = '') {
 		let returnCardsUrl = `api/deck/${deckId}/`
+
 		if (pileName) {
 			returnCardsUrl += `pile/${pileName}/`
 		}
+
 		returnCardsUrl += 'return/'
+
 		if (cards) {
 			returnCardsUrl += `?cards=${cards}`
 		}
+
 		cy.step(`Return cards to deck id ${deckId}`)
 		cy.api(returnCardsUrl).as('recentReturnCardsResp')
 	}

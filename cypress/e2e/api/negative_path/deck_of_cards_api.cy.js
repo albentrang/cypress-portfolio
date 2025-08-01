@@ -1,11 +1,24 @@
 describe('Deck of Cards API Tests (Negative)', () => {
 	const decksPath = 'cypress/fixtures/deck_of_cards_api/current_decks_neg.json'
-	// const deckKeys = ['singleDeckShuffled', 'singleDeckShuffledWithJokers']
+	const shuffledDeckKeys = Object.freeze({
+		SDS: 'singleDeckShuffled',
+		SDSJ: 'singleDeckShuffledWithJokers',
+		DDS: 'doubleDeckShuffled',
+		DDSJ: 'doubleDeckShuffledWithJokers'
+	})
 	// const maxCardCount = 52
 	// const maxCardCountWithJokers = 54
 
-	beforeEach(() => {
+	before(() => {
 		cy.checkDecks(decksPath)
+	})
+
+	beforeEach(() => {
+		cy.section('Shuffle the shuffled decks to their full stacks')
+		for (let key in shuffledDeckKeys) {
+			cy.shuffleDeck(`${shuffledDeckKeys[key]}`)
+		}
+		cy.section('Beginning the test case')
 	})
 
 	it('Draw a card from a deck that does not exist', function () {

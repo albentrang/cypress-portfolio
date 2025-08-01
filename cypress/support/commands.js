@@ -12,10 +12,72 @@ Cypress.Commands.addAll({
 	 * @param {string} decksPath Path from the project to the decks file.
 	 */
 	checkDecks(decksPath) {
-		cy.section('Checking decks still exist or not')
-		DeckHandler.checkDecks(decksPath)
+		cy.section('Checking decks if they exist or not')
+		cy.readFile(decksPath).then((decksJson) => {
+			/* Utilize arrays instead of objects because it's easier for Cypress to handle.
+			 * Each deck array has the name of the original object as deck[0], and
+			 * the actual object is deck[1].
+			 */
+			cy.wrap(Object.entries(decksJson)).each((deck) => {
+				const deckName = deck[0]
+				const deckObj = deck[1]
+				const checkDeckApiOptions = {
+					url: `api/deck/${deckObj.id}/`,
+					failOnStatusCode: false
+				}
+
+				// Use an API call to check if the deck exists.
+				cy.api(checkDeckApiOptions).then((checkResp) => {
+					if (checkResp.body.success) {
+						let expectedRemaining
+						let apiUrl = `api/deck/${deckObj.id}/`
+						let cyStepText = ``
+
+						if (deckObj.cards) {
+							expectedRemaining = deckObj.cards.split(',').length
+						} else if (deckObj.jokersEnabled) {
+							expectedRemaining = DeckHandler.maxCardCountWithJokers
+						} else {
+							expectedRemaining = DeckHandler.maxCardCount
+						}
+
+						if (deckObj.shuffled) {
+							if (deckObj.deckCount) {
+								expectedRemaining *= deckObj.deckCount
+							}
+							apiUrl += `shuffle/`
+							cyStepText = `Shuffle deck of cards`
+						} else {
+							apiUrl += `return/`
+							cyStepText = `Return drawn cards to deck`
+						}
+
+						// Shuffle or return to set the decks to their original stacks.
+						cy.step(cyStepText)
+						cy.api(apiUrl).then((initializeDeckResp) => {
+							const actualRemaining = initializeDeckResp.body.remaining
+
+							cy.step(`Verify deck ${deckObj.id} is at a full stack`)
+							cy.wrap(actualRemaining).should('equal', expectedRemaining)
+						})
+					} else {
+						DeckHandler.createNewDeck(deckObj)
+
+						// Update the deck ID for the specified object in the fixture file.
+						cy.get('@newDeckResp').then((newDeckResp) => {
+							let objCopy = {}
+							deckObj.id = newDeckResp.body.deck_id
+							Object.defineProperty(objCopy, `${deckName}`, {
+								value: { ...deckObj }
+							})
+							cy.writeFile(decksPath, Object.assign(decksJson, objCopy))
+						})
+					}
+				})
+			})
+		})
 	},
-	// Positive commands
+	// Positive testing commands
 	/**
 	 * Command to draw a card from a deck.
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
@@ -34,21 +96,21 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to reshuffle a deck.
+	 * Command to shuffle a deck.
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
 	 * @param {string} [remaining] Set this to true to shuffle cards only in
 	 * main stack while ignoring any piles or drawn cards (optional).
 	 */
-	reshuffleDeck(deckKey, remaining = ``) {
+	shuffleDeck(deckKey, remaining = ``) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.reshuffleDeck(decks[deckKey].id, remaining)
-			cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
-				cy.step('Initial verifications for reshuffling a deck successfully')
-				cy.wrap(reshuffleResp.status).should('equal', 200)
-				cy.wrap(reshuffleResp.statusText).should('equal', 'OK')
-				cy.wrap(reshuffleResp.body.success).should('equal', true)
-				cy.wrap(reshuffleResp.body.deck_id).should('equal', decks[deckKey].id)
-				cy.wrap(reshuffleResp.body.shuffled).should('equal', true)
+			DeckHandler.shuffleDeck(decks[deckKey].id, remaining)
+			cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
+				cy.step('Initial verifications for shuffling a deck successfully')
+				cy.wrap(shuffleResp.status).should('equal', 200)
+				cy.wrap(shuffleResp.statusText).should('equal', 'OK')
+				cy.wrap(shuffleResp.body.success).should('equal', true)
+				cy.wrap(shuffleResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(shuffleResp.body.shuffled).should('equal', true)
 			})
 		})
 	},
@@ -75,25 +137,22 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to reshuffled a pile from a deck.
+	 * Command to shuffle a pile from a deck.
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
 	 * @param {string} pileName Name of the pile that's part of the given deck.
 	 */
-	reshufflePile(deckKey, pileName) {
+	shufflePile(deckKey, pileName) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.reshufflePile(decks[deckKey].id, pileName)
-			cy.get('@recentReshufflePileResp').then((reshufflePileResp) => {
+			DeckHandler.shufflePile(decks[deckKey].id, pileName)
+			cy.get('@recentShufflePileResp').then((shufflePileResp) => {
 				cy.step(
 					'Initial verifications for shuffling cards in a pile successfully'
 				)
-				cy.wrap(reshufflePileResp.status).should('equal', 200)
-				cy.wrap(reshufflePileResp.statusText).should('equal', 'OK')
-				cy.wrap(reshufflePileResp.body.success).should('equal', true)
-				cy.wrap(reshufflePileResp.body.deck_id).should(
-					'equal',
-					decks[deckKey].id
-				)
-				cy.wrap(reshufflePileResp.body.piles[pileName]).should(
+				cy.wrap(shufflePileResp.status).should('equal', 200)
+				cy.wrap(shufflePileResp.statusText).should('equal', 'OK')
+				cy.wrap(shufflePileResp.body.success).should('equal', true)
+				cy.wrap(shufflePileResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(shufflePileResp.body.piles[pileName]).should(
 					'have.key',
 					'remaining'
 				)
@@ -256,27 +315,25 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to verify that reshuffling the main stack of the deck and drawing
+	 * Command to verify that shuffling the main stack of the deck after drawing
 	 * no cards should have the deck at its full number of cards.
 	 * @param {boolean} [jokers] Set this to true if joker cards are in the deck.
 	 * @param {number} [drawCount] The number of cards that have been drawn at once.
 	 */
-	verifyReshuffleRemainingNoDrawnCards(jokers = false, deckCount = 1) {
+	verifyShuffleRemainingAfterDrawingNoCards(jokers = false, deckCount = 1) {
 		cy.section(
-			`Verifications for reshuffling the main stack only that has ${deckCount} deck(s) only`
+			`Verifications for shuffling the main stack only that has ${deckCount} deck(s) only`
 		)
-		cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
+		cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
 			if (jokers === true) {
-				cy.step(
-					`Verify reshuffle main stack that has jokers with no cards drawn`
-				)
-				cy.wrap(reshuffleResp.body.remaining).should(
+				cy.step(`Verify shuffle main stack that has jokers with no cards drawn`)
+				cy.wrap(shuffleResp.body.remaining).should(
 					'equal',
 					DeckHandler.maxCardCountWithJokers * deckCount
 				)
 			} else {
-				cy.step(`Verify reshuffle main stack with no cards drawn`)
-				cy.wrap(reshuffleResp.body.remaining).should(
+				cy.step(`Verify shuffle main stack with no cards drawn`)
+				cy.wrap(shuffleResp.body.remaining).should(
 					'equal',
 					DeckHandler.maxCardCount * deckCount
 				)
@@ -284,26 +341,26 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to verify that reshuffling the main stack of the deck and drawing
-	 * all cards should have no cards in the main stack.
+	 * Command to verify that shuffling the main stack of the deck after drawing
+	 * all the cards should have no cards in the main stack.
 	 * @param {boolean} [jokers] Set this to true if joker cards are in the deck.
 	 * @param {number} [drawCount] The number of cards that have been drawn at once.
 	 */
-	verifyReshuffleRemainingAllDrawnCards(jokers = false, deckCount = 1) {
+	verifyShuffleRemainingAfterDrawingAllCards(jokers = false, deckCount = 1) {
 		cy.section(
-			`Verifications for reshuffling the main stack only that has ${deckCount} deck(s) only`
+			`Verifications for shuffling the main stack only that has ${deckCount} deck(s) only`
 		)
 		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 			if (jokers === true) {
 				cy.step(
-					'Verify reshuffle main stack that has jokers with max number of cards drawn'
+					'Verify shuffle main stack that has jokers with max number of cards drawn'
 				)
 				cy.wrap(drawDeckResp.body.cards).should(
 					'have.length',
 					DeckHandler.maxCardCountWithJokers * deckCount
 				)
 			} else {
-				cy.step('Verify reshuffle main stack with max number of cards drawn')
+				cy.step('Verify shuffle main stack with max number of cards drawn')
 				cy.wrap(drawDeckResp.body.cards).should(
 					'have.length',
 					DeckHandler.maxCardCount * deckCount
@@ -311,21 +368,21 @@ Cypress.Commands.addAll({
 			}
 			cy.step('Verify draw card response shows remaining cards as 0')
 			cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
-			cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
+			cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
 				cy.step('Verify main stack has no cards left')
-				cy.wrap(reshuffleResp.body.remaining).should('equal', 0)
+				cy.wrap(shuffleResp.body.remaining).should('equal', 0)
 			})
 		})
 	},
 	/**
-	 * Command to verify that reshuffling a deck without the drawn cards should
+	 * Command to verify that shuffling a deck without the drawn cards should
 	 * not have those cards in the main stack.
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
 	 */
-	verifyRemainingCards(deckKey) {
-		cy.section(`Verifications for reshuffling the deck without drawn cards`)
-		cy.get('@recentReshuffleDeckResp').then((reshuffleResp) => {
-			const cardsToDrawFromMain = reshuffleResp.body.remaining
+	verifyShuffleRemaining(deckKey) {
+		cy.section(`Verifications for shuffling the deck without drawn cards`)
+		cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
+			const cardsToDrawFromMain = shuffleResp.body.remaining
 			cy.get('@recentDrawDeckResp').then((initialDrawDeckResp) => {
 				cy.drawCardsFromDeck(deckKey, cardsToDrawFromMain)
 				cy.get('@recentDrawDeckResp').then((remainingDrawDeckResp) => {
@@ -343,7 +400,6 @@ Cypress.Commands.addAll({
 	 */
 	verifyPartialDeck(cardsExpected) {
 		cy.section('Verifications for partial deck')
-
 		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 			cy.wrap(drawDeckResp.body.cards).each((card, idx) => {
 				cy.step(`Verifing card ${card.code} at index ${idx}`)
@@ -379,7 +435,7 @@ Cypress.Commands.addAll({
 	 */
 	verifyShufflePile(pileName, pileRemainingExpected) {
 		cy.section('Verifications for shuffling cards in a pile')
-		cy.get('@recentReshufflePileResp').then((shufflePileResp) => {
+		cy.get('@recentShufflePileResp').then((shufflePileResp) => {
 			cy.step(`Check remaining cards in pile ${pileName}`)
 			cy.wrap(shufflePileResp.body.piles[pileName].remaining).should(
 				'equal',
@@ -513,7 +569,7 @@ Cypress.Commands.addAll({
 			)
 		})
 	},
-	// Negative commands
+	// Negative testing commands
 	/**
 	 * Command to verify error handling for drawing a card
 	 * from a deck that does not exist.

@@ -4,7 +4,7 @@
 
 This document plans the positive and negative test cases when using the [Deck of Cards API](https://www.deckofcardsapi.com/). Each test case uses REST API requests and checks their responses for using different functions that are listed in the Deck of Cards API website.
 
-## Test Approach
+### Test Approach
 
 - Testing will be automated end-to-end REST API black-box testing.
 - Every test, both positive and negative, needs to pass.
@@ -13,8 +13,13 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Positive Tests
 
+### Unshuffled Decks
+
 - [x] Check each card is in order for an unshuffled deck
 - [x] Check each card is in order for an unshuffled deck with jokers
+
+### Drawing Cards from Decks
+
 - [x] Draw 1 card at a time from a shuffled deck 10 times
 - [x] Draw 1 card at a time from a shuffled deck with jokers 20 times
 - [x] Draw 2 card at a time from two shuffled decks 10 times
@@ -23,29 +28,43 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Draw all the cards at once from a shuffled deck with jokers
 - [x] Draw all the cards at once from two shuffled decks
 - [x] Draw all the cards at once from two shuffled decks with jokers
-- [x] Reshuffle deck without the drawn cards after drawing no cards
-- [x] Reshuffle deck that has jokers without the drawn cards after drawing no cards
-- [x] Reshuffle deck without the drawn cards after drawing 1 card
-- [x] Reshuffle deck that has jokers without the drawn cards after drawing 1 card
-- [x] Reshuffle deck without the drawn cards after drawing half the cards
-- [x] Reshuffle deck that has jokers without the drawn cards after drawing half the cards
-- [x] Reshuffle deck without the drawn cards after drawing all the cards
-- [x] Reshuffle deck that has jokers without the drawn cards after drawing all the cards
-- [x] Reshuffle two decks without the drawn cards after drawing no cards
-- [x] Reshuffle two decks that has jokers without the drawn cards after drawing no cards
-- [x] Reshuffle two decks without the drawn cards after 1 card
-- [x] Reshuffle two decks that have jokers without the drawn cards after 1 card
-- [x] Reshuffle two decks without the drawn cards after drawing half the cards
-- [x] Reshuffle two decks that have jokers without the drawn cards after drawing half the cards
-- [x] Reshuffle two decks without the drawn cards after drawing all the cards
-- [x] Reshuffle two decks that have jokers without the drawn cards after drawing all the cards
+
+### Shuffle Main Stack of Deck Only
+
+- [x] Shuffle deck without the drawn cards after drawing no cards
+- [x] Shuffle deck that has jokers without the drawn cards after drawing no cards
+- [x] Shuffle deck without the drawn cards after drawing 1 card
+- [x] Shuffle deck that has jokers without the drawn cards after drawing 1 card
+- [x] Shuffle deck without the drawn cards after drawing half the cards
+- [x] Shuffle deck that has jokers without the drawn cards after drawing half the cards
+- [x] Shuffle deck without the drawn cards after drawing all the cards
+- [x] Shuffle deck that has jokers without the drawn cards after drawing all the cards
+- [x] Shuffle two decks without the drawn cards after drawing no cards
+- [x] Shuffle two decks that has jokers without the drawn cards after drawing no cards
+- [x] Shuffle two decks without the drawn cards after 1 card
+- [x] Shuffle two decks that have jokers without the drawn cards after 1 card
+- [x] Shuffle two decks without the drawn cards after drawing half the cards
+- [x] Shuffle two decks that have jokers without the drawn cards after drawing half the cards
+- [x] Shuffle two decks without the drawn cards after drawing all the cards
+- [x] Shuffle two decks that have jokers without the drawn cards after drawing all the cards
+
+### Pardial Decks
+
 - [x] A partial deck has the specified cards where one card is from each suit
+- [x] A "partial" deck has the specified cards where there is only one card
+- [x] A "partial" deck has the specified cards where all cards, except jokers, are in it
+
+### Piles
+
 - [x] Draw one card from a one-card pile by count
 - [x] Draw one card from a one-card pile by its card code
 - [x] Draw all cards from a whole-deck shuffled pile by count
 - [x] Draw all cards from a whole-deck shuffled pile that includes jokers by their card codes
 - [x] Put half of the shuffled deck in one pile, shuffle the cards in the first pile, bring half of those cards in the first pile to a second pile, and then draw all cards in the second pile from the bottom of it by card count
 - [x] Put half of the shuffled deck in one pile, bring half of those cards in the first pile to a second pile, shuffle the cards in the second pile, take those cards back to the first pile, shuffle the cards in the first pile, and then draw all cards in the first pile randomly by card count
+
+### Return Cards
+
 - [x] Draw a card from a shuffled deck and then return it to the deck
 - [x] Draw all cards from a shuffled deck and then return all cards to the deck
 - [x] Draw all cards from a shuffled deck with jokers and then return all cards to the deck
@@ -61,9 +80,14 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Negative Tests
 
-- [x] Draw a card from a deck that does not exist
+### Making a New Deck
+
 - [ ] Make a new deck with "deck_count" equal to 0
 - [ ] Make a new deck with "deck_count" equal to -1
+
+### Drawing Cards from Decks
+
+- [x] Draw a card from a deck that does not exist
 - [ ] Draw -1 cards from a shuffled deck
 - [ ] Draw -1 cards from a shuffled deck with jokers
 - [ ] Draw -1 cards from two shuffled decks
@@ -76,10 +100,14 @@ This document plans the positive and negative test cases when using the [Deck of
 - [ ] Draw 55 cards with jokers from a shuffled deck
 - [ ] Draw 105 cards from two shuffled decks
 - [ ] Draw 109 cards from two shuffled decks with jokers
-- [ ] Cards specified that duplicate other specified cards or not part of a standard deck are ignored for a partial deck
+
+### Drawing Cards from Piles
+
 - [ ] Draw -1 cards from a pile
 - [ ] Draw 5 cards from a pile that only has 4 cards in it
-- [ ] Add no specified cards to a partial deck
+
+### Adding No Specified Cards
+
 - [ ] Add no specified cards to a pile
 - [ ] Add no specified cards when returning drawn cards
 - [ ] Add no specified cards when returning drawn cards from a pile

@@ -10,5 +10,16 @@
     "shuffled": true,
     "deckCount": 1,
     "jokersEnabled": true
+  },
+  "doubleDeckShuffled": {
+    "id": "x5052t6430pr",
+    "shuffled": true,
+    "deckCount": 2
+  },
+  "doubleDeckShuffledWithJokers": {
+    "id": "srm2bnhc904h",
+    "shuffled": true,
+    "deckCount": 2,
+    "jokersEnabled": true
   }
 }
