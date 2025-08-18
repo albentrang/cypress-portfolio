@@ -159,26 +159,37 @@ class DeckHandler {
 	}
 
 	/**
-	 * Return the cards that are either drawn or in a pile back to the deck.
+	 * Return the cards that are drawn back to the deck.
 	 * @param {string} deckId The ID of the deck.
 	 * @param {string} [cards] The cards to be put in the pile as a
 	 * comma-separated string of card codes (optional).
-	 * @param {string} [pileName] The name of the pile from the deck (optional).
 	 */
-	returnCards(deckId, cards = '', pileName = '') {
-		let returnCardsUrl = `api/deck/${deckId}/`
-
-		if (pileName) {
-			returnCardsUrl += `pile/${pileName}/`
-		}
-
-		returnCardsUrl += 'return/'
+	returnDrawnCards(deckId, cards = '') {
+		let returnCardsUrl = `api/deck/${deckId}/return/`
 
 		if (cards) {
 			returnCardsUrl += `?cards=${cards}`
 		}
 
-		cy.step(`Return cards to deck id ${deckId}`)
+		cy.step(`Return cards that are drawn to deck id ${deckId}`)
+		cy.api(returnCardsUrl).as('recentReturnCardsResp')
+	}
+
+	/**
+	 * Return the cards that are in a pile back to the deck.
+	 * @param {string} deckId The ID of the deck.
+	 * @param {string} pileName The name of the pile from the deck.
+	 * @param {string} [cards] The cards to be put in the pile as a
+	 * comma-separated string of card codes (optional).
+	 */
+	returnPileCards(deckId, pileName, cards = '') {
+		let returnCardsUrl = `api/deck/${deckId}/pile/${pileName}/return/`
+
+		if (cards) {
+			returnCardsUrl += `?cards=${cards}`
+		}
+
+		cy.step(`Return cards from pile ${pileName} to deck id ${deckId}`)
 		cy.api(returnCardsUrl).as('recentReturnCardsResp')
 	}
 }

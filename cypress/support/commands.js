@@ -212,15 +212,34 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to return the cards that are either drawn or in a pile back to the deck.
+	 * Command to return the cards that are drawn back to the deck.
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
 	 * @param {string} [cards] The cards to be put in the pile as a
 	 * comma-separated string of card codes (optional).
-	 * @param {string} [pileName] Name of the pile that's part of the given deck (optional).
 	 */
-	returnCards(deckKey, cards = '', pileName = '') {
+	returnDrawnCards(deckKey, cards = '') {
 		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.returnCards(decks[deckKey].id, cards, pileName)
+			DeckHandler.returnDrawnCards(decks[deckKey].id, cards)
+			cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
+				cy.step('Initial verifications for returning drawn cards successfully')
+				cy.wrap(returnCardsResp.status).should('equal', 200)
+				cy.wrap(returnCardsResp.statusText).should('equal', 'OK')
+				cy.wrap(returnCardsResp.body.success).should('equal', true)
+				cy.wrap(returnCardsResp.body.deck_id).should('equal', decks[deckKey].id)
+			})
+		})
+	},
+	/**
+	 * Command to return the cards that are in a pile back to the deck.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 * @param {string} pileName Name of the pile that's part of the given deck.
+	 * @param {string} [cards] The cards to be put in the pile as a
+	 * comma-separated string of card codes (optional).
+	 */
+	returnPileCards(deckKey, pileName, cards = '') {
+		cy.fixture(decksPosFixturePath).then((decks) => {
+			DeckHandler.returnPileCards(decks[deckKey].id, pileName, cards)
+
 			cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
 				cy.step('Initial verifications for returning cards successfully')
 				cy.wrap(returnCardsResp.status).should('equal', 200)
@@ -231,8 +250,32 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
+	 * Command to check an ordered deck.
+	 */
+	verifyOrderedDeck() {
+		const orderedDeckPath = 'deck_of_cards_api/ordered_deck.json'
+
+		cy.section('Verifications for ordered deck')
+		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+			cy.fixture(orderedDeckPath).then((orderedDeck) => {
+				cy.wrap(drawDeckResp.body.cards).each((card, idx) => {
+					cy.step(`Verifing card ${card.code} at index ${idx}`)
+					cy.wrap(card.code).should('equal', orderedDeck[idx].code)
+					cy.wrap(card.image).should('equal', orderedDeck[idx].image)
+					cy.wrap(card.images.svg).should('equal', orderedDeck[idx].images.svg)
+					cy.wrap(card.images.png).should('equal', orderedDeck[idx].images.png)
+					cy.wrap(card.value).should('equal', orderedDeck[idx].value)
+					cy.wrap(card.suit).should('equal', orderedDeck[idx].suit)
+				})
+				cy.step('Verify all cards are drawn')
+				cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
+			})
+		})
+	},
+	/**
 	 * Command to both draw cards from a deck and verify each unique card is less than or equal to the number
-	 * of decks from the entire deck.
+	 * of decks from the entire deck. If the tests are meant to check the function to draw cards from a deck,
+	 * use this command by itself.
 	 * @param {string} deckKey The key (deck name) defined from a decks file.
 	 * @param {number} cardsPerDraw The number of cards to draw each time.
 	 * @param {number} totalDraws: The number of times to draw cards from the deck.
@@ -289,29 +332,6 @@ Cypress.Commands.addAll({
 					})
 				})
 			}
-		})
-	},
-	/**
-	 * Command to check an ordered deck.
-	 */
-	verifyOrderedDeck() {
-		const orderedDeckPath = 'deck_of_cards_api/ordered_deck.json'
-
-		cy.section('Verifications for ordered deck')
-		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-			cy.fixture(orderedDeckPath).then((orderedDeck) => {
-				cy.wrap(drawDeckResp.body.cards).each((card, idx) => {
-					cy.step(`Verifing card ${card.code} at index ${idx}`)
-					cy.wrap(card.code).should('equal', orderedDeck[idx].code)
-					cy.wrap(card.image).should('equal', orderedDeck[idx].image)
-					cy.wrap(card.images.svg).should('equal', orderedDeck[idx].images.svg)
-					cy.wrap(card.images.png).should('equal', orderedDeck[idx].images.png)
-					cy.wrap(card.value).should('equal', orderedDeck[idx].value)
-					cy.wrap(card.suit).should('equal', orderedDeck[idx].suit)
-				})
-				cy.step('Verify all cards are drawn')
-				cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
-			})
 		})
 	},
 	/**
@@ -518,56 +538,94 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to check that the returned cards are put back to the deck
-	 * based on the remaining number of cards in it and in the same order.
-	 * Optionally, it can also check the remaining cards of a pile after
-	 * it had its cards returned to the deck.
+	 * Command to check that the returned drawn cards are put back to the deck
+	 * based on the remaining number of cards in the deck.
 	 * @param {number} deckRemainingExpected The remaining number of cards expected
 	 * after returning cards to the deck.
-	 * @param {string} [pileName] The name of the pile that had its cards returned
-	 * to the deck (optional).
-	 * @param {number} [pileRemainingExpected = 0] The expected remaining number of
-	 * cards in the pile after returning cards to the deck (optional).
-	 * @param {string} [cardsReturned] The cards that were returned to the deck
-	 * as a comma-separated string of card codes (optional).
-	 * @param {string} [deckId] The ID of the deck that had its cards returned
-	 * to it (optional).
 	 */
-	verifyReturnCards(
-		deckRemainingExpected,
-		pileName = '',
-		pileRemainingExpected = 0,
-		cardsReturned = '',
-		deckId = ''
-	) {
-		cy.section('Verifications for returning cards')
+	verifyReturnDrawnCards(deckRemainingExpected) {
+		cy.section('Verifications for returning drawn cards')
 		cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
-			if (pileName) {
-				if (cardsReturned && deckId) {
-					const cardsReturnedArray = cardsReturned.split(',')
-
-					cy.step(`Check specified cards returned from pile ${pileName}`)
-					cy.listCardsInPile(deckId, pileName)
-					cy.get('@recentListPileResp').then((listPileResp) => {
-						cy.wrap(listPileResp.body.piles[pileName].cards).each((card) => {
-							cy.wrap(cardsReturnedArray).should('not.include', card.code)
-						})
-					})
-				}
-
-				cy.step(`Check remaining cards in pile ${pileName}`)
-				cy.wrap(returnCardsResp.body.piles[pileName].remaining).should(
-					'equal',
-					pileRemainingExpected
-				)
-			}
+			const deckRemaining = returnCardsResp.body.remaining
 
 			cy.step('Check remaining cards in the deck')
-			cy.wrap(returnCardsResp.body.remaining).should(
-				'equal',
-				deckRemainingExpected
-			)
+			cy.wrap(deckRemaining).should('equal', deckRemainingExpected)
 		})
+	},
+	/**
+	 * Command to check that the returned pile cards are put back to the deck.
+	 * It checks the remaining cards in the pile.
+	 * @param {string} pileName The name of the pile that had its cards returned
+	 * to the deck.
+	 * @param {number} [pileRemainingExpected = 0]  The expected remaining number of
+	 * cards in the pile after returning cards to the deck (optional).
+	 */
+	verifyReturnPileCards(pileName, pileRemainingExpected = 0) {
+		cy.section('Verifications for returning pile cards')
+		cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
+			const pileRemaining = returnCardsResp.body.piles[pileName].remaining
+
+			cy.step(`Check remaining cards in pile ${pileName}`)
+			cy.wrap(pileRemaining).should('equal', pileRemainingExpected)
+		})
+	},
+	/**
+	 * Command to check that the returned pile cards are put back to the deck.
+	 * It checks the card codes that have been returned to the deck are not
+	 * in the pile anymore.
+	 * @param {string} deckKey The key (deck name) of the deck that had its cards
+	 * returned to it.
+	 * @param {string} pileName The name of the pile that had its cards returned
+	 * to the deck.
+	 * @param {string} cardsReturned The cards that were returned to the deck
+	 * as a comma-separated string of card codes.
+	 */
+	verifyReturnPileCardCodes(deckKey, pileName, cardsReturned) {
+		// List the current pile's cards first to see its current cards.
+		cy.listCardsInPile(deckKey, pileName)
+		cy.section('Verifications for returning pile cards by card codes')
+		cy.get('@recentListPileResp').then((listPileResp) => {
+			const cardsReturnedArray = cardsReturned.split(',')
+
+			cy.step(`Check specified cards returned from pile ${pileName}`)
+			cy.wrap(listPileResp.body.piles[pileName].cards).each((card) => {
+				cy.wrap(cardsReturnedArray).should('not.include', card.code)
+			})
+		})
+	},
+	/**
+	 * Helper command to create a string of card codes from an array of cards.
+	 * This command will also create a string of card codes for the second half.
+	 * @param {Array} cardsArray The array of card objects from either an API response
+	 * from drawing cards from a deck or pile.
+	 * @param {number} lengthOfCardsNeeded The length (number) of cards needed for the test.
+	 */
+	createCardCodeStrings(cardsArray, lengthOfCardsNeeded) {
+		let allCardCodes = ''
+		let secondCardCodesHalf = ''
+
+		for (let idx = 0; idx < lengthOfCardsNeeded; idx++) {
+			allCardCodes += cardsArray[idx].code
+
+			// Add a comma after each card code except for the last one.
+			if (idx < lengthOfCardsNeeded - 1) {
+				allCardCodes += `,`
+			}
+
+			// Add the second half of the cards to a separate string.
+			if (idx >= lengthOfCardsNeeded / 2 && idx < lengthOfCardsNeeded) {
+				secondCardCodesHalf += cardsArray[idx].code
+
+				// Add a comma after each card code except for the last one.
+				if (idx < lengthOfCardsNeeded - 1) {
+					secondCardCodesHalf += `,`
+				}
+			}
+		}
+
+		// Wrap the strings of card codes as aliases.
+		cy.wrap(allCardCodes).as('allCardCodes')
+		cy.wrap(secondCardCodesHalf).as('secondCardCodesHalf')
 	},
 	// Negative testing commands
 	/**

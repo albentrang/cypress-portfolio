@@ -18,7 +18,7 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Check each card is in order for an unshuffled deck
 - [x] Check each card is in order for an unshuffled deck with jokers
 
-### Drawing Cards from Decks
+### Shuffled Decks
 
 - [x] Draw 1 card at a time from a shuffled deck 10 times
 - [x] Draw 1 card at a time from a shuffled deck with jokers 20 times

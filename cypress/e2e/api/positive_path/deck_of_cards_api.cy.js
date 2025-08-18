@@ -47,7 +47,7 @@ describe('Deck of Cards API Tests (Positive)', () => {
 		})
 	})
 
-	context('Drawing Cards from Decks', () => {
+	context('Shuffled Decks', () => {
 		/* Example of data-driven testing for drawing cards from decks. 
 		It is best used during headless testing because using this test case
 		while the browser runs the Cypress tests causes the tests to run
@@ -327,441 +327,332 @@ describe('Deck of Cards API Tests (Positive)', () => {
 
 	context('Piles', () => {
 		it('Draw one card from a one-card pile by count', () => {
-			const cardsToDrawFromDeck = 1
+			const deckKey = shuffledDeckKeys.SDS
+			const cardsToDraw = 1
 			const pileName = 'test_pile'
-			const pilesExpected = [{ name: pileName, remaining: cardsToDrawFromDeck }]
+			const pilesExpected = [{ name: pileName, remaining: cardsToDraw }]
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDrawFromDeck)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				const cardCode = `${drawDeckResp.body.cards[0].code}`
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
-				cy.verifyAddToPile(pileName, cardsToDrawFromDeck)
-				cy.shufflePile(shuffledDeckKeys.SDS, pileName) // Check that shuffling a one-card pile doesn't do anything.
-				cy.verifyShufflePile(pileName, cardsToDrawFromDeck)
-				cy.listCardsInPile(shuffledDeckKeys.SDS, pileName)
+
+				cy.addCardsToPile(deckKey, pileName, cardCode)
+				cy.verifyAddToPile(pileName, cardsToDraw)
+				cy.shufflePile(deckKey, pileName) // Check that shuffling a one-card pile doesn't do anything.
+				cy.verifyShufflePile(pileName, cardsToDraw)
+				cy.listCardsInPile(deckKey, pileName)
 				cy.verifyListingPile(pileName, pilesExpected)
-				cy.drawCardsFromPile(
-					shuffledDeckKeys.SDS,
-					pileName,
-					cardsToDrawFromDeck
-				)
-				cy.verifyDrawFromPile(pileName, cardsToDrawFromDeck)
+				cy.drawCardsFromPile(deckKey, pileName, cardsToDraw)
+				cy.verifyDrawFromPile(pileName, cardsToDraw)
 			})
 		})
 
 		it('Draw one card from a one-card pile by its card code', () => {
-			const cardsToDrawFromDeck = 1
+			const deckKey = shuffledDeckKeys.SDS
+			const cardsToDraw = 1
 			const pileName = 'test_pile'
-			const pilesExpected = [{ name: pileName, remaining: cardsToDrawFromDeck }]
+			const pilesExpected = [{ name: pileName, remaining: cardsToDraw }]
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDrawFromDeck)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				const cardCode = `${drawDeckResp.body.cards[0].code}`
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
-				cy.verifyAddToPile(pileName, cardsToDrawFromDeck)
-				cy.listCardsInPile(shuffledDeckKeys.SDS, pileName)
+
+				cy.addCardsToPile(deckKey, pileName, cardCode)
+				cy.verifyAddToPile(pileName, cardsToDraw)
+				cy.listCardsInPile(deckKey, pileName)
 				cy.verifyListingPile(pileName, pilesExpected)
-				cy.drawCardsFromPile(
-					shuffledDeckKeys.SDS,
-					pileName,
-					drawDeckResp.body.cards[0].code
-				)
+				cy.drawCardsFromPile(deckKey, pileName, drawDeckResp.body.cards[0].code)
 				cy.verifyDrawFromPile(pileName, drawDeckResp.body.cards[0].code)
 			})
 		})
 
 		it('Draw all cards from a whole-deck shuffled pile by count', () => {
-			const cardsToDrawFromDeck = maxCardCount
+			const deckKey = shuffledDeckKeys.SDS
+			const cardsToDraw = maxCardCount
 			const pileName = 'test_pile'
-			const pilesExpected = [{ name: pileName, remaining: cardsToDrawFromDeck }]
+			const pilesExpected = [{ name: pileName, remaining: cardsToDraw }]
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDrawFromDeck)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-				for (let index = 0; index < drawDeckResp.body.cards.length; index++) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						cardCodes += `,`
-					}
-				}
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCodes)
-				cy.verifyAddToPile(pileName, cardsToDrawFromDeck)
-				cy.listCardsInPile(shuffledDeckKeys.SDS, pileName)
-				cy.verifyListingPile(pileName, pilesExpected)
-				cy.shufflePile(shuffledDeckKeys.SDS, pileName)
-				cy.verifyShufflePile(pileName, cardsToDrawFromDeck)
-				cy.drawCardsFromPile(
-					shuffledDeckKeys.SDS,
-					pileName,
-					cardsToDrawFromDeck
-				)
-				cy.verifyDrawFromPile(pileName, cardsToDrawFromDeck)
+				const cardsLength = drawDeckResp.body.cards.length
+
+				cy.createCardCodeStrings(drawDeckResp.body.cards, cardsLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.addCardsToPile(deckKey, pileName, cardCodes)
+					cy.verifyAddToPile(pileName, cardsToDraw)
+					cy.listCardsInPile(deckKey, pileName)
+					cy.verifyListingPile(pileName, pilesExpected)
+					cy.shufflePile(deckKey, pileName)
+					cy.verifyShufflePile(pileName, cardsToDraw)
+					cy.drawCardsFromPile(deckKey, pileName, cardsToDraw)
+					cy.verifyDrawFromPile(pileName, cardsToDraw)
+				})
 			})
 		})
 
-		it('Draw all cards from a whole-deck shuffled pile by their card codes', () => {
-			const cardsToDrawFromDeck = maxCardCountWithJokers
+		it('Draw all cards from a whole-deck shuffled pile that includes jokers by their card codes', () => {
+			const deckKey = shuffledDeckKeys.SDSJ
+			const cardsToDraw = maxCardCountWithJokers
 			const pileName = 'test_pile'
-			const pilesExpected = [{ name: pileName, remaining: cardsToDrawFromDeck }]
+			const pilesExpected = [{ name: pileName, remaining: cardsToDraw }]
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDSJ, cardsToDrawFromDeck)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-				for (let index = 0; index < drawDeckResp.body.cards.length; index++) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						cardCodes += `,`
-					}
-				}
+				const cardsLength = drawDeckResp.body.cards.length
 
-				cy.addCardsToPile(shuffledDeckKeys.SDSJ, pileName, cardCodes)
-				cy.verifyAddToPile(pileName, cardsToDrawFromDeck)
-				cy.listCardsInPile(shuffledDeckKeys.SDSJ, pileName)
-				cy.verifyListingPile(pileName, pilesExpected)
-				cy.shufflePile(shuffledDeckKeys.SDSJ, pileName)
-				cy.verifyShufflePile(pileName, cardsToDrawFromDeck)
-				cy.drawCardsFromPile(shuffledDeckKeys.SDSJ, pileName, cardCodes)
-				cy.verifyDrawFromPile(pileName, cardCodes)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, cardsLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.addCardsToPile(deckKey, pileName, cardCodes)
+					cy.verifyAddToPile(pileName, cardsToDraw)
+					cy.listCardsInPile(deckKey, pileName)
+					cy.verifyListingPile(pileName, pilesExpected)
+					cy.shufflePile(deckKey, pileName)
+					cy.verifyShufflePile(pileName, cardsToDraw)
+					cy.drawCardsFromPile(deckKey, pileName, cardCodes)
+					cy.verifyDrawFromPile(pileName, cardCodes)
+				})
 			})
 		})
 
 		it('Put half of the shuffled deck in one pile, shuffle the cards in the first pile, bring half of those cards in the first pile to a second pile, and then draw all cards in the second pile from the bottom of it by card count', () => {
-			const cardsToDrawFromDeck = maxCardCount / 2
-			const firstPileName = 'first_test_pile'
-			const secondPileName = 'second_test_pile'
+			const deckKey = shuffledDeckKeys.SDS
+			const cardsToDraw = maxCardCount / 2
+			const halfOfDrawn = cardsToDraw / 2
+			const pileName1 = 'first_test_pile'
+			const pileName2 = 'second_test_pile'
+			const drawPileAct = 'bottom'
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDrawFromDeck)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let allCardCodes = ``
-				let secondCardCodesHalf = ``
-				for (let index = 0; index < drawDeckResp.body.cards.length; index++) {
-					allCardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						allCardCodes += `,`
-					}
-					if (
-						index >= drawDeckResp.body.cards.length / 2 &&
-						index < drawDeckResp.body.cards.length
-					) {
-						secondCardCodesHalf += drawDeckResp.body.cards[index].code
-						if (index < drawDeckResp.body.cards.length - 1) {
-							secondCardCodesHalf += `,`
-						}
-					}
-				}
+				const cardsLength = drawDeckResp.body.cards.length
 
-				cy.addCardsToPile(shuffledDeckKeys.SDS, firstPileName, allCardCodes)
-				cy.verifyAddToPile(firstPileName, cardsToDrawFromDeck)
-				cy.shufflePile(shuffledDeckKeys.SDS, firstPileName)
-				cy.verifyShufflePile(firstPileName, cardsToDrawFromDeck)
-				cy.addCardsToPile(
-					shuffledDeckKeys.SDS,
-					secondPileName,
-					secondCardCodesHalf
-				)
-				cy.verifyAddToPile(secondPileName, cardsToDrawFromDeck / 2)
-				cy.drawCardsFromPile(
-					shuffledDeckKeys.SDS,
-					secondPileName,
-					cardsToDrawFromDeck / 2,
-					'bottom'
-				)
-				cy.verifyDrawFromPile(secondPileName, cardsToDrawFromDeck / 2)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, cardsLength)
+				cy.get('@allCardCodes').then((allCardCodes) => {
+					cy.addCardsToPile(deckKey, pileName1, allCardCodes)
+					cy.verifyAddToPile(pileName1, cardsToDraw)
+					cy.shufflePile(deckKey, pileName1)
+					cy.verifyShufflePile(pileName1, cardsToDraw)
+					cy.get('@secondCardCodesHalf').then((secondCardCodesHalf) => {
+						cy.addCardsToPile(deckKey, pileName2, secondCardCodesHalf)
+						cy.verifyAddToPile(pileName2, halfOfDrawn)
+						cy.drawCardsFromPile(deckKey, pileName2, halfOfDrawn, drawPileAct)
+						cy.verifyDrawFromPile(pileName2, halfOfDrawn)
+					})
+				})
 			})
 		})
 
 		it('Put half of the shuffled deck in one pile, bring half of those cards in the first pile to a second pile, shuffle the cards in the second pile, take those cards back to the first pile, shuffle the cards in the first pile, and then draw all cards in the first pile randomly by card count', () => {
-			const cardsToDrawFromDeck = maxCardCount / 2
-			const firstPileName = 'first_test_pile'
-			const secondPileName = 'second_test_pile'
+			const deckKey = shuffledDeckKeys.SDS
+			const cardsToDraw = maxCardCount / 2
+			const halfOfDrawn = cardsToDraw / 2
+			const pileName1 = 'first_test_pile'
+			const pileName2 = 'second_test_pile'
+			const drawPileAct = 'bottom'
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDrawFromDeck)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let allCardCodes = ``
-				let secondCardCodesHalf = ``
-				for (let index = 0; index < drawDeckResp.body.cards.length; index++) {
-					allCardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						allCardCodes += `,`
-					}
-					if (
-						index >= drawDeckResp.body.cards.length / 2 &&
-						index < drawDeckResp.body.cards.length
-					) {
-						secondCardCodesHalf += drawDeckResp.body.cards[index].code
-						if (index < drawDeckResp.body.cards.length - 1) {
-							secondCardCodesHalf += `,`
-						}
-					}
-				}
+				const cardsLength = drawDeckResp.body.cards.length
 
-				cy.addCardsToPile(shuffledDeckKeys.SDS, firstPileName, allCardCodes)
-				cy.verifyAddToPile(firstPileName, cardsToDrawFromDeck)
-				cy.addCardsToPile(
-					shuffledDeckKeys.SDS,
-					secondPileName,
-					secondCardCodesHalf
-				)
-				cy.verifyAddToPile(secondPileName, cardsToDrawFromDeck / 2)
-				cy.shufflePile(shuffledDeckKeys.SDS, secondPileName)
-				cy.verifyShufflePile(secondPileName, cardsToDrawFromDeck / 2)
-				cy.addCardsToPile(
-					shuffledDeckKeys.SDS,
-					firstPileName,
-					secondCardCodesHalf
-				)
-				cy.verifyAddToPile(firstPileName, cardsToDrawFromDeck)
-				cy.shufflePile(shuffledDeckKeys.SDS, firstPileName)
-				cy.verifyShufflePile(firstPileName, cardsToDrawFromDeck)
-				cy.drawCardsFromPile(
-					shuffledDeckKeys.SDS,
-					firstPileName,
-					cardsToDrawFromDeck,
-					'random'
-				)
-				cy.verifyDrawFromPile(firstPileName, cardsToDrawFromDeck)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, cardsLength)
+				cy.get('@allCardCodes').then((allCardCodes) => {
+					cy.addCardsToPile(deckKey, pileName1, allCardCodes)
+					cy.verifyAddToPile(pileName1, cardsToDraw)
+					cy.get('@secondCardCodesHalf').then((secondCardCodesHalf) => {
+						cy.addCardsToPile(deckKey, pileName2, secondCardCodesHalf)
+						cy.verifyAddToPile(pileName2, halfOfDrawn)
+						cy.shufflePile(deckKey, pileName2)
+						cy.verifyShufflePile(pileName2, halfOfDrawn)
+						cy.addCardsToPile(deckKey, pileName1, secondCardCodesHalf)
+						cy.verifyAddToPile(pileName1, cardsToDraw)
+						cy.shufflePile(deckKey, pileName1)
+						cy.verifyShufflePile(pileName1, cardsToDraw)
+						cy.drawCardsFromPile(deckKey, pileName1, cardsToDraw, drawPileAct)
+						cy.verifyDrawFromPile(pileName1, cardsToDraw)
+					})
+				})
 			})
 		})
 	})
 
 	context('Return Cards', () => {
 		it('Draw a card from a shuffled deck and then return it to the deck', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = 1
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
-			cy.returnCards(shuffledDeckKeys.SDS)
-			cy.verifyReturnCards(maxCardCount)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
+			cy.returnDrawnCards(deckKey)
+			cy.verifyReturnDrawnCards(maxCardCount)
 		})
 
 		it('Draw all cards from a shuffled deck and then return all cards to the deck', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = maxCardCount
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
-			cy.returnCards(shuffledDeckKeys.SDS)
-			cy.verifyReturnCards(maxCardCount)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
+			cy.returnDrawnCards(deckKey)
+			cy.verifyReturnDrawnCards(maxCardCount)
 		})
 
 		it('Draw all cards from a shuffled deck with jokers and then return all cards to the deck', () => {
+			const deckKey = shuffledDeckKeys.SDSJ
 			const cardsToDraw = maxCardCountWithJokers
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
-			cy.returnCards(shuffledDeckKeys.SDSJ)
-			cy.verifyReturnCards(maxCardCountWithJokers)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
+			cy.returnDrawnCards(deckKey)
+			cy.verifyReturnDrawnCards(maxCardCountWithJokers)
 		})
 
 		it('Draw a card from a shuffled deck, put it in a pile, and then return it to the deck', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = 1
+			const pileName = 'test_pile'
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				const cardCode = `${drawDeckResp.body.cards[0].code}`
-				const pileName = 'test_pile'
 
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
-				cy.returnCards(shuffledDeckKeys.SDS, '', pileName)
-				cy.verifyReturnCards(maxCardCount, pileName)
+				cy.addCardsToPile(deckKey, pileName, cardCode)
+				cy.returnPileCards(deckKey, pileName)
+				cy.verifyReturnPileCards(pileName)
+				cy.verifyReturnPileCardCodes(deckKey, pileName, cardCode)
 			})
 		})
 
 		it('Draw all cards from a shuffled deck, put half of them in a pile, and then return all of the pile cards to the deck', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = maxCardCount
+			const halfDeckLength = maxCardCount / 2
+			const pileName = 'test_pile'
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-				const pileName = 'test_pile'
-				const halfDeckLength = drawDeckResp.body.cards.length / 2
-
-				for (let index = 0; index < halfDeckLength; index++) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < halfDeckLength - 1) {
-						cardCodes += `,`
-					}
-				}
-
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCodes)
-				cy.returnCards(shuffledDeckKeys.SDS, cardCodes, pileName)
-				cy.verifyReturnCards(maxCardCount / 2, pileName)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, halfDeckLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.addCardsToPile(deckKey, pileName, cardCodes)
+					cy.returnPileCards(deckKey, pileName)
+					cy.verifyReturnPileCards(pileName)
+				})
 			})
 		})
 
 		it('Draw all cards from a shuffled deck with jokers, put all of them in a pile, and then return all of the pile cards to the deck', () => {
+			const deckKey = shuffledDeckKeys.SDSJ
 			const cardsToDraw = maxCardCountWithJokers
+			const pileName = 'test_pile'
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-				const pileName = 'test_pile'
-
-				for (let index = 0; index < drawDeckResp.body.cards.length; index++) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						cardCodes += `,`
-					}
-				}
-
-				cy.addCardsToPile(shuffledDeckKeys.SDSJ, pileName, cardCodes)
-				cy.returnCards(shuffledDeckKeys.SDSJ, cardCodes, pileName)
-				cy.verifyReturnCards(maxCardCountWithJokers, pileName)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, cardsToDraw)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.addCardsToPile(deckKey, pileName, cardCodes)
+					cy.returnPileCards(deckKey, pileName)
+					cy.verifyReturnPileCards(pileName)
+				})
 			})
 		})
 
 		it('Draw a card from a shuffled deck and then return it to the deck using its card code', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = 1
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				const cardCode = `${drawDeckResp.body.cards[0].code}`
 
-				cy.returnCards(shuffledDeckKeys.SDS, cardCode)
-				cy.verifyReturnCards(maxCardCount)
+				cy.returnDrawnCards(deckKey, cardCode)
+				cy.verifyReturnDrawnCards(maxCardCount)
 			})
 		})
 
 		it('Draw all cards from a shuffled deck and then return half of them to the deck using their card codes', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = maxCardCount
+			const halfDeckLength = maxCardCount / 2
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-
-				for (
-					let index = 0;
-					index < drawDeckResp.body.cards.length / 2;
-					index++
-				) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						cardCodes += `,`
-					}
-				}
-
-				cy.returnCards(shuffledDeckKeys.SDS, cardCodes)
-				cy.verifyReturnCards(maxCardCount / 2)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, halfDeckLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.returnDrawnCards(deckKey, cardCodes)
+					cy.verifyReturnDrawnCards(halfDeckLength)
+				})
 			})
 		})
 
 		it('Draw all cards from a shuffled deck with jokers and then return half of them to the deck using their card codes', () => {
+			const deckKey = shuffledDeckKeys.SDSJ
 			const cardsToDraw = maxCardCountWithJokers
+			const halfDeckLength = maxCardCountWithJokers / 2
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-
-				for (
-					let index = 0;
-					index < drawDeckResp.body.cards.length / 2;
-					index++
-				) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < drawDeckResp.body.cards.length - 1) {
-						cardCodes += `,`
-					}
-				}
-
-				cy.returnCards(shuffledDeckKeys.SDSJ, cardCodes)
-				cy.verifyReturnCards(maxCardCountWithJokers / 2)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, halfDeckLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.returnDrawnCards(deckKey, cardCodes)
+					cy.verifyReturnDrawnCards(halfDeckLength)
+				})
 			})
 		})
 
 		it('Draw a card from a shuffled deck, put it in a pile, and then return it to the deck using its card code', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = 1
+			const pileName = 'test_pile'
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				const cardCode = `${drawDeckResp.body.cards[0].code}`
-				const pileName = 'test_pile'
 
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCode)
-				cy.returnCards(shuffledDeckKeys.SDS, cardCode, pileName)
-				cy.verifyReturnCards(
-					maxCardCount,
-					pileName,
-					0,
-					cardCode,
-					shuffledDeckKeys.SDS
-				)
+				cy.addCardsToPile(deckKey, pileName, cardCode)
+				cy.returnPileCards(deckKey, pileName)
+				cy.verifyReturnPileCards(pileName)
+				cy.verifyReturnPileCardCodes(deckKey, pileName, cardCode)
 			})
 		})
 
 		it('Draw all cards from a shuffled deck, put half of them in a pile, and then return half of the pile cards to the deck using their card codes', () => {
+			const deckKey = shuffledDeckKeys.SDS
 			const cardsToDraw = maxCardCount
+			const halfDeckLength = maxCardCount / 2
+			const quarterDeckLength = maxCardCount / 4
+			const pileName = 'test_pile'
+			const remainingExpected = 13
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDS, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-				const pileName = 'test_pile'
-				const halfDeckLength = drawDeckResp.body.cards.length / 2
-
-				for (let index = 0; index < halfDeckLength; index++) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < halfDeckLength - 1) {
-						cardCodes += `,`
-					}
-				}
-
-				cy.addCardsToPile(shuffledDeckKeys.SDS, pileName, cardCodes)
-				cy.listCardsInPile(shuffledDeckKeys.SDS, pileName)
-				cy.get('@recentListPileResp').then((listPileResp) => {
-					let pileCardCodes = ``
-					const halfPileLength = cardCodes.split(',').length / 2
-
-					for (let index = 0; index < halfPileLength; index++) {
-						pileCardCodes += listPileResp.body.piles[pileName].cards[index].code
-						if (index < halfPileLength - 1) {
-							pileCardCodes += `,`
-						}
-					}
-
-					cy.returnCards(shuffledDeckKeys.SDS, pileCardCodes, pileName)
-					cy.verifyReturnCards(
-						halfPileLength,
-						pileName,
-						halfPileLength,
-						pileCardCodes,
-						shuffledDeckKeys.SDS
-					)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, halfDeckLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.addCardsToPile(deckKey, pileName, cardCodes)
+					cy.createCardCodeStrings(drawDeckResp.body.cards, quarterDeckLength)
+					cy.get('@allCardCodes').then((cardCodes) => {
+						cy.returnPileCards(deckKey, pileName, cardCodes)
+						cy.verifyReturnPileCards(pileName, remainingExpected)
+						cy.verifyReturnPileCardCodes(deckKey, pileName, cardCodes)
+					})
 				})
 			})
 		})
 
 		it('Draw all cards from a shuffled deck with jokers, put them half of them in a pile, and then return half of the pile cards to the deck using their card codes', () => {
+			const deckKey = shuffledDeckKeys.SDSJ
 			const cardsToDraw = maxCardCountWithJokers
+			const halfDeckLength = maxCardCountWithJokers / 2
+			const quarterDeckLength = maxCardCountWithJokers / 4
+			const pileName = 'test_pile'
+			const remainingExpected = 13
 
-			cy.drawCardsFromDeck(shuffledDeckKeys.SDSJ, cardsToDraw)
+			cy.drawCardsFromDeck(deckKey, cardsToDraw)
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				let cardCodes = ``
-				const pileName = 'test_pile'
-				const halfDeckLength = drawDeckResp.body.cards.length / 2
-
-				for (let index = 0; index < halfDeckLength; index++) {
-					cardCodes += drawDeckResp.body.cards[index].code
-					if (index < halfDeckLength - 1) {
-						cardCodes += `,`
-					}
-				}
-
-				cy.addCardsToPile(shuffledDeckKeys.SDSJ, pileName, cardCodes)
-				cy.listCardsInPile(shuffledDeckKeys.SDSJ, pileName)
-				cy.get('@recentListPileResp').then((listPileResp) => {
-					let pileCardCodes = ``
-					const halfPileLength = Math.round(cardCodes.split(',').length / 2)
-
-					for (let index = 0; index < halfPileLength; index++) {
-						pileCardCodes += listPileResp.body.piles[pileName].cards[index].code
-						if (index < halfPileLength - 1) {
-							pileCardCodes += `,`
-						}
-					}
-
-					cy.returnCards(shuffledDeckKeys.SDSJ, pileCardCodes, pileName)
-					cy.verifyReturnCards(
-						halfPileLength,
-						pileName,
-						halfPileLength - 1,
-						pileCardCodes,
-						shuffledDeckKeys.SDSJ
-					)
+				cy.createCardCodeStrings(drawDeckResp.body.cards, halfDeckLength)
+				cy.get('@allCardCodes').then((cardCodes) => {
+					cy.addCardsToPile(deckKey, pileName, cardCodes)
+					cy.createCardCodeStrings(drawDeckResp.body.cards, quarterDeckLength)
+					cy.get('@allCardCodes').then((cardCodes) => {
+						cy.returnPileCards(deckKey, pileName, cardCodes)
+						cy.verifyReturnPileCards(pileName, remainingExpected)
+						cy.verifyReturnPileCardCodes(deckKey, pileName, cardCodes)
+					})
 				})
 			})
 		})
