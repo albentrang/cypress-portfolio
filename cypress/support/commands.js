@@ -1,7 +1,7 @@
 import DeckHandler from './deck_handler'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
-// const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
+const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
 
 // Custom commands for the Deck of Cards API project.
 Cypress.Commands.addAll({
@@ -86,12 +86,10 @@ Cypress.Commands.addAll({
 	drawCardsFromDeck(deckKey, drawCount) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.drawCardsFromDeck(decks[deckKey].id, drawCount)
+
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				cy.step('Initial verifications for drawing deck card successfully')
-				cy.wrap(drawDeckResp.status).should('equal', 200)
-				cy.wrap(drawDeckResp.statusText).should('equal', 'OK')
-				cy.wrap(drawDeckResp.body.success).should('equal', true)
-				cy.wrap(drawDeckResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.commonApiVerifications(drawDeckResp, decks[deckKey].id)
 			})
 		})
 	},
@@ -104,12 +102,9 @@ Cypress.Commands.addAll({
 	shuffleDeck(deckKey, remaining = ``) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.shuffleDeck(decks[deckKey].id, remaining)
+
 			cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
-				cy.step('Initial verifications for shuffling a deck successfully')
-				cy.wrap(shuffleResp.status).should('equal', 200)
-				cy.wrap(shuffleResp.statusText).should('equal', 'OK')
-				cy.wrap(shuffleResp.body.success).should('equal', true)
-				cy.wrap(shuffleResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.commonApiVerifications(shuffleResp, decks[deckKey].id)
 				cy.wrap(shuffleResp.body.shuffled).should('equal', true)
 			})
 		})
@@ -123,16 +118,13 @@ Cypress.Commands.addAll({
 	addCardsToPile(deckKey, pileName, cards) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.addCardsToPile(decks[deckKey].id, pileName, cards)
+
 			cy.get('@recentAddPileResp').then((addPileResp) => {
+				const pileActual = addPileResp.body.piles[pileName]
+
 				cy.step('Initial verifications for adding cards to a pile successfully')
-				cy.wrap(addPileResp.status).should('equal', 200)
-				cy.wrap(addPileResp.statusText).should('equal', 'OK')
-				cy.wrap(addPileResp.body.success).should('equal', true)
-				cy.wrap(addPileResp.body.deck_id).should('equal', decks[deckKey].id)
-				cy.wrap(addPileResp.body.piles[pileName]).should(
-					'have.key',
-					'remaining'
-				)
+				cy.commonApiVerifications(addPileResp, decks[deckKey].id)
+				cy.wrap(pileActual).should('have.key', 'remaining')
 			})
 		})
 	},
@@ -144,18 +136,13 @@ Cypress.Commands.addAll({
 	shufflePile(deckKey, pileName) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.shufflePile(decks[deckKey].id, pileName)
+
 			cy.get('@recentShufflePileResp').then((shufflePileResp) => {
-				cy.step(
-					'Initial verifications for shuffling cards in a pile successfully'
-				)
-				cy.wrap(shufflePileResp.status).should('equal', 200)
-				cy.wrap(shufflePileResp.statusText).should('equal', 'OK')
-				cy.wrap(shufflePileResp.body.success).should('equal', true)
-				cy.wrap(shufflePileResp.body.deck_id).should('equal', decks[deckKey].id)
-				cy.wrap(shufflePileResp.body.piles[pileName]).should(
-					'have.key',
-					'remaining'
-				)
+				const pileActual = shufflePileResp.body.piles[pileName]
+
+				cy.step('Initial verifications for shuffling pile cards successfully')
+				cy.commonApiVerifications(shufflePileResp, decks[deckKey].id)
+				cy.wrap(pileActual).should('have.key', 'remaining')
 			})
 		})
 	},
@@ -167,14 +154,10 @@ Cypress.Commands.addAll({
 	listCardsInPile(deckKey, pileName) {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.listCardsInPile(decks[deckKey].id, pileName)
+
 			cy.get('@recentListPileResp').then((listPileResp) => {
-				cy.step(
-					'Initial verifications for listing cards for a pile successfully'
-				)
-				cy.wrap(listPileResp.status).should('equal', 200)
-				cy.wrap(listPileResp.statusText).should('equal', 'OK')
-				cy.wrap(listPileResp.body.success).should('equal', true)
-				cy.wrap(listPileResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.step('Initial verifications for listing pile cards successfully')
+				cy.commonApiVerifications(listPileResp, decks[deckKey].id)
 				cy.wrap(listPileResp.body.piles).should('have.key', pileName)
 			})
 		})
@@ -185,29 +168,21 @@ Cypress.Commands.addAll({
 	 * @param {string} pileName Name of the pile that's part of the given deck.
 	 * @param {string | number} cardsToGet Either get specific cards from a pile using
 	 * a string of comma-separated card codes or some number of cards using a number.
-	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
+	 * @param {string} [drawAct] Set as either "bottom" to draw a card from the bottom
 	 * of the pile or "random" to draw a random card from a pile (optional).
 	 */
-	drawCardsFromPile(deckKey, pileName, cardsToGet, drawMethod = '') {
+	drawCardsFromPile(deckKey, pileName, cardsToGet, drawAct = '') {
 		cy.fixture(decksPosFixturePath).then((decks) => {
-			DeckHandler.drawCardsFromPile(
-				decks[deckKey].id,
-				pileName,
-				cardsToGet,
-				drawMethod
-			)
+			const deckId = decks[deckKey].id
+
+			DeckHandler.drawCardsFromPile(deckId, pileName, cardsToGet, drawAct)
+
 			cy.get('@recentDrawPileResp').then((drawPileResp) => {
-				cy.step(
-					'Initial verifications for drawing cards from a pile successfully'
-				)
-				cy.wrap(drawPileResp.status).should('equal', 200)
-				cy.wrap(drawPileResp.statusText).should('equal', 'OK')
-				cy.wrap(drawPileResp.body.success).should('equal', true)
-				cy.wrap(drawPileResp.body.deck_id).should('equal', decks[deckKey].id)
-				cy.wrap(drawPileResp.body.piles[pileName]).should(
-					'have.key',
-					'remaining'
-				)
+				const pileActual = drawPileResp.body.piles[pileName]
+
+				cy.step('Initial verifications for drawing pile cards successfully')
+				cy.commonApiVerifications(drawPileResp, decks[deckKey].id)
+				cy.wrap(pileActual).should('have.key', 'remaining')
 			})
 		})
 	},
@@ -220,12 +195,10 @@ Cypress.Commands.addAll({
 	returnDrawnCards(deckKey, cards = '') {
 		cy.fixture(decksPosFixturePath).then((decks) => {
 			DeckHandler.returnDrawnCards(decks[deckKey].id, cards)
+
 			cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
 				cy.step('Initial verifications for returning drawn cards successfully')
-				cy.wrap(returnCardsResp.status).should('equal', 200)
-				cy.wrap(returnCardsResp.statusText).should('equal', 'OK')
-				cy.wrap(returnCardsResp.body.success).should('equal', true)
-				cy.wrap(returnCardsResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.commonApiVerifications(returnCardsResp, decks[deckKey].id)
 			})
 		})
 	},
@@ -242,10 +215,7 @@ Cypress.Commands.addAll({
 
 			cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
 				cy.step('Initial verifications for returning cards successfully')
-				cy.wrap(returnCardsResp.status).should('equal', 200)
-				cy.wrap(returnCardsResp.statusText).should('equal', 'OK')
-				cy.wrap(returnCardsResp.body.success).should('equal', true)
-				cy.wrap(returnCardsResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.commonApiVerifications(returnCardsResp, decks[deckKey].id)
 			})
 		})
 	},
@@ -341,22 +311,21 @@ Cypress.Commands.addAll({
 	 * @param {number} [drawCount] The number of cards that have been drawn at once.
 	 */
 	verifyShuffleRemainingAfterDrawingNoCards(jokers = false, deckCount = 1) {
-		cy.section(
-			`Verifications for shuffling the main stack only that has ${deckCount} deck(s) only`
-		)
+		cy.section(`Verify shuffling main stack with ${deckCount} deck(s)`)
 		cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
+			const remainingActual = shuffleResp.body.remaining
+			let remainingExpected
+
 			if (jokers === true) {
+				remainingExpected = DeckHandler.maxCardCountWithJokers * deckCount
+
 				cy.step(`Verify shuffle main stack that has jokers with no cards drawn`)
-				cy.wrap(shuffleResp.body.remaining).should(
-					'equal',
-					DeckHandler.maxCardCountWithJokers * deckCount
-				)
+				cy.wrap(remainingActual).should('equal', remainingExpected)
 			} else {
+				remainingExpected = DeckHandler.maxCardCount * deckCount
+
 				cy.step(`Verify shuffle main stack with no cards drawn`)
-				cy.wrap(shuffleResp.body.remaining).should(
-					'equal',
-					DeckHandler.maxCardCount * deckCount
-				)
+				cy.wrap(remainingActual).should('equal', remainingExpected)
 			}
 		})
 	},
@@ -367,24 +336,20 @@ Cypress.Commands.addAll({
 	 * @param {number} [drawCount] The number of cards that have been drawn at once.
 	 */
 	verifyShuffleRemainingAfterDrawingAllCards(jokers = false, deckCount = 1) {
-		cy.section(
-			`Verifications for shuffling the main stack only that has ${deckCount} deck(s) only`
-		)
+		cy.section(`Verify shuffling main stack with ${deckCount} deck(s)`)
 		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+			let cardsExpected
+
 			if (jokers === true) {
-				cy.step(
-					'Verify shuffle main stack that has jokers with max number of cards drawn'
-				)
-				cy.wrap(drawDeckResp.body.cards).should(
-					'have.length',
-					DeckHandler.maxCardCountWithJokers * deckCount
-				)
+				cardsExpected = DeckHandler.maxCardCountWithJokers * deckCount
+
+				cy.step('Verify shuffle main stack with jokers with max cards drawn')
+				cy.wrap(drawDeckResp.body.cards).should('have.length', cardsExpected)
 			} else {
-				cy.step('Verify shuffle main stack with max number of cards drawn')
-				cy.wrap(drawDeckResp.body.cards).should(
-					'have.length',
-					DeckHandler.maxCardCount * deckCount
-				)
+				cardsExpected = DeckHandler.maxCardCount * deckCount
+
+				cy.step('Verify shuffle main stack with max cards drawn')
+				cy.wrap(drawDeckResp.body.cards).should('have.length', cardsExpected)
 			}
 			cy.step('Verify draw card response shows remaining cards as 0')
 			cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
@@ -403,6 +368,7 @@ Cypress.Commands.addAll({
 		cy.section(`Verifications for shuffling the deck without drawn cards`)
 		cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
 			const cardsToDrawFromMain = shuffleResp.body.remaining
+
 			cy.get('@recentDrawDeckResp').then((initialDrawDeckResp) => {
 				cy.drawCardsFromDeck(deckKey, cardsToDrawFromMain)
 				cy.get('@recentDrawDeckResp').then((remainingDrawDeckResp) => {
@@ -439,11 +405,10 @@ Cypress.Commands.addAll({
 	verifyAddToPile(pileName, pileRemainingExpected) {
 		cy.section('Verifications for adding cards to a pile')
 		cy.get('@recentAddPileResp').then((addPileResp) => {
+			const pileRemainingActual = addPileResp.body.piles[pileName].remaining
+
 			cy.step(`Check remaining cards in pile ${pileName}`)
-			cy.wrap(addPileResp.body.piles[pileName].remaining).should(
-				'equal',
-				pileRemainingExpected
-			)
+			cy.wrap(pileRemainingActual).should('equal', pileRemainingExpected)
 		})
 	},
 	/**
@@ -456,11 +421,10 @@ Cypress.Commands.addAll({
 	verifyShufflePile(pileName, pileRemainingExpected) {
 		cy.section('Verifications for shuffling cards in a pile')
 		cy.get('@recentShufflePileResp').then((shufflePileResp) => {
+			const pileRemainingActual = shufflePileResp.body.piles[pileName].remaining
+
 			cy.step(`Check remaining cards in pile ${pileName}`)
-			cy.wrap(shufflePileResp.body.piles[pileName].remaining).should(
-				'equal',
-				pileRemainingExpected
-			)
+			cy.wrap(pileRemainingActual).should('equal', pileRemainingExpected)
 		})
 	},
 	/**
@@ -477,17 +441,14 @@ Cypress.Commands.addAll({
 		cy.get('@recentListPileResp').then((listPileResp) => {
 			cy.step(`Check listed cards in pile ${pileToList}`)
 			cy.get('@recentDrawDeckResp').then((drawResp) => {
-				cy.wrap(listPileResp.body.piles[pileToList].cards).each(
-					(card, index) => {
-						cy.wrap(card.code).should('equal', drawResp.body.cards[index].code)
-					}
-				)
+				cy.wrap(listPileResp.body.piles[pileToList].cards).each((card, idx) => {
+					cy.wrap(card.code).should('equal', drawResp.body.cards[idx].code)
+				})
 				cy.step('Check remaining cards in each pile of the current deck')
 				cy.wrap(allPilesExpected).each((pileExpected) => {
-					cy.wrap(listPileResp.body.piles[pileExpected.name].remaining).should(
-						'equal',
-						pileExpected.remaining
-					)
+					const remaining = listPileResp.body.piles[pileExpected.name].remaining
+
+					cy.wrap(remaining).should('equal', pileExpected.remaining)
 				})
 			})
 		})
@@ -563,10 +524,10 @@ Cypress.Commands.addAll({
 	verifyReturnPileCards(pileName, pileRemainingExpected = 0) {
 		cy.section('Verifications for returning pile cards')
 		cy.get('@recentReturnCardsResp').then((returnCardsResp) => {
-			const pileRemaining = returnCardsResp.body.piles[pileName].remaining
+			const pileRemainingActual = returnCardsResp.body.piles[pileName].remaining
 
 			cy.step(`Check remaining cards in pile ${pileName}`)
-			cy.wrap(pileRemaining).should('equal', pileRemainingExpected)
+			cy.wrap(pileRemainingActual).should('equal', pileRemainingExpected)
 		})
 	},
 	/**
@@ -627,12 +588,102 @@ Cypress.Commands.addAll({
 		cy.wrap(allCardCodes).as('allCardCodes')
 		cy.wrap(secondCardCodesHalf).as('secondCardCodesHalf')
 	},
+	/**
+	 * Helper command to verify common Deck of Cards API response body key value pairs.
+	 * @param {Object} response The response with these common key value pairs:
+	 * status: 200, statusText: "OK", body.success: true, and body.deck_id: deckId.
+	 * @param {string} deckId The used deck's ID.
+	 */
+	commonApiVerifications(response, deckId) {
+		cy.wrap(response.status).should('equal', 200)
+		cy.wrap(response.statusText).should('equal', 'OK')
+		cy.wrap(response.body.success).should('equal', true)
+		cy.wrap(response.body.deck_id).should('equal', deckId)
+	},
 	// Negative testing commands
+	/**
+	 * Command to verify error handling for trying to make a new deck
+	 * with a deck count at 0 or less.
+	 * @param {number} deckCount The deck count that needs to be 0 or less.
+	 */
+	createInvalidDeck(deckCount = 0) {
+		const deckObj = {
+			deckCount: deckCount
+		}
+		const errorExpected = 'The min number of Decks is 1.'
+
+		DeckHandler.createNewDeck(deckObj, true)
+
+		cy.step('Verify error handling for creating invalid deck')
+		cy.get('@newDeckResp').then((newDeckResp) => {
+			cy.wrap(newDeckResp.status).should('equal', 200)
+			cy.wrap(newDeckResp.statusText).should('equal', 'OK')
+			cy.wrap(newDeckResp.body.success).should('equal', false)
+			cy.wrap(newDeckResp.body.error).should('equal', errorExpected)
+		})
+	},
 	/**
 	 * Command to verify error handling for drawing a card
 	 * from a deck that does not exist.
 	 */
 	drawCardsFromNoDeck() {
-		DeckHandler.drawCardsFromDeck('0', 1)
+		const errorExpected = 'Deck ID does not exist.'
+		const deckKey = '0'
+		const drawCount = 1
+
+		DeckHandler.drawCardsFromDeck(deckKey, drawCount, true)
+
+		cy.step('Verify error handling for drawing card from no deck')
+		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+			cy.wrap(drawDeckResp.status).should('equal', 404)
+			cy.wrap(drawDeckResp.statusText).should('equal', 'Not Found')
+			cy.wrap(drawDeckResp.body.success).should('equal', false)
+			cy.wrap(drawDeckResp.body.error).should('equal', errorExpected)
+		})
+	},
+	/**
+	 * Command to verify error handling for drawing zero deck cards.
+	 * @param {string} deckKey The valid key (deck name) defined from a decks file.
+	 * @param {number} maxCardsExpected The max cards expected in a deck.
+	 */
+	drawZeroCardsFromDeck(deckKey, maxCardsExpected) {
+		const cardsToDraw = 0
+
+		cy.fixture(decksNegFixturePath).then((decks) => {
+			DeckHandler.drawCardsFromDeck(decks[deckKey].id, cardsToDraw, true)
+
+			cy.step('Verify error handling for drawing 0 deck cards')
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				cy.wrap(drawDeckResp.status).should('equal', 200)
+				cy.wrap(drawDeckResp.statusText).should('equal', 'OK')
+				cy.wrap(drawDeckResp.body.success).should('equal', true)
+				cy.wrap(drawDeckResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(drawDeckResp.body.cards).should('have.length', 0)
+				cy.wrap(drawDeckResp.body.remaining).should('equal', maxCardsExpected)
+			})
+		})
+	},
+	/**
+	 * Command to verify error handling for drawing one-over-max deck cards.
+	 * @param {string} deckKey The valid key (deck name) defined from a decks file.
+	 * @param {number} maxCardsExpected The max cards expected in a deck.
+	 */
+	drawOneOverMaxCardsFromDeck(deckKey, maxCardsExpected) {
+		const cardsToDraw = maxCardsExpected + 1
+		const errorExpected = `Not enough cards remaining to draw ${cardsToDraw} additional`
+
+		cy.fixture(decksNegFixturePath).then((decks) => {
+			DeckHandler.drawCardsFromDeck(decks[deckKey].id, cardsToDraw, true)
+
+			cy.step('Verify error handling for drawing one-over-max deck cards')
+			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
+				cy.wrap(drawDeckResp.status).should('equal', 200)
+				cy.wrap(drawDeckResp.statusText).should('equal', 'OK')
+				cy.wrap(drawDeckResp.body.success).should('equal', false)
+				cy.wrap(drawDeckResp.body.deck_id).should('equal', decks[deckKey].id)
+				cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
+				cy.wrap(drawDeckResp.body.error).should('equal', errorExpected)
+			})
+		})
 	}
 })

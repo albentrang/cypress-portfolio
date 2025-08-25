@@ -29,8 +29,10 @@ class DeckHandler {
 	 * Create a new deck of cards or a partial deck based on the given
 	 * properties in the deck object.
 	 * @param {object} deckObj The deck object containing the properties.
+	 * @param {boolean} [isNeg] The boolean to indicate that the running test case is negative.
 	 */
-	createNewDeck(deckObj) {
+	createNewDeck(deckObj, isNeg = false) {
+		const apiOptions = { url: '' }
 		let newDeckUrl = 'api/deck/new/'
 
 		if (deckObj.cards) {
@@ -46,16 +48,22 @@ class DeckHandler {
 			}
 
 			// Query parameters for multiple decks and/or enabling joker cards.
-			if (deckObj.deckCount > 0 && deckObj.jokersEnabled) {
+			if (typeof deckObj.deckCount === 'number' && deckObj.jokersEnabled) {
 				newDeckUrl += `?deck_count=${deckObj.deckCount}&jokers_enabled=true`
-			} else if (deckObj.deckCount > 0) {
+			} else if (typeof deckObj.deckCount === 'number') {
 				newDeckUrl += `?deck_count=${deckObj.deckCount}`
 			} else if (deckObj.jokersEnabled) {
 				newDeckUrl += `?jokers_enabled=true`
 			}
 		}
 
-		cy.api(newDeckUrl).as('newDeckResp')
+		apiOptions.url = newDeckUrl
+
+		if (isNeg) {
+			apiOptions.failOnStatusCode = false
+		}
+
+		cy.api(apiOptions).as('newDeckResp')
 	}
 
 	/**
@@ -63,10 +71,15 @@ class DeckHandler {
 	 * @param {string} deckId The ID of the deck.
 	 * @param {number} drawCount The number of cards to be drawn as a
 	 * positive, whole number.
+	 * @param {boolean} [isNeg] The boolean to indicate that the running test case is negative.
 	 */
-	drawCardsFromDeck(deckId, drawCount) {
+	drawCardsFromDeck(deckId, drawCount, isNeg = false) {
 		const drawDeckCardUrl = `api/deck/${deckId}/draw/?count=${Math.trunc(drawCount)}`
-		const apiOptions = { url: drawDeckCardUrl, failOnStatusCode: false }
+		const apiOptions = { url: drawDeckCardUrl }
+
+		if (isNeg) {
+			apiOptions.failOnStatusCode = false
+		}
 
 		cy.step(`Drawing ${drawCount} card(s) from deck ID ${deckId}`)
 		cy.api(apiOptions).as('recentDrawDeckResp')
@@ -135,14 +148,14 @@ class DeckHandler {
 	 * @param {string} pileName The name of the pile from the deck.
 	 * @param {string | number} cardsToGet Either get specific cards from a pile using
 	 * a string of comma-separated card codes or some number of cards using a number.
-	 * @param {string} [drawMethod] Set as either "bottom" to draw a card from the bottom
+	 * @param {string} [drawAct] Set as either "bottom" to draw a card from the bottom
 	 * of the pile or "random" to draw a random card from a pile (optional).
 	 */
-	drawCardsFromPile(deckId, pileName, cardsToGet, drawMethod = '') {
+	drawCardsFromPile(deckId, pileName, cardsToGet, drawAct = '') {
 		let drawPileCardUrl = `api/deck/${deckId}/pile/${pileName}/draw/`
 
-		if (drawMethod) {
-			drawPileCardUrl += `${drawMethod}/`
+		if (drawAct) {
+			drawPileCardUrl += `${drawAct}/`
 		}
 
 		switch (typeof cardsToGet) {

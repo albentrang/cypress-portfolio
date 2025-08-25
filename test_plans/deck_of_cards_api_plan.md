@@ -82,29 +82,26 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ### Making a New Deck
 
-- [ ] Make a new deck with "deck_count" equal to 0
-- [ ] Make a new deck with "deck_count" equal to -1
+- [x] Make a new deck with "deck_count" equal to 0
+- [x] Make a new deck with "deck_count" equal to -1
 
 ### Drawing Cards from Decks
 
 - [x] Draw a card from a deck that does not exist
-- [ ] Draw -1 cards from a shuffled deck
-- [ ] Draw -1 cards from a shuffled deck with jokers
-- [ ] Draw -1 cards from two shuffled decks
-- [ ] Draw -1 cards from two shuffled decks with jokers
-- [ ] Draw 0 cards from a shuffled deck
-- [ ] Draw 0 cards from a shuffled deck with jokers
-- [ ] Draw 0 cards from two shuffled decks
-- [ ] Draw 0 cards from two shuffled decks with jokers
-- [ ] Draw 53 cards from a shuffled deck
-- [ ] Draw 55 cards with jokers from a shuffled deck
-- [ ] Draw 105 cards from two shuffled decks
-- [ ] Draw 109 cards from two shuffled decks with jokers
+- [x] Draw 0 cards from a shuffled deck
+- [x] Draw 0 cards from a shuffled deck with jokers
+- [x] Draw 0 cards from two shuffled decks
+- [x] Draw 0 cards from two shuffled decks with jokers
+- [x] Draw 53 cards from a shuffled deck
+- [x] Draw 55 cards with jokers from a shuffled deck
+- [x] Draw 105 cards from two shuffled decks
+- [x] Draw 109 cards from two shuffled decks with jokers
 
 ### Drawing Cards from Piles
 
-- [ ] Draw -1 cards from a pile
-- [ ] Draw 5 cards from a pile that only has 4 cards in it
+- [ ] Draw 1 card from a pile that has no cards in it from a single shuffled deck
+- [ ] Draw 53 cards from a pile that only has 52 cards in it from a single shuffled deck
+- [ ] Draw 55 cards from a pile that only has 54 cards in it from a single shuffled deck with jokers
 
 ### Adding No Specified Cards
 
@@ -114,8 +111,10 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Notes
 
+- Setting the "count" query parameter to a negative number when drawing cards from a deck will draw the max number
+  of cards minus the "count" parameter as long as the absolute value from the negative number is less than the number of cards remaining in the deck.
 - Partial decks cannot contain joker cards.
 - Using the function that lists cards from a pile by specifying its name will have an attribute called "cards" that lists all the cards in that pile. The other piles will not have that attribute.
-- Setting the "count" query parameter to 0 when drawing from piles will actually draw all the cards from the pile.
+- Setting the "count" query parameter to 0 when drawing from piles will actually draw no cards from the pile. Also, setting the "count" query parameter to a negative number when drawing cards from a pile will draw the max number of cards minus the "count" parameter as long as the absolute value from the negative number is less than the number of cards remaining in the deck.
 - The function that returns drawn cards to the deck does not work with multiple decks because that function does not take duplicate cards that are already in the deck.
 - The function that returns cards, either drawn or from a pile, to the deck does not put those cards in order on top of the deck if the deck has been shuffled.

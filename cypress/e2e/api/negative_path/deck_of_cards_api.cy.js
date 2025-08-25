@@ -6,8 +6,8 @@ describe('Deck of Cards API Tests (Negative)', () => {
 		DDS: 'doubleDeckShuffled',
 		DDSJ: 'doubleDeckShuffledWithJokers'
 	})
-	// const maxCardCount = 52
-	// const maxCardCountWithJokers = 54
+	const maxCardCount = 52
+	const maxCardCountWithJokers = 54
 
 	before(() => {
 		cy.checkDecks(decksPath)
@@ -23,84 +23,90 @@ describe('Deck of Cards API Tests (Negative)', () => {
 
 	context('Making a New Deck', () => {
 		it('Make a new deck with "deck_count" equal to 0', () => {
-			cy.todo('Test not implemented')
+			const deckCount = 0
+
+			cy.createInvalidDeck(deckCount)
 		})
 
 		it('Make a new deck with "deck_count" equal to -1', () => {
-			cy.todo('Test not implemented')
+			const deckCount = -1
+
+			cy.createInvalidDeck(deckCount)
 		})
 	})
 
 	context('Drawing Cards from Decks', () => {
 		it('Draw a card from a deck that does not exist', () => {
 			cy.drawCardsFromNoDeck()
-			cy.step('Verify error handling for drawing card from no deck')
-			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-				cy.wrap(drawDeckResp.status).should('equal', 404)
-				cy.wrap(drawDeckResp.statusText).should('equal', 'Not Found')
-				cy.wrap(drawDeckResp.body.success).should('equal', false)
-				cy.wrap(drawDeckResp.body.error).should(
-					'equal',
-					'Deck ID does not exist.'
-				)
-			})
-		})
-
-		it('Draw -1 cards from a shuffled deck', () => {
-			cy.todo('Test not implemented')
-		})
-
-		it('Draw -1 cards from a shuffled deck with jokers', () => {
-			cy.todo('Test not implemented')
-		})
-
-		it('Draw -1 cards from two shuffled decks', () => {
-			cy.todo('Test not implemented')
-		})
-
-		it('Draw -1 cards from two shuffled decks with jokers', () => {
-			cy.todo('Test not implemented')
 		})
 
 		it('Draw 0 cards from a shuffled deck', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'singleDeckShuffled'
+			const maxCardsExpected = maxCardCount
+
+			cy.drawZeroCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 0 cards from a shuffled deck with jokers', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'singleDeckShuffledWithJokers'
+			const maxCardsExpected = maxCardCountWithJokers
+
+			cy.drawZeroCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 0 cards from two shuffled decks', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'doubleDeckShuffled'
+			const maxCardsExpected = maxCardCount * 2
+
+			cy.drawZeroCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 0 cards from two shuffled decks with jokers', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'doubleDeckShuffledWithJokers'
+			const maxCardsExpected = maxCardCountWithJokers * 2
+
+			cy.drawZeroCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 53 cards from a shuffled deck', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'singleDeckShuffled'
+			const maxCardsExpected = maxCardCount
+
+			cy.drawOneOverMaxCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 55 cards with jokers from a shuffled deck', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'singleDeckShuffledWithJokers'
+			const maxCardsExpected = maxCardCountWithJokers
+
+			cy.drawOneOverMaxCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 105 cards from two shuffled decks', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'doubleDeckShuffled'
+			const maxCardsExpected = maxCardCount * 2
+
+			cy.drawOneOverMaxCardsFromDeck(deckKey, maxCardsExpected)
 		})
 
 		it('Draw 109 cards from two shuffled decks with jokers', () => {
-			cy.todo('Test not implemented')
+			const deckKey = 'doubleDeckShuffledWithJokers'
+			const maxCardsExpected = maxCardCountWithJokers * 2
+
+			cy.drawOneOverMaxCardsFromDeck(deckKey, maxCardsExpected)
 		})
 	})
 
 	context('Drawing Cards from Piles', () => {
-		it('Draw -1 cards from a pile', () => {
+		it('Draw 1 card from a pile that has no cards in it from a single shuffled deck', () => {
 			cy.todo('Test not implemented')
 		})
 
-		it('Draw 5 cards from a pile that only has 4 cards in it', () => {
+		it('Draw 53 cards from a pile that only has 52 cards in it from a single shuffled deck', () => {
+			cy.todo('Test not implemented')
+		})
+
+		it('Draw 55 cards from a pile that only has 54 cards in it from a single shuffled deck with jokers', () => {
 			cy.todo('Test not implemented')
 		})
 	})
