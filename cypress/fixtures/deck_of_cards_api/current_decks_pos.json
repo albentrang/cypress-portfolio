@@ -1,0 +1,41 @@
+{
+	"singleDeck": {
+		"id": "qzrnal2j4ua3"
+	},
+	"singleDeckWithJokers": {
+		"id": "aw3ivd17tv54",
+		"jokersEnabled": true
+	},
+	"singleDeckShuffled": {
+		"id": "b5zywrhoktxt",
+		"shuffled": true
+	},
+	"singleDeckShuffledWithJokers": {
+		"id": "u24b68h4zidm",
+		"shuffled": true,
+		"jokersEnabled": true
+	},
+	"doubleDeckShuffled": {
+		"id": "mcg5i2e6h786",
+		"shuffled": true,
+		"deckCount": 2
+	},
+	"doubleDeckShuffledWithJokers": {
+		"id": "1x4w2jryhp36",
+		"shuffled": true,
+		"deckCount": 2,
+		"jokersEnabled": true
+	},
+	"partialDeck": {
+		"id": "m9c0cn0w1ytc",
+		"cards": "AS,JH,QC,KD"
+	},
+	"partialDeckOneCard": {
+		"id": "7ljgoz16xen7",
+		"cards": "AS"
+	},
+	"partialDeckAllCards": {
+		"id": "gc6kzntmsmq1",
+		"cards": "AS,2S,3S,4S,5S,6S,7S,8S,9S,0S,JS,QS,KS,AD,2D,3D,4D,5D,6D,7D,8D,9D,0D,JD,QD,KD,AC,2C,3C,4C,5C,6C,7C,8C,9C,0C,JC,QC,KC,AH,2H,3H,4H,5H,6H,7H,8H,9H,0H,JH,QH,KH"
+	}
+}
