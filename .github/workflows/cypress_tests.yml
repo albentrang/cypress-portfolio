@@ -22,8 +22,18 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Initialize project
+  initialize-project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Initialize
+      - run: npm init
+
   # Cypress tests
   cypress-run:
+    needs: initialize-project
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,7 +47,7 @@ jobs:
           command: npm run deck:run
 
   # Build page
-  build:
+  build-page:
     needs: cypress-run
     runs-on: ubuntu-latest
     steps:
@@ -54,8 +64,8 @@ jobs:
         uses: actions/upload-pages-artifact@v3
 
   # Deploy page
-  deploy:
-    needs: build
+  deploy-page:
+    needs: build-page
     runs-on: ubuntu-latest
     environment:
       name: github-pages
