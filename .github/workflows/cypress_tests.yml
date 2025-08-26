@@ -22,39 +22,16 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Cypress build
-  cypress-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Cypress build
-        uses: cypress-io/github-action@v6
-        with:
-          runTests: false
-          build: npm run build
-      - name: Save build folder
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          if-no-files-found: error
-          path: build
-  
   # Cypress run
   cypress-run:
-    needs: cypress-build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Download build folder
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: build
       - name: Cypress run deck tests
         uses: cypress-io/github-action@v6
         with:
+          # This will generate an HTML report when it's done
           command: npm run deck:run
       - name: Save HTML report folder
         uses: actions/upload-artifact@v4
