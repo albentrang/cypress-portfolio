@@ -4,6 +4,7 @@
 # recording
 cypress/videos
 cypress/screenshots
+cypress/reports/html
 
 # environment variables
 cypress.env.json
