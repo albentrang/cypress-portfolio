@@ -2,12 +2,6 @@
 /node_modules
 package-lock.json
 
-# testing
-/coverage
-
-# production
-/build
-
 # recording
 cypress/videos
 cypress/screenshots
