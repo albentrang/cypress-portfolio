@@ -264,11 +264,13 @@ Cypress.Commands.addAll({
 			} else {
 				deckCount = 1
 			}
+
 			if (decks[deckKey].jokersEnabled === true) {
 				deckTypeMaxCards = 54
 			} else {
 				deckTypeMaxCards = 52
 			}
+
 			maxCardsExpected = deckTypeMaxCards * deckCount
 
 			for (let i = 0; i < totalDraws; i++) {
@@ -292,7 +294,7 @@ Cypress.Commands.addAll({
 								}
 							}
 
-							cy.step(`Verifying ${deckCount} of ${card.code} cards`)
+							cy.step(`Verifying at most ${deckCount} of ${card.code} cards`)
 							cy.wrap(numOfCurrentCard).should('be.lte', deckCount)
 						})
 
@@ -351,6 +353,7 @@ Cypress.Commands.addAll({
 				cy.step('Verify shuffle main stack with max cards drawn')
 				cy.wrap(drawDeckResp.body.cards).should('have.length', cardsExpected)
 			}
+
 			cy.step('Verify draw card response shows remaining cards as 0')
 			cy.wrap(drawDeckResp.body.remaining).should('equal', 0)
 			cy.get('@recentShuffleDeckResp').then((shuffleResp) => {
@@ -604,17 +607,17 @@ Cypress.Commands.addAll({
 	/**
 	 * Command to verify error handling for trying to make a new deck
 	 * with a deck count at 0 or less.
-	 * @param {number} deckCount The deck count that needs to be 0 or less.
+	 * @param {object} deckObj An object with these key value pairs:
+	 * deckCount: [number of decks that's 0 or less],
+	 * shuffled: [boolean to have the new deck shuffled or not],
+	 * jokersEnabled: [boolean to have jokers in the deck or not]
 	 */
-	createInvalidDeck(deckCount = 0) {
-		const deckObj = {
-			deckCount: deckCount
-		}
+	createInvalidDeck(deckObj) {
 		const errorExpected = 'The min number of Decks is 1.'
 
 		DeckHandler.createNewDeck(deckObj, true)
 
-		cy.step('Verify error handling for creating invalid deck')
+		cy.section('Verify error handling for creating invalid deck')
 		cy.get('@newDeckResp').then((newDeckResp) => {
 			cy.wrap(newDeckResp.status).should('equal', 200)
 			cy.wrap(newDeckResp.statusText).should('equal', 'OK')
@@ -633,12 +636,9 @@ Cypress.Commands.addAll({
 
 		DeckHandler.drawCardsFromDeck(deckKey, drawCount, true)
 
-		cy.step('Verify error handling for drawing card from no deck')
+		cy.section('Verify error handling for drawing card from no deck')
 		cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
-			cy.wrap(drawDeckResp.status).should('equal', 404)
-			cy.wrap(drawDeckResp.statusText).should('equal', 'Not Found')
-			cy.wrap(drawDeckResp.body.success).should('equal', false)
-			cy.wrap(drawDeckResp.body.error).should('equal', errorExpected)
+			cy.commonNegativeApiVerifications(drawDeckResp, errorExpected)
 		})
 	},
 	/**
@@ -652,7 +652,7 @@ Cypress.Commands.addAll({
 		cy.fixture(decksNegFixturePath).then((decks) => {
 			DeckHandler.drawCardsFromDeck(decks[deckKey].id, cardsToDraw, true)
 
-			cy.step('Verify error handling for drawing 0 deck cards')
+			cy.section('Verify error handling for drawing 0 deck cards')
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				cy.wrap(drawDeckResp.status).should('equal', 200)
 				cy.wrap(drawDeckResp.statusText).should('equal', 'OK')
@@ -667,15 +667,16 @@ Cypress.Commands.addAll({
 	 * Command to verify error handling for drawing one-over-max deck cards.
 	 * @param {string} deckKey The valid key (deck name) defined from a decks file.
 	 * @param {number} maxCardsExpected The max cards expected in a deck.
+	 * This method will handle adding 1 extra card to draw.
 	 */
-	drawOneOverMaxCardsFromDeck(deckKey, maxCardsExpected) {
+	drawOneOverMaxFromDeck(deckKey, maxCardsExpected) {
 		const cardsToDraw = maxCardsExpected + 1
 		const errorExpected = `Not enough cards remaining to draw ${cardsToDraw} additional`
 
 		cy.fixture(decksNegFixturePath).then((decks) => {
 			DeckHandler.drawCardsFromDeck(decks[deckKey].id, cardsToDraw, true)
 
-			cy.step('Verify error handling for drawing one-over-max deck cards')
+			cy.section('Verify error handling for drawing one-over-max deck cards')
 			cy.get('@recentDrawDeckResp').then((drawDeckResp) => {
 				cy.wrap(drawDeckResp.status).should('equal', 200)
 				cy.wrap(drawDeckResp.statusText).should('equal', 'OK')
@@ -685,5 +686,59 @@ Cypress.Commands.addAll({
 				cy.wrap(drawDeckResp.body.error).should('equal', errorExpected)
 			})
 		})
+	},
+	/**
+	 * Command to verify error handling for not using the "cards" query parameter
+	 * when adding cards to a pile.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 * @param {string} pileName Name of the pile that's part of the given deck.
+	 */
+	addNoCardsToPile(deckKey, pileName) {
+		const errorExpected = 'You must specify cards to add to the pile.'
+
+		cy.fixture(decksNegFixturePath).then((decks) => {
+			const addPileCardsUrl = `api/deck/${decks[deckKey].id}/pile/${pileName}/add/`
+			const apiOptions = { url: addPileCardsUrl, failOnStatusCode: false }
+
+			cy.api(apiOptions).then((response) => {
+				cy.section('Verify error handling for adding no pile cards')
+				cy.commonNegativeApiVerifications(response, errorExpected)
+			})
+		})
+	},
+	/**
+	 * Command to verify error handling for one-over-max pile cards.
+	 * @param {string} deckKey The key (deck name) defined from a decks file.
+	 * @param {string} pileName Name of the pile that's part of the given deck.
+	 * @param {number} cardsToGet The invalid number of cards to draw.
+	 * @param {string} drawAct Set as either "bottom" to draw a card from the bottom
+	 * of the pile or "random" to draw a random card from a pile (optional).
+	 */
+	drawOneOverMaxFromPile(deckKey, pileName, cardsToGet, drawAct = '') {
+		const errorExpected = `Not enough cards remaining to draw ${cardsToGet} additional`
+
+		cy.fixture(decksPosFixturePath).then((decks) => {
+			const deckId = decks[deckKey].id
+
+			DeckHandler.drawCardsFromPile(deckId, pileName, cardsToGet, drawAct, true)
+
+			cy.section('Verify error handling for drawing one-over-max pile cards')
+			cy.get('@recentDrawPileResp').then((recentDrawPileResp) => {
+				cy.commonNegativeApiVerifications(recentDrawPileResp, errorExpected)
+			})
+		})
+	},
+	/**
+	 * Helper command to verify common negative Deck of Cards API response body key value pairs.
+	 * @param {object} response The response with these common key value pairs:
+	 * status: 404, statusText: "Not Found", body.success: false,
+	 * and body.error: errorExpected.
+	 * @param {string} errorExpected The expected error message in the response body.
+	 */
+	commonNegativeApiVerifications(response, errorExpected) {
+		cy.wrap(response.status).should('equal', 404)
+		cy.wrap(response.statusText).should('equal', 'Not Found')
+		cy.wrap(response.body.success).should('equal', false)
+		cy.wrap(response.body.error).should('equal', errorExpected)
 	}
 })

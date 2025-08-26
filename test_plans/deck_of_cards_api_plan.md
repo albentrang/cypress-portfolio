@@ -80,12 +80,18 @@ This document plans the positive and negative test cases when using the [Deck of
 
 ## Negative Tests
 
-### Making a New Deck
+### New Deck Error Handling
 
 - [x] Make a new deck with "deck_count" equal to 0
 - [x] Make a new deck with "deck_count" equal to -1
+- [x] Make a new shuffled deck with "deck_count" equal to 0
+- [x] Make a new shuffled deck with "deck_count" equal to -1
+- [x] Make a new deck with jokers with "deck_count" equal to 0
+- [x] Make a new deck with jokers with "deck_count" equal to -1
+- [x] Make a new shuffled deck with jokers with "deck_count" equal to 0
+- [x] Make a new shuffled deck with jokers with "deck_count" equal to -1
 
-### Drawing Cards from Decks
+### Drawing Cards from Decks Error Handling
 
 - [x] Draw a card from a deck that does not exist
 - [x] Draw 0 cards from a shuffled deck
@@ -97,20 +103,23 @@ This document plans the positive and negative test cases when using the [Deck of
 - [x] Draw 105 cards from two shuffled decks
 - [x] Draw 109 cards from two shuffled decks with jokers
 
-### Drawing Cards from Piles
+### Piles Error Handling
 
-- [ ] Draw 1 card from a pile that has no cards in it from a single shuffled deck
-- [ ] Draw 53 cards from a pile that only has 52 cards in it from a single shuffled deck
-- [ ] Draw 55 cards from a pile that only has 54 cards in it from a single shuffled deck with jokers
-
-### Adding No Specified Cards
-
-- [ ] Add no specified cards to a pile
-- [ ] Add no specified cards when returning drawn cards
-- [ ] Add no specified cards when returning drawn cards from a pile
+- [x] Add no specified cards to a pile
+- [x] Draw 1 card from a pile that has no cards in it from a single shuffled deck
+- [x] Draw 1 card from the bottom of a pile that has no cards in it from a single shuffled deck
+- [x] Draw 1 card at random from a pile that has no cards in it from a single shuffled deck
+- [x] Draw 53 cards from a pile that only has 52 cards in it from a single shuffled deck
+- [x] Draw 53 cards from the bottom of a pile that only has 52 cards in it from a single shuffled deck
+- [x] Draw 53 cards at random from a pile that only has 52 cards in it from a single shuffled deck
+- [x] Draw 55 cards from a pile that only has 54 cards in it from a single shuffled deck with jokers
+- [x] Draw 55 cards from the bottom of a pile that only has 54 cards in it from a single shuffled deck with jokers
+- [x] Draw 55 cards at random from a pile that only has 54 cards in it from a single shuffled deck with jokers
 
 ## Notes
 
+- Negative tests will not test error responses with code 500.
+- Shuffling a deck with the "remaining" query parameter set to anything other than "true" will execute a regular shuffle of the entire deck.
 - Setting the "count" query parameter to a negative number when drawing cards from a deck will draw the max number
   of cards minus the "count" parameter as long as the absolute value from the negative number is less than the number of cards remaining in the deck.
 - Partial decks cannot contain joker cards.

@@ -52,22 +52,22 @@ describe('Deck of Cards API Tests (Positive)', () => {
 		It is best used during headless testing because using this test case
 		while the browser runs the Cypress tests causes the tests to run
 		slower than usual. */
-		it.skip('Drawing cards from decks with data-driven testing', () => {
-			const fixturePath = 'deck_of_cards_api/draw_cards_from_deck_pos.json'
+		// it.skip('Drawing cards from decks with data-driven testing', () => {
+		// 	const fixturePath = 'deck_of_cards_api/draw_cards_from_deck_pos.json'
 
-			cy.fixture(fixturePath).then((drawDeckDataArray) => {
-				cy.wrap(drawDeckDataArray).each((drawDeckDataObj) => {
-					let deckKey = shuffledDeckKeys[drawDeckDataObj.deckKeyCode]
-					let cardsPerDraw = drawDeckDataObj.cardsPerDraw
-					let totalDraws = drawDeckDataObj.totalDraws
+		// 	cy.fixture(fixturePath).then((drawDeckDataArray) => {
+		// 		cy.wrap(drawDeckDataArray).each((drawDeckDataObj) => {
+		// 			let deckKey = shuffledDeckKeys[drawDeckDataObj.deckKeyCode]
+		// 			let cardsPerDraw = drawDeckDataObj.cardsPerDraw
+		// 			let totalDraws = drawDeckDataObj.totalDraws
 
-					cy.verifyAfterDrawCardsFromDeck(deckKey, cardsPerDraw, totalDraws)
+		// 			cy.verifyAfterDrawCardsFromDeck(deckKey, cardsPerDraw, totalDraws)
 
-					// Shuffle the deck after drawing cards.
-					cy.shuffleDeck(deckKey)
-				})
-			})
-		})
+		// 			// Shuffle the deck after drawing cards.
+		// 			cy.shuffleDeck(deckKey)
+		// 		})
+		// 	})
+		// })
 
 		it('Draw 1 card at a time from a shuffled deck 10 times', () => {
 			const deckKey = shuffledDeckKeys.SDS

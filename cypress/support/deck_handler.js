@@ -93,14 +93,16 @@ class DeckHandler {
 	 */
 	shuffleDeck(deckId, remaining = ``) {
 		let shuffleDeckUrl = `api/deck/${deckId}/shuffle/`
+		let stepMessage = `Shuffle deck ID ${deckId}`
 
-		/* The string for "remaining" can be omitted the query parameter
-		or set as any string for testing positive and negative scenarios. */
+		/* Setting the string for "remaining" to be empty omits the
+		query paramter "remaining" in the URL. */
 		if (remaining) {
 			shuffleDeckUrl += `?remaining=${remaining}`
+			stepMessage += ` with 'remaining' set to ${remaining}`
 		}
 
-		cy.step(`Shuffle deck ID ${deckId} with 'remaining' set to ${remaining}`)
+		cy.step(stepMessage)
 		cy.api(shuffleDeckUrl).as('recentShuffleDeckResp')
 	}
 
@@ -150,9 +152,11 @@ class DeckHandler {
 	 * a string of comma-separated card codes or some number of cards using a number.
 	 * @param {string} [drawAct] Set as either "bottom" to draw a card from the bottom
 	 * of the pile or "random" to draw a random card from a pile (optional).
+	 * @param {boolean} [isNeg] The boolean to indicate that the running test case is negative.
 	 */
-	drawCardsFromPile(deckId, pileName, cardsToGet, drawAct = '') {
+	drawCardsFromPile(deckId, pileName, cardsToGet, drawAct = '', isNeg) {
 		let drawPileCardUrl = `api/deck/${deckId}/pile/${pileName}/draw/`
+		let apiOptions
 
 		if (drawAct) {
 			drawPileCardUrl += `${drawAct}/`
@@ -167,8 +171,14 @@ class DeckHandler {
 				break
 		}
 
+		apiOptions = { url: drawPileCardUrl }
+
+		if (isNeg) {
+			apiOptions.failOnStatusCode = false
+		}
+
 		cy.step(`Draw card(s) from deck id ${deckId} in pile ${pileName}`)
-		cy.api(drawPileCardUrl).as('recentDrawPileResp')
+		cy.api(apiOptions).as('recentDrawPileResp')
 	}
 
 	/**
