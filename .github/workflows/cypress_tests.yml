@@ -1,10 +1,10 @@
 # Workflow for using Cypress tests and generating reports to GitHub Pages.
 name: Cypress Tests Workflow
 
+# Runs on merges targeting the default branch.
 on:
-  # Runs on pull requests targeting the default branch.
-  pull_request:
-    branches: [ "main" ]
+  push:
+    branches: [ main ]
 
   # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
@@ -22,29 +22,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Initialize project
-  initialize-project:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Initialize run
-      - run: npm init
-
   # Cypress tests
   cypress-run:
-    needs: initialize-project
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      # Install npm dependencies, cache them correctly, and run all Cypress tests.
-      - name: Cypress run
+      - name: Cypress build
         uses: cypress-io/github-action@v6
         with:
           build: npm run build
-          # Test the Deck of Cards API only for now.
+      - name: Cypress run deck tests
+        uses: cypress-io/github-action@v6
+        with:
           command: npm run deck:run
+      - name: Save HTML report folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          if-no-files-found: error
+          path: ./cypress/reports/html/
 
   # Build page
   build-page:
@@ -53,6 +50,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Download HTML report folder
+        uses: actions/download-artifact@v4
+        with:
+          name: reports
+          path: ./cypress/reports/html/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
