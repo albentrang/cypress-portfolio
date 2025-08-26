@@ -31,10 +31,12 @@ jobs:
       - name: Cypress build
         uses: cypress-io/github-action@v6
         with:
+          working-directory: cypress-portfolio
           build: npm run build
       - name: Cypress run deck tests
         uses: cypress-io/github-action@v6
         with:
+          working-directory: cypress-portfolio
           command: npm run deck:run
       - name: Save HTML report folder
         uses: actions/upload-artifact@v4
