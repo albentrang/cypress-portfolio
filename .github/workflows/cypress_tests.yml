@@ -22,8 +22,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Cypress tests
-  cypress-run:
+  # Cypress build
+  cypress-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,19 +31,37 @@ jobs:
       - name: Cypress build
         uses: cypress-io/github-action@v6
         with:
-          working-directory: cypress-portfolio
+          runTests: false
           build: npm run build
+      - name: Save build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          if-no-files-found: error
+          path: build
+  
+  # Cypress run
+  cypress-run:
+    needs: cypress-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download build folder
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: build
       - name: Cypress run deck tests
         uses: cypress-io/github-action@v6
         with:
-          working-directory: cypress-portfolio
           command: npm run deck:run
       - name: Save HTML report folder
         uses: actions/upload-artifact@v4
         with:
           name: reports
           if-no-files-found: error
-          path: ./cypress/reports/html/
+          path: cypress/reports/html
 
   # Build page
   build-page:
@@ -56,7 +74,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: reports
-          path: ./cypress/reports/html/
+          path: cypress/reports/html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
