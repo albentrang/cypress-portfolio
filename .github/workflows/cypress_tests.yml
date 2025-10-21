@@ -50,10 +50,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: deck_report
+          path: build/deck
       - name: Setup page
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./build/deck/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
