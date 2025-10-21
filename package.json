@@ -8,7 +8,7 @@
 		"cy:open": "cypress open",
 		"cy:run": "cypress run",
 		"deck:open": "cypress open --config baseUrl=https://www.deckofcardsapi.com/",
-		"deck:run": "cypress run --config baseUrl=https://www.deckofcardsapi.com/ --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\""
+		"deck:run": "cypress run --config baseUrl=https://www.deckofcardsapi.com/ --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\" --reporter-options reportDir=\"cypress/reports/html/deck_of_cards_api\",reportFilename=\"deck_report\""
 	},
 	"repository": {
 		"type": "git",

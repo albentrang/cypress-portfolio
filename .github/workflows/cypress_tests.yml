@@ -4,7 +4,7 @@ name: Cypress Tests Workflow
 # Runs on merges targeting the default branch.
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
@@ -18,12 +18,12 @@ permissions:
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, don't cancel in-progress runs to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: 'pages'
   cancel-in-progress: false
 
 jobs:
-  # Cypress run
-  cypress-run:
+  # Run Cypress tests for Deck of Cards API
+  cypress-run-deck:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,18 +31,17 @@ jobs:
       - name: Cypress run deck tests
         uses: cypress-io/github-action@v6
         with:
-          # This will generate an HTML report when it's done
-          command: npm run deck:run
+          command: npm run deck:run # This will generate an HTML report when it's done
       - name: Save HTML report folder
         uses: actions/upload-artifact@v4
         with:
-          name: reports
+          name: deck_report
           if-no-files-found: error
-          path: cypress/reports/html
+          path: cypress/reports/html/deck_of_cards_api
 
-  # Build page
-  build-page:
-    needs: cypress-run
+  # Build the page made of the Deck of Cards API test report
+  build-deck-report-page:
+    needs: cypress-run-deck
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -50,26 +49,32 @@ jobs:
       - name: Download HTML report folder
         uses: actions/download-artifact@v4
         with:
-          name: reports
-          path: cypress/reports/html
-      - name: Setup Pages
+          name: deck_report
+          path: cypress/reports/html/deck_of_cards_api
+      - name: Setup page
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./cypress/reports/html/
-          destination: ./_site
+          source: ./cypress/reports/html/deck_of_cards_api/
+          destination: ./build/deck-report-page
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          name: deck-report-page-artifact
+          path: build/deck-report-page
 
   # Deploy page
-  deploy-page:
-    needs: build-page
+  deploy-deck-report-page:
+    needs: build-deck-report-page
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment-deck-report-page.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
-        id: deployment
+        id: deployment-deck-report-page
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: deck-report-page-artifact
+          path: /deck-report

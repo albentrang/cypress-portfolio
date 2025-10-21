@@ -1,23 +1,23 @@
 {
   "singleDeckShuffled": {
-    "id": "4j0xfpxhvblo",
+    "id": "0",
     "shuffled": true,
     "deckCount": 1,
     "jokersEnabled": false
   },
   "singleDeckShuffledWithJokers": {
-    "id": "73zqttnslwbw",
+    "id": "0",
     "shuffled": true,
     "deckCount": 1,
     "jokersEnabled": true
   },
   "doubleDeckShuffled": {
-    "id": "6w230lwov9n2",
+    "id": "0",
     "shuffled": true,
     "deckCount": 2
   },
   "doubleDeckShuffledWithJokers": {
-    "id": "z7wyirvzmd4j",
+    "id": "0",
     "shuffled": true,
     "deckCount": 2,
     "jokersEnabled": true
