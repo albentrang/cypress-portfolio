@@ -59,8 +59,6 @@ jobs:
           source: ./build/deck/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-        with:
-          name: deck-report-page-artifact
 
   # Deploy page
   deploy-deck-report-page:
@@ -73,5 +71,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment_deck_report_page
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: deck-report-page-artifact
