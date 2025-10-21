@@ -10,7 +10,7 @@ Custom website showcasing various elements and interactions that will be tested.
 
 Automated REST API tests on the [Deck of Cards API](https://www.deckofcardsapi.com/).
 
-- View the Mochawesome report that shows the list of passed test cases by clicking this [GitHub Pages link](https://albentrang.github.io/cypress-portfolio/deck-report).
+- View the Mochawesome report that shows the list of passed test cases by clicking this [GitHub Pages link](https://albentrang.github.io/cypress-portfolio/).
 
 ## Test Plans
 

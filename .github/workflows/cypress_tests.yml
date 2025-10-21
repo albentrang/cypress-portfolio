@@ -62,7 +62,6 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           name: deck-report-page-artifact
-          path: _site/
 
   # Deploy page
   deploy-deck-report-page:
@@ -70,10 +69,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment-deck-report-page.outputs.page_url }}
+      url: ${{ steps.deployment_deck_report_page.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
-        id: deployment-deck-report-page
+        id: deployment_deck_report_page
         uses: actions/deploy-pages@v4
         with:
           artifact_name: deck-report-page-artifact
