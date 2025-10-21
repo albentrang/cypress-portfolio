@@ -57,12 +57,12 @@ jobs:
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./cypress/reports/html/deck_of_cards_api/
-          destination: ./build/deck-report-page
+          destination: ./_site
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           name: deck-report-page-artifact
-          path: build/deck-report-page
+          path: _site/
 
   # Deploy page
   deploy-deck-report-page:
@@ -77,4 +77,3 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           artifact_name: deck-report-page-artifact
-          path: /deck-report
