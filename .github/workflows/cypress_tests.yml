@@ -57,8 +57,12 @@ jobs:
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./build/deck/
+          destination: ./deck_report_page
       - name: Upload HTML report artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          name: deck_report_artifact
+          path: ./deck_report_page
 
   # Deploy page
   deploy-deck-report-page:
@@ -66,8 +70,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}deck-report
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: deck_report_artifact
