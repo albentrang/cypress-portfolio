@@ -6,11 +6,13 @@ Welcome to my portfolio that showcases personal Cypress projects. Please feel fr
 
 Custom website showcasing various elements and interactions that will be tested. The work will be done in the custom_website branch of this repository.
 
+- The custom website will be hosted on [GitHub Pages](https://albentrang.github.io/cypress-portfolio/), and it will contain the test results for the finished projects.
+
 ## Finished Projects
 
 Automated REST API tests on the [Deck of Cards API](https://www.deckofcardsapi.com/).
 
-- View the Mochawesome report that shows the list of passed test cases by clicking this [GitHub Pages link](https://albentrang.github.io/cypress-portfolio/deck-report).
+- View the Mochawesome report that shows the list of passing test cases by clicking this [GitHub Pages link](https://albentrang.github.io/cypress-portfolio/deck-report.html).
 
 ## Test Plans
 

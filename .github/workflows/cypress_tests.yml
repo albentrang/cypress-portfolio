@@ -26,21 +26,24 @@ jobs:
   cypress-run-deck:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout # Access GitHub repository
+      # Access GitHub repository to access its contents
+      - name: Checkout
         uses: actions/checkout@v4
       - name: Cypress run deck tests
         uses: cypress-io/github-action@v6
         with:
-          command: npm run deck:run # This generate's the test results as index.html
+          # Run tests and generate test results in cypress/reports/html/deck_of_cards_api
+          command: npm run deck:run
       - name: Save HTML report folder
         uses: actions/upload-artifact@v4
         with:
-          name: deck_report # Name artifact (folder) has deck_report
-          if-no-files-found: error
+          # Name artifact (file in cypress/reports/html/deck_of_cards_api) as deck_report
+          name: deck_report
           path: cypress/reports/html/deck_of_cards_api
+          if-no-files-found: error
 
   # Build the page made of the Deck of Cards API test report
-  build-deck-report-page:
+  build-pages:
     needs: cypress-run-deck
     runs-on: ubuntu-latest
     steps:
@@ -49,31 +52,27 @@ jobs:
       - name: Download HTML report artifact
         uses: actions/download-artifact@v4
         with:
+          # Put Deck of Cards API test report in github_pages
           name: deck_report
-          path: build/deck # Put downloaded artifact in build/deck
+          path: github_pages
       - name: Setup for GitHub Pages
         uses: actions/configure-pages@v5
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./build/deck/
-          destination: ./deck_report_page
+          # Use the HTML files to build the GitHub Pages website
+          source: ./github_pages/
       - name: Upload HTML report artifact
         uses: actions/upload-pages-artifact@v3
-        with:
-          name: deck_report_artifact
-          path: ./deck_report_page
 
   # Deploy page
-  deploy-deck-report-page:
-    needs: build-deck-report-page
+  deploy-pages:
+    needs: build-pages
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}deck-report
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          artifact_name: deck_report_artifact
