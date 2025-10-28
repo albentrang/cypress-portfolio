@@ -42,18 +42,48 @@ jobs:
           path: cypress/reports/html/deck_of_cards_api
           if-no-files-found: error
 
+  # Run Cypress tests for custom website
+  cypress-run-custom:
+    runs-on: ubuntu-latest
+    steps:
+      # Access GitHub repository to access its contents
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run custom website tests
+        uses: cypress-io/github-action@v6
+        with:
+          # Start a local web server.
+          start: npm start
+          # Wait for the server to be ready before starting tests.
+          wait-on: 'http://localhost:3000'
+          # Run tests and generate test results in cypress/reports/html/custom_website
+          command: npm run deck:run
+      - name: Save HTML report folder
+        uses: actions/upload-artifact@v4
+        with:
+          # Name artifact (file in cypress/reports/html/custom_website) as custom_report
+          name: custom_report
+          path: cypress/reports/html/custom_website
+          if-no-files-found: error
+
   # Build the page made of the Deck of Cards API test report
   build-pages:
-    needs: cypress-run-deck
+    needs: [cypress-run-deck, cypress-run-custom]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Download HTML report artifact
+      - name: Download deck API report artifact
         uses: actions/download-artifact@v4
         with:
           # Put Deck of Cards API test report in github_pages
           name: deck_report
+          path: github_pages
+      - name: Download custom website report artifact
+        uses: actions/download-artifact@v4
+        with:
+          # Put custom website test report in github_pages
+          name: custom_report
           path: github_pages
       - name: Setup for GitHub Pages
         uses: actions/configure-pages@v5

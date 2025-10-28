@@ -2,14 +2,14 @@
 
 ## Test Objective
 
-This document plans the positive and negative test cases when using the [Deck of Cards API](https://www.deckofcardsapi.com/). Each test case uses REST API requests and checks their responses for using different functions that are listed in the Deck of Cards API website.
+This document plans the positive and negative test cases when using the [Deck of Cards API](https://www.deckofcardsapi.com/) by Chase Roberts. Each test case uses REST API requests and checks their responses for using different functions that are listed in the Deck of Cards API website.
 
 ### Test Approach
 
 - Testing will be automated end-to-end REST API black-box testing.
 - Every test, both positive and negative, needs to pass.
 - Tests are done using JavaScript and Cypress.
-- Deliverable will be a generated report using Mocha.
+- Deliverable will be a generated report using Mochawesome.
 
 ## Positive Tests
 

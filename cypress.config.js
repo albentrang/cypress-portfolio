@@ -1,4 +1,12 @@
 const { defineConfig } = require('cypress')
+const cypressOnFix = require('cypress-on-fix')
+const createBundler = require('@bahmutov/cypress-esbuild-preprocessor')
+const {
+	addCucumberPreprocessorPlugin
+} = require('@badeball/cypress-cucumber-preprocessor')
+const {
+	createEsbuildPlugin
+} = require('@badeball/cypress-cucumber-preprocessor/esbuild')
 
 module.exports = defineConfig({
 	reporter: 'cypress-mochawesome-reporter',
@@ -8,13 +16,22 @@ module.exports = defineConfig({
 		inlineAssets: true
 	},
 	e2e: {
-		setupNodeEvents(on, config) {
-			require('cypress-mochawesome-reporter/plugin')(on)
+		async setupNodeEvents(on, config) {
 			config.defaultCommandTimeout = 2000
+			on = cypressOnFix(on)
+
+			require('cypress-mochawesome-reporter/plugin')(on)
+
+			await addCucumberPreprocessorPlugin(on, config)
+			on(
+				'file:preprocessor',
+				createBundler({
+					plugins: [createEsbuildPlugin(config)]
+				})
+			)
+
 			return config
 		},
-		baseUrl: 'https://example.cypress.io/',
-		defaultBrowser: 'firefox',
-		watchForFileChanges: false
+		defaultBrowser: 'firefox'
 	}
 })
