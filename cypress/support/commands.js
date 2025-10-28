@@ -3,6 +3,15 @@ import DeckHandler from './deck_handler'
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
 
+// General custom commands for different projects.
+/**
+ * Get an element using its data-cy attribute.
+ * @param {string} cyVal The value of the data-cy attribute.
+ */
+Cypress.Commands.add('getByCy', (cyVal, args = {}) => {
+	return cy.get(`[data-cy="${cyVal}"]`, args)
+})
+
 // Custom commands for the Deck of Cards API project.
 Cypress.Commands.addAll({
 	// The command for the beforeEach() method for checking if decks are initialized.

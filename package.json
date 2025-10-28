@@ -1,14 +1,17 @@
 {
 	"name": "cypress-portfolio",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Alben Trang's portfolio showcasing Cypress projects.",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "node server.js",
 		"cy:open": "cypress open",
 		"cy:run": "cypress run",
 		"deck:open": "cypress open --config baseUrl=https://www.deckofcardsapi.com/",
-		"deck:run": "cypress run --config baseUrl=https://www.deckofcardsapi.com/ --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\" --reporter-options reportDir=\"cypress/reports/html/deck_of_cards_api\",reportFilename=\"deck-report\""
+		"deck:run": "cypress run --config baseUrl=https://www.deckofcardsapi.com/ --spec \"cypress/e2e/api/positive_path/deck_of_cards_api.cy.js,cypress/e2e/api/negative_path/deck_of_cards_api.cy.js\" --reporter-options reportDir=\"cypress/reports/html/deck_of_cards_api\",reportFilename=\"deck-report\"",
+		"custom:open": "cypress open --config baseUrl=http://localhost:3000/,specPattern=\"**/*.feature\"",
+		"custom:run": "cypress run --config baseUrl=http://localhost:3000/,specPattern=\"**/*.feature\" --reporter-options reportDir=\"cypress/reports/html/custom_website\",reportFilename=\"custom-report\""
 	},
 	"repository": {
 		"type": "git",
@@ -23,18 +26,25 @@
 	},
 	"homepage": "https://github.com/albentrang/cypress-portfolio#readme",
 	"devDependencies": {
+		"@badeball/cypress-cucumber-preprocessor": "^23.2.1",
+		"@bahmutov/cypress-esbuild-preprocessor": "^2.2.6",
 		"@eslint/js": "^9.24.0",
 		"cypress": "^14.2.1",
 		"cypress-mochawesome-reporter": "^3.8.2",
+		"cypress-on-fix": "^1.1.0",
 		"eslint": "^9.24.0",
 		"eslint-config-prettier": "^10.1.1",
 		"eslint-plugin-cypress": "^4.2.1",
 		"eslint-plugin-prettier": "^5.2.6",
+		"express": "^5.1.0",
 		"globals": "^16.0.0",
 		"prettier": "3.5.3"
 	},
 	"dependencies": {
 		"cypress-plugin-api": "^2.11.2",
 		"cypress-plugin-steps": "^1.2.0"
+	},
+	"cypress-cucumber-preprocessor": {
+		"nonGlobalStepDefinitions": false
 	}
 }
