@@ -57,7 +57,7 @@ jobs:
           # Wait for the server to be ready before starting tests.
           wait-on: 'http://localhost:3000'
           # Run tests and generate test results in cypress/reports/html/custom_website
-          command: npm run deck:run
+          command: npm run custom:run
       - name: Save HTML report folder
         uses: actions/upload-artifact@v4
         with:
