@@ -15,7 +15,7 @@ Feature: Calculator
 			| calc-nav-calc-link | Calculator                                              |
 			| calc-header        | Calculator                                              |
 			| calc-tagline       | A simple calculator app to test simple math operations! |
-			| calc-footer-text   | © Alben Trang 2025                                      |
+			| calc-footer-text   | © 2025 by Alben Trang                                   |
 
 	Scenario Outline: Check links
 		When I see clickable text with the data-cy attribute "<dataCy>"

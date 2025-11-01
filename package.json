@@ -38,7 +38,8 @@
 		"eslint-plugin-prettier": "^5.2.6",
 		"express": "^5.1.0",
 		"globals": "^16.0.0",
-		"prettier": "3.5.3"
+		"prettier": "3.5.3",
+		"typescript": "^5.9.3"
 	},
 	"dependencies": {
 		"cypress-plugin-api": "^2.11.2",

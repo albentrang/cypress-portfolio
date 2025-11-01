@@ -5,6 +5,8 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Homepage</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/homepage.css">
 </head>
 
 <body>
@@ -24,36 +26,47 @@
 	</header>
 
 	<main>
-		<h2 data-cy="test-pages-header">Test Pages</h2>
-		<p data-cy="test-pages-desc">
-			Explore different test pages to validate various features.
-		</p>
-		<a href="calculator.html" data-cy="test-pages-calc-link">
-			<button type="button" data-cy="test-pages-calc-btn">Calculator</button>
-		</a>
-		<h2 data-cy="cy-test-results-header">Cypress Test Results</h2>
-		<p data-cy="cy-test-results-desc">
-			These Mochawesome test results are generated right before this website's deployment.
-		</p>
-		<ul>
-			<li>
-				<a href="custom-report.html" data-cy="custom-web-results-link">Custom Website Test Results</a>
-			</li>
-			<li>
-				<a href="deck-report.html" data-cy="deck-api-results-link">Deck of Cards API Test Results</a>
-			</li>
-		</ul>
+		<section>
+			<h2 data-cy="test-pages-header">Test Pages</h2>
+			<p data-cy="test-pages-desc">
+				Explore different test pages to validate various features.
+			</p>
+			<a href="calculator.html" data-cy="test-pages-calc-link">
+				<button type="button" data-cy="test-pages-calc-btn">Calculator</button>
+			</a>
+		</section>
+		<section>
+			<h2 data-cy="cy-test-results-header">Cypress Test Results</h2>
+			<p data-cy="cy-test-results-desc">
+				These Mochawesome test results are generated right before this website's deployment.
+			</p>
+			<ul class="test-results">
+				<li>
+					<a href="custom-report.html" data-cy="custom-web-results-link">Custom Website Test Results</a>
+				</li>
+				<li>
+					<a href="deck-report.html" data-cy="deck-api-results-link">Deck of Cards API Test Results</a>
+				</li>
+			</ul>
+		</section>
 	</main>
 
 	<footer>
-		<p data-cy="home-footer-text">© Alben Trang 2025</p>
-		<!-- ToDo: Replace the words LinkedIn and GitHub with their respective icons. -->
-		<a href="https://www.linkedin.com/in/albentrang/" data-cy="home-footer-linkedin-link">
-			<button type="button" data-cy="home-footer-linkedin-btn">LinkedIn</button>
-		</a>
-		<a href="https://github.com/albentrang/cypress-portfolio" data-cy="home-footer-github-link">
-			<button type="button" data-cy="home-footer-github-btn">GitHub</button>
-		</a>
+		<p data-cy="home-footer-text">© 2025 by Alben Trang</p>
+		<ul class="socials">
+			<li>
+				<a href="https://www.linkedin.com/in/albentrang/" id="linkedin-link" data-cy="home-footer-linkedin-link">
+					<img src="img/icons/LI-In-Bug-57x48.png" srcset="img/icons/LI-In-Bug-127x108.png 2x"
+						alt="LinkedIn icon that links to my LinkedIn profile" width="57" height="48" />
+				</a>
+			</li>
+			<li>
+				<a href="https://github.com/albentrang/cypress-portfolio" id="github-link" data-cy="home-footer-github-link">
+					<img src="img/icons/github-mark-48x48.png" srcset="img/icons/github-mark-108x108.png 2x"
+						alt="GitHub icon that links to this website's GitHub repository" width="48" height="48" />
+				</a>
+			</li>
+		</ul>
 	</footer>
 </body>
 

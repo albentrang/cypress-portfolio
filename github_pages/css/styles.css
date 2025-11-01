@@ -1,0 +1,62 @@
+/* Box-Model Fix */
+html {
+	box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+}
+
+/* Body */
+body {
+	font-family: Arial, sans-serif;
+	background-color: lightyellow;
+}
+
+/* Top Header Elements */
+nav {
+	border-color: black;
+	border-style: groove;
+	background-color: lightsalmon;
+}
+nav a {
+	text-decoration: none;
+	color: black;
+	padding: 14px 20px;
+	display: inline-block;
+}
+nav a:hover {
+	background-color: darksalmon;
+}
+hgroup {
+	text-align: center;
+	margin-bottom: 60px;
+}
+
+/* Main Content */
+main {
+	margin-left: 20%;
+	margin-right: 20%;
+}
+
+/* Footer */
+footer {
+	background-color: powderblue;
+	padding: 20px 0;
+	text-align: center;
+	border-top: 1px solid paleturquoise;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+}
+.socials {
+	list-style-type: none;
+	padding: 0;
+}
+.socials li {
+	display: inline-block;
+	margin: 0 10px;
+	vertical-align: middle;
+}

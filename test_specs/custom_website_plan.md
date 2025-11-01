@@ -9,6 +9,7 @@ This document plans the positive and negative test cases when for my [custom web
 - Every test, both positive and negative, needs to pass.
 - Tests are done using JavaScript, Cypress, and Cucumber.
 - Deliverable will be a generated report using Mochawesome.
+- All data-cy attributes in the HTML elements must be unique across all HTML files.
 - Using the Cucumber framework, the feature files will store all the specific test cases. Thus, the test cases listed in this test plan will contain general features (web pages) to test.
 
 ## Test Cases
@@ -18,7 +19,7 @@ This document plans the positive and negative test cases when for my [custom web
 - [ ] The navigation bar at the top of the website is consistent across all web pages
 - [ ] The navigation bar contains buttons for navigating the different pages of the website
 - [ ] The footer of the web pages all have "© Alben Trang 2025"
-- [ ] The footer contains buttons that link to my LinkedIn profile and the GitHub repository used to make my custom website
+- [ ] The footer contains icons that link to my LinkedIn profile and the GitHub repository used to make my custom website
 
 ### Homepage
 
