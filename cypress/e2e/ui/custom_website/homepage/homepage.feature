@@ -22,7 +22,7 @@ Feature: Homepage
       | cy-test-results-desc    | These Mochawesome test results are generated right before this website's deployment. |
       | custom-web-results-link | Custom Website Test Results                                                          |
       | deck-api-results-link   | Deck of Cards API Test Results                                                       |
-      | home-footer-text        | © Alben Trang 2025                                                                   |
+      | home-footer-text        | © 2025 by Alben Trang                                                                |
 
   Scenario Outline: Check links
     When I see clickable text with the data-cy attribute "<dataCy>"

@@ -5,6 +5,8 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Calculator</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<script src="scripts/dist/calculator.js" defer></script>
 </head>
 
 <body>
@@ -24,14 +26,21 @@
 	</main>
 
 	<footer>
-		<p data-cy="calc-footer-text">© Alben Trang 2025</p>
-		<!-- ToDo: Replace the words LinkedIn and GitHub with their respective icons. -->
-		<a href="https://www.linkedin.com/in/albentrang/" data-cy="calc-footer-linkedin-link">
-			<button type="button" data-cy="calc-footer-linkedin-btn">LinkedIn</button>
-		</a>
-		<a href="https://github.com/albentrang/cypress-portfolio" data-cy="calc-footer-github-link">
-			<button type="button" data-cy="calc-footer-github-btn">GitHub</button>
-		</a>
+		<p data-cy="calc-footer-text">© 2025 by Alben Trang</p>
+		<ul class="socials">
+			<li>
+				<a href="https://www.linkedin.com/in/albentrang/" id="linkedin-link" data-cy="calc-footer-linkedin-link">
+					<img src="img/icons/LI-In-Bug-57x48.png" srcset="img/icons/LI-In-Bug-127x108.png 2x"
+						alt="LinkedIn icon that links to my LinkedIn profile" width="57" height="48" />
+				</a>
+			</li>
+			<li>
+				<a href="https://github.com/albentrang/cypress-portfolio" id="github-link" data-cy="calc-footer-github-link">
+					<img src="img/icons/github-mark-48x48.png" srcset="img/icons/github-mark-108x108.png 2x"
+						alt="GitHub icon that links to this website's GitHub repository" width="48" height="48" />
+				</a>
+			</li>
+		</ul>
 	</footer>
 </body>
 
