@@ -29,10 +29,21 @@ Feature: Homepage
     Then I should expect the link to reference the correct URL "<url>" of the custom website or an external website
     Examples:
       | dataCy                    | url                                             |
-      | home-nav-home-link        | /                                               |
+      | home-nav-home-link        | index.html                                      |
       | home-nav-calc-link        | calculator.html                                 |
       | test-pages-calc-link      | calculator.html                                 |
       | custom-web-results-link   | custom-report.html                              |
       | deck-api-results-link     | deck-report.html                                |
       | home-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
       | home-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
+
+  Scenario Outline: Check element hover effects
+    When I hover over the element with the data-cy attribute "<dataCy>"
+    Then I should see the element's background color change to these RGB values: <r>, <g>, <b>
+    Examples:
+      | dataCy                  | r   | g   | b   |
+      | home-nav-home-link      | 233 | 150 | 122 |
+      | home-nav-calc-link      | 233 | 150 | 122 |
+      | test-pages-calc-btn     | 147 | 112 | 219 |
+      | custom-web-results-link | 0   | 250 | 154 |
+      | deck-api-results-link   | 0   | 250 | 154 |

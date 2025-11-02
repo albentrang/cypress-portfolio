@@ -18,7 +18,8 @@ This document plans the positive and negative test cases when for my [custom web
 
 - [ ] The navigation bar at the top of the website is consistent across all web pages
 - [ ] The navigation bar contains buttons for navigating the different pages of the website
-- [ ] The footer of the web pages all have "© Alben Trang 2025"
+- [ ] Hovering over an element with a function or link using the mouse will cause the element to change its background color
+- [ ] The footer of the web pages all have "© 2025 by Alben Trang"
 - [ ] The footer contains icons that link to my LinkedIn profile and the GitHub repository used to make my custom website
 
 ### Homepage
