@@ -34,3 +34,20 @@ Then(
 		cy.get('@clickableText').should('have.attr', 'href', url)
 	}
 )
+
+When(
+	'I hover over the element with the data-cy attribute {string}',
+	(dataCy) => {
+		cy.getByCy(dataCy).as('anchorElement')
+	}
+)
+
+Then(
+	"I should see the element's background color change to these RGB values: {int}, {int}, {int}",
+	(r, g, b) => {
+		const hoverColor = `rgb(${r}, ${g}, ${b})`
+
+		cy.get('@anchorElement').realHover()
+		cy.get('@anchorElement').should('have.css', 'background-color', hoverColor)
+	}
+)

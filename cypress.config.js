@@ -32,6 +32,6 @@ module.exports = defineConfig({
 
 			return config
 		},
-		defaultBrowser: 'firefox'
+		defaultBrowser: 'electron'
 	}
 })

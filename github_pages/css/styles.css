@@ -1,3 +1,5 @@
+/* General Styles for all Pages */
+
 /* Box-Model Fix */
 html {
 	box-sizing: border-box;
@@ -10,34 +12,40 @@ html {
 
 /* Body */
 body {
-	font-family: Arial, sans-serif;
 	background-color: lightyellow;
+	font-family: Arial, sans-serif;
 }
 
 /* Top Header Elements */
 nav {
+	background-color: lightsalmon;
 	border-color: black;
 	border-style: groove;
-	background-color: lightsalmon;
 }
 nav a {
-	text-decoration: none;
 	color: black;
-	padding: 14px 20px;
 	display: inline-block;
+	padding-top: 14px;
+	padding-bottom: 14px;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-decoration: none;
 }
 nav a:hover {
 	background-color: darksalmon;
+	font-weight: bold;
 }
 hgroup {
-	text-align: center;
 	margin-bottom: 60px;
+	text-align: center;
 }
 
 /* Main Content */
 main {
 	margin-left: 20%;
 	margin-right: 20%;
+	/* Leave some space for the footer if it overlaps the main content */
+	padding-bottom: 15%;
 }
 
 /* Footer */
@@ -46,9 +54,11 @@ footer {
 	padding: 20px 0;
 	text-align: center;
 	border-top: 1px solid paleturquoise;
-	position: fixed;
-	left: 0;
+
+	/* Make footer stick to bottom */
 	bottom: 0;
+	left: 0;
+	position: fixed;
 	width: 100%;
 }
 .socials {

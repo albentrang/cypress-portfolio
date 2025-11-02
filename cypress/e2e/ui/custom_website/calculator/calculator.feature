@@ -22,7 +22,15 @@ Feature: Calculator
 		Then I should expect the link to reference the correct URL "<url>" of the custom website or an external website
 		Examples:
 			| dataCy                    | url                                             |
-			| calc-nav-home-link        | /                                               |
+			| calc-nav-home-link        | index.html                                      |
 			| calc-nav-calc-link        | calculator.html                                 |
 			| calc-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
 			| calc-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
+
+	Scenario Outline: Check element hover effects
+		When I hover over the element with the data-cy attribute "<dataCy>"
+		Then I should see the element's background color change to these RGB values: <r>, <g>, <b>
+		Examples:
+			| dataCy             | r   | g   | b   |
+			| calc-nav-home-link | 233 | 150 | 122 |
+			| calc-nav-calc-link | 233 | 150 | 122 |
