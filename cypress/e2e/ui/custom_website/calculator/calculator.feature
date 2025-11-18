@@ -15,7 +15,10 @@ Feature: Calculator
 			| calc-nav-calc-link | Calculator                                              |
 			| calc-header        | Calculator                                              |
 			| calc-tagline       | A simple calculator app to test simple math operations! |
-			| calc-footer-text   | © 2025 by Alben Trang                                   |
+
+	Scenario: Check footer text
+		When I see the footer element where the footer text has the data-cy attribute "calc-footer-text"
+		Then I should see the expected text "© 2025 by Alben Trang" and the email address "albentrang@gmail.com"
 
 	Scenario Outline: Check links
 		When I see clickable text with the data-cy attribute "<dataCy>"
@@ -34,3 +37,27 @@ Feature: Calculator
 			| dataCy             | r   | g   | b   |
 			| calc-nav-home-link | 233 | 150 | 122 |
 			| calc-nav-calc-link | 233 | 150 | 122 |
+			| btn-clear          | 0   | 0   | 0   |
+			| btn-clear-entry    | 0   | 0   | 0   |
+			| btn-modulo         | 0   | 0   | 0   |
+			| btn-divide         | 0   | 0   | 0   |
+			| btn-7              | 0   | 0   | 0   |
+			| btn-8              | 0   | 0   | 0   |
+			| btn-9              | 0   | 0   | 0   |
+			| btn-multiply       | 0   | 0   | 0   |
+			| btn-4              | 0   | 0   | 0   |
+			| btn-5              | 0   | 0   | 0   |
+			| btn-6              | 0   | 0   | 0   |
+			| btn-subtract       | 0   | 0   | 0   |
+			| btn-1              | 0   | 0   | 0   |
+			| btn-2              | 0   | 0   | 0   |
+			| btn-3              | 0   | 0   | 0   |
+			| btn-add            | 0   | 0   | 0   |
+			| btn-sign-change    | 0   | 0   | 0   |
+			| btn-0              | 0   | 0   | 0   |
+			| btn-decimal        | 0   | 0   | 0   |
+			| btn-equals         | 0   | 0   | 0   |
+
+	Scenario: Cannot modify calculator display directly
+		When I try to type directly into the calculator display with the data-cy attribute "calc-display"
+		Then I should see that the value of the calculator display remains unchanged at "0"

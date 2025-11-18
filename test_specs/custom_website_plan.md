@@ -46,5 +46,11 @@ This document plans the positive and negative test cases when for my [custom web
 
 ## Notes
 
+### Frontend
+
 - The website will use TypeScript for its functionality, but the Cypress tests and supporting scripts will use JavaScript.
 - The calculator application will display up to ten digits including the decimal point and negative sign if needed.
+
+### Backend
+
+- The technologies that will be implemented can include Python and SQL.

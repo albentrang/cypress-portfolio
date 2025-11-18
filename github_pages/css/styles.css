@@ -4,24 +4,40 @@
 html {
 	box-sizing: border-box;
 }
+
 *,
 *:before,
 *:after {
 	box-sizing: inherit;
 }
 
+/* Main Content covering the Whole Page */
+html,
+body {
+	height: 100%;
+}
+
 /* Body */
 body {
 	background-color: lightyellow;
+	display: flex;
+	flex-direction: column;
 	font-family: Arial, sans-serif;
+	margin: 0;
 }
 
 /* Top Header Elements */
 nav {
 	background-color: lightsalmon;
-	border-color: black;
-	border-style: groove;
+	border-bottom: 3px solid darksalmon;
+
+	/* For a fixed navigation bar */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
 }
+
 nav a {
 	color: black;
 	display: inline-block;
@@ -31,12 +47,16 @@ nav a {
 	padding-right: 20px;
 	text-decoration: none;
 }
+
 nav a:hover {
 	background-color: darksalmon;
 	font-weight: bold;
 }
+
 hgroup {
-	margin-bottom: 60px;
+	/* To avoid being hidden under the fixed nav */
+	margin-top: 80px;
+	margin-bottom: 20px;
 	text-align: center;
 }
 
@@ -44,29 +64,48 @@ hgroup {
 main {
 	margin-left: 20%;
 	margin-right: 20%;
-	/* Leave some space for the footer if it overlaps the main content */
-	padding-bottom: 15%;
+}
+
+/* For the Sticky Footer */
+.content-wrapper {
+	flex: 1 0 auto;
 }
 
 /* Footer */
 footer {
 	background-color: powderblue;
-	padding: 20px 0;
-	text-align: center;
-	border-top: 1px solid paleturquoise;
+	border-top: 2px solid paleturquoise;
 
-	/* Make footer stick to bottom */
-	bottom: 0;
-	left: 0;
-	position: fixed;
-	width: 100%;
+	/* Flexbox for Footer Content */
+	display: flex;
+	justify-content: space-between;
+	padding: 0 20px;
 }
+
+#footer-text {
+	line-height: 1.5;
+}
+
+#footer-email {
+	color: black;
+	text-decoration: none;
+}
+
+#footer-email:hover {
+	text-decoration: underline;
+}
+
 .socials {
 	list-style-type: none;
 	padding: 0;
 }
+
 .socials li {
 	display: inline-block;
 	margin: 0 10px;
 	vertical-align: middle;
+}
+
+.socials img:hover {
+	opacity: 0.9;
 }

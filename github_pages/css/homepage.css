@@ -1,15 +1,4 @@
 /* Specific Styles for Homepage */
-
-/* Box-Model Fix */
-html {
-	box-sizing: border-box;
-}
-*,
-*:before,
-*:after {
-	box-sizing: inherit;
-}
-
 section {
 	margin-bottom: 80px;
 }
@@ -24,6 +13,7 @@ button {
 	font-size: 16px;
 	padding: 12px 16px;
 }
+
 button:hover {
 	background-color: mediumpurple;
 }
@@ -33,15 +23,18 @@ button:hover {
 	list-style-type: none;
 	padding: 0;
 }
+
 .test-results li {
 	margin-bottom: 10px;
 	margin-left: 30px;
 }
+
 .test-results a {
 	color: darkblue;
 	padding: 2px 4px;
 	text-decoration: none;
 }
+
 .test-results a:hover {
 	background-color: mediumspringgreen;
 	border-radius: 5px;
