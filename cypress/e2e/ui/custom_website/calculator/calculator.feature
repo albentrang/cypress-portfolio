@@ -61,3 +61,26 @@ Feature: Calculator
 	Scenario: Cannot modify calculator display directly
 		When I try to type directly into the calculator display with the data-cy attribute "calc-display"
 		Then I should see that the value of the calculator display remains unchanged at "0"
+
+	Scenario Outline: Add two numbers using the calculator
+		When I enter "<num1>" and "<num2>" and press +
+		And I press =
+		Then I should see the calculator display show "<result>"
+		Examples:
+			| num1       | num2       | result     |
+			| 1          | 2          | 3          |
+			| 0          | 0          | 0          |
+			| -1         | 1          | 0          |
+			| 9999999999 | 1          | 9999999999 |
+			| 1234567890 | 987654321  | 2222222211 |
+			| -999999999 | 1          | -999999998 |
+			| 0.1        | 0.2        | 0.3        |
+			| 99999999.9 | 0.1        | 100000000  |
+			| -0.1       | -0.2       | -0.3       |
+			| 123456789  | 876543211  | 1000000000 |
+			| 0          | 9999999999 | 9999999999 |
+			| -999999999 | 999999999  | 0          |
+			| 5          | -5         | 0          |
+			| 0.00000001 | 0.00000009 | 0.0000001  |
+			| -0.0000001 | -0.0000009 | -0.000001  |
+			| 9999999999 | 9999999999 | 9999999999 |

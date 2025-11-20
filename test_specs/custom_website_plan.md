@@ -44,7 +44,7 @@ This document plans the positive and negative test cases when for my [custom web
 - [ ] The calculator handles the divide by 0 error gracefully
 - [ ] The results bar will display -999999999 or 9999999999 if a number goes beyond one of them
 
-## Notes
+## Notes and Ideas
 
 ### Frontend
 
@@ -53,4 +53,4 @@ This document plans the positive and negative test cases when for my [custom web
 
 ### Backend
 
-- The technologies that will be implemented can include Python and SQL.
+- The backend technologies can include Python and/or SQL.

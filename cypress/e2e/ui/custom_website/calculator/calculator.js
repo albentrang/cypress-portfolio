@@ -87,3 +87,35 @@ Then(
 		cy.get('@calcDisplay').should('have.value', expectedValue)
 	}
 )
+
+// Scenario Outline: Add two numbers using the calculator
+When('I enter {string} and {string} and press +', (num1, num2) => {
+	// Helper to click calculator buttons for a given string
+	function clickNumber(str) {
+		for (const char of str) {
+			if (char === '.') {
+				cy.getByCy('btn-decimal').realClick()
+			} else if (char >= '0' && char <= '9') {
+				cy.getByCy(`btn-${char}`).realClick()
+			}
+		}
+
+		// Add negative sign
+		if (str.startsWith('-')) {
+			cy.getByCy('btn-sign-change').realClick()
+			str = str.slice(1)
+		}
+	}
+
+	clickNumber(num1)
+	cy.getByCy('btn-add').realClick()
+	clickNumber(num2)
+})
+
+When('I press =', () => {
+	cy.getByCy('btn-equals').realClick()
+})
+
+Then('I should see the calculator display show {string}', (result) => {
+	cy.getByCy('calc-display').should('have.value', result)
+})
