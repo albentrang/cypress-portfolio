@@ -1,4 +1,5 @@
 import DeckHandler from './deck_handler'
+import CalculatorPage from './custom_website/page_objects/calculator_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
@@ -749,5 +750,57 @@ Cypress.Commands.addAll({
 		cy.wrap(response.statusText).should('equal', 'Not Found')
 		cy.wrap(response.body.success).should('equal', false)
 		cy.wrap(response.body.error).should('equal', errorExpected)
+	}
+})
+
+// Custom commands for the custom website project.
+Cypress.Commands.addAll({
+	/**
+	 * Enter numbers and actions into the calculator.
+	 * @param {string[]} numStrings At least one number string.
+	 * @param {string[]} actions The actions to perform between the numbers. There is one fewer action than numbers.
+	 */
+	calcEnterNumsAndActions(numStrings, actions) {
+		for (let i = 0; i < numStrings.length; i++) {
+			const numStr = numStrings[i]
+			CalculatorPage.enterNumber(numStr)
+
+			if (i < actions.length) {
+				const action = actions[i].toLowerCase()
+				switch (action) {
+					case 'add':
+						CalculatorPage.pressAdd()
+						break
+					case 'subtract':
+						CalculatorPage.pressSubtract()
+						break
+					case 'multiply':
+						CalculatorPage.pressMultiply()
+						break
+					case 'divide':
+						CalculatorPage.pressDivide()
+						break
+					case 'modulo':
+						CalculatorPage.pressModulo()
+						break
+					case 'clear':
+						CalculatorPage.pressClear()
+						break
+					case 'clearentry':
+						CalculatorPage.pressClearEntry()
+						break
+					default:
+						throw new Error(`Unknown action: ${action}`)
+				}
+			}
+		}
+	},
+	calcEnterEquals() {
+		CalculatorPage.pressEquals()
+	},
+	verifyCalcResult(expectedResult) {
+		CalculatorPage.getDisplayResult().then((displayText) => {
+			cy.wrap(displayText).should('equal', expectedResult)
+		})
 	}
 })

@@ -5,6 +5,15 @@ Given('I visit the calculator page', () => {
 	cy.visit('calculator.html')
 })
 
+// Common Steps
+When('I press =', () => {
+	cy.calcEnterEquals()
+})
+
+Then('I should see the calculator display show {string}', (result) => {
+	cy.verifyCalcResult(result)
+})
+
 // Scenario: Check title
 When('I load the calculator page at the correct the sub directory', () => {
 	cy.location('pathname').should('eq', `/calculator.html`)
@@ -90,32 +99,40 @@ Then(
 
 // Scenario Outline: Add two numbers using the calculator
 When('I enter {string} and {string} and press +', (num1, num2) => {
-	// Helper to click calculator buttons for a given string
-	function clickNumber(str) {
-		for (const char of str) {
-			if (char === '.') {
-				cy.getByCy('btn-decimal').realClick()
-			} else if (char >= '0' && char <= '9') {
-				cy.getByCy(`btn-${char}`).realClick()
-			}
-		}
+	const numStrs = [num1, num2]
+	const actions = ['add']
 
-		// Add negative sign
-		if (str.startsWith('-')) {
-			cy.getByCy('btn-sign-change').realClick()
-			str = str.slice(1)
-		}
-	}
-
-	clickNumber(num1)
-	cy.getByCy('btn-add').realClick()
-	clickNumber(num2)
+	cy.calcEnterNumsAndActions(numStrs, actions)
 })
 
-When('I press =', () => {
-	cy.getByCy('btn-equals').realClick()
+// Scenario Outline: Subtract two numbers using the calculator
+When('I enter {string} and {string} and press -', (num1, num2) => {
+	const numStrs = [num1, num2]
+	const actions = ['subtract']
+
+	cy.calcEnterNumsAndActions(numStrs, actions)
 })
 
-Then('I should see the calculator display show {string}', (result) => {
-	cy.getByCy('calc-display').should('have.value', result)
+// Scenario Outline: Multiply two numbers using the calculator
+When('I enter {string} and {string} and press x', (num1, num2) => {
+	const numStrs = [num1, num2]
+	const actions = ['multiply']
+
+	cy.calcEnterNumsAndActions(numStrs, actions)
+})
+
+// Scenario Outline: Divide two numbers using the calculator
+When('I enter {string} and {string} and press ÷', (num1, num2) => {
+	const numStrs = [num1, num2]
+	const actions = ['divide']
+
+	cy.calcEnterNumsAndActions(numStrs, actions)
+})
+
+// Scenario Outline: Get the remainder of two numbers using the calculator
+When('I enter {string} and {string} and press %', (num1, num2) => {
+	const numStrs = [num1, num2]
+	const actions = ['modulo']
+
+	cy.calcEnterNumsAndActions(numStrs, actions)
 })

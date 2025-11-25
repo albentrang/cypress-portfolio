@@ -35,10 +35,11 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] All the elements contain their expected text when the calculator page is loaded
 - [x] The title element uses "Calculator"
 - [ ] The correct numbers appear in the results bar when one number is entered
-- [ ] The correct numbers appear in the results bar when two different whole or decimal numbers are added
-- [ ] The correct numbers appear in the results bar when two different whole or decimal numbers are subtracted
-- [ ] The correct numbers appear in the results bar when two different whole or decimal numbers are multiplied
-- [ ] The correct numbers appear in the results bar when two different whole or decimal numbers are divided
+- [x] The correct numbers appear in the results bar when two different whole or decimal numbers are added
+- [x] The correct numbers appear in the results bar when two different whole or decimal numbers are subtracted
+- [x] The correct numbers appear in the results bar when two different whole or decimal numbers are multiplied
+- [x] The correct numbers appear in the results bar when two different whole or decimal numbers are divided
+- [x] The correct numbers appear in the results bar when two different whole or decimal numbers are used to get the remainder
 - [ ] The correct numbers appear in the results bar when three different whole or decimal numbers are entered with two operations
 - [ ] The results bar can display -999999999 and 9999999999 exactly
 - [ ] The calculator handles the divide by 0 error gracefully

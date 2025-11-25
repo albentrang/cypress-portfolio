@@ -113,7 +113,7 @@ function calculate(): void {
 		case '-':
 			result = prev - curr
 			break
-		case '×':
+		case 'x':
 			result = prev * curr
 			break
 		case '÷':
@@ -135,6 +135,16 @@ function calculate(): void {
 		let fixed = result.toFixed(MAX_LENGTH)
 		// Remove trailing zeros and possible trailing decimal point
 		resultStr = fixed.replace(/\.?0+$/, '')
+		// Truncate if still too long
+		if (resultStr.length > MAX_LENGTH) {
+			resultStr = resultStr.slice(0, MAX_LENGTH)
+			// Remove trailing zeros and possible trailing decimal point again
+			resultStr = resultStr.replace(/\.?0+$/, '')
+		}
+		// Convert "-0" to "0"
+		if (resultStr === '-0') {
+			resultStr = '0'
+		}
 	}
 
 	currentValue = resultStr
@@ -178,7 +188,7 @@ window.addEventListener('load', () => {
 					inputOperator('-')
 					break
 				case 'btn-multiply':
-					inputOperator('×')
+					inputOperator('x')
 					break
 				case 'btn-divide':
 					inputOperator('÷')
