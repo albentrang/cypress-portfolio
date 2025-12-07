@@ -7,7 +7,7 @@ Given('I visit the calculator page', () => {
 
 // Common Steps
 When('I press =', () => {
-	cy.calcEnterEquals()
+	cy.calcEnterAction('equals')
 })
 
 Then('I should see the calculator display show {string}', (result) => {
@@ -97,6 +97,11 @@ Then(
 	}
 )
 
+// Scenario Outline: Enter numbers into the calculator
+When('I enter {string} into the calculator', (numStr) => {
+	cy.calcEnterNumsAndActions([numStr], [])
+})
+
 // Scenario Outline: Add two numbers using the calculator
 When('I enter {string} and {string} and press +', (num1, num2) => {
 	const numStrs = [num1, num2]
@@ -136,3 +141,51 @@ When('I enter {string} and {string} and press %', (num1, num2) => {
 
 	cy.calcEnterNumsAndActions(numStrs, actions)
 })
+
+// Scenario Outline: The correct numbers appear in the results bar when one number and one operation are entered
+When('I enter {string} and press {string}', (num1, op1) => {
+	const numStrs = [num1]
+
+	cy.calcEnterNumsAndActions(numStrs, [])
+	cy.calcEnterAction(op1)
+})
+
+// Scenario Outline: Calculate with three numbers and two operations using the calculator
+When(
+	'I enter {string}, press {string}, enter {string}, press {string}, and enter {string}',
+	(num1, op1, num2, op2, num3) => {
+		const numStrs = [num1, num2, num3]
+		const actions = [op1, op2]
+
+		cy.calcEnterNumsAndActions(numStrs, actions)
+	}
+)
+
+// Scenario Outline: Enter one number, clear entry, and then enter a new number so that the results bar should only show the new number
+When('I enter {string}, press CE, and enter {string}', (num1, num2) => {
+	const numStrs = [num1, num2]
+	const actions = ['clearEntry']
+
+	cy.calcEnterNumsAndActions(numStrs, actions)
+})
+
+// Scenario Outline: Enter one number, then the operation, then the next number, then clear entry, and then enter a new number so that the results bar should show the result of the first number and operation with the new number.
+When(
+	'I enter {string}, press {string}, enter {string}, press CE, and enter {string}',
+	(num1, op1, num2, num3) => {
+		const numStrs = [num1, num2, num3]
+		const actions = [op1, 'clearEntry']
+
+		cy.calcEnterNumsAndActions(numStrs, actions)
+	}
+)
+
+// Scenario Outline: Enter two numbers, press the clear button, and then do two new numbers so that the results bar should only show the result of the second calculation
+When(
+	'I enter {string}, press {string}, enter {string}, press C, enter {string}, press {string}, and enter {string}',
+	(num1, op1, num2, num3, op2, num4) => {
+		const numStrs = [num1, num2, num3, num4]
+		const actions = [op1, 'clear', op2]
+		cy.calcEnterNumsAndActions(numStrs, actions)
+	}
+)

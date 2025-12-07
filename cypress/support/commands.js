@@ -761,43 +761,56 @@ Cypress.Commands.addAll({
 	 * @param {string[]} actions The actions to perform between the numbers. There is one fewer action than numbers.
 	 */
 	calcEnterNumsAndActions(numStrings, actions) {
-		for (let i = 0; i < numStrings.length; i++) {
+		const numCount = numStrings.length
+		const actionCount = actions.length
+
+		for (let i = 0; i < numCount; i++) {
 			const numStr = numStrings[i]
 			CalculatorPage.enterNumber(numStr)
 
-			if (i < actions.length) {
-				const action = actions[i].toLowerCase()
-				switch (action) {
-					case 'add':
-						CalculatorPage.pressAdd()
-						break
-					case 'subtract':
-						CalculatorPage.pressSubtract()
-						break
-					case 'multiply':
-						CalculatorPage.pressMultiply()
-						break
-					case 'divide':
-						CalculatorPage.pressDivide()
-						break
-					case 'modulo':
-						CalculatorPage.pressModulo()
-						break
-					case 'clear':
-						CalculatorPage.pressClear()
-						break
-					case 'clearentry':
-						CalculatorPage.pressClearEntry()
-						break
-					default:
-						throw new Error(`Unknown action: ${action}`)
-				}
+			if (i < actionCount) {
+				cy.calcEnterAction(actions[i])
 			}
 		}
 	},
-	calcEnterEquals() {
-		CalculatorPage.pressEquals()
+	/**
+	 * Command to press an action button on the calculator.
+	 * @param {string} action The action to perform.
+	 */
+	calcEnterAction(action) {
+		switch (action.toLocaleLowerCase()) {
+			case 'add':
+				CalculatorPage.pressAdd()
+				break
+			case 'subtract':
+				CalculatorPage.pressSubtract()
+				break
+			case 'multiply':
+				CalculatorPage.pressMultiply()
+				break
+			case 'divide':
+				CalculatorPage.pressDivide()
+				break
+			case 'modulo':
+				CalculatorPage.pressModulo()
+				break
+			case 'clear':
+				CalculatorPage.pressClear()
+				break
+			case 'clearentry':
+				CalculatorPage.pressClearEntry()
+				break
+			case 'equals':
+				CalculatorPage.pressEquals()
+				break
+			default:
+				throw new Error(`Unknown action: ${action}`)
+		}
 	},
+	/**
+	 * Command to verify the calculator result.
+	 * @param {string} expectedResult The expected result string.
+	 */
 	verifyCalcResult(expectedResult) {
 		CalculatorPage.getDisplayResult().then((displayText) => {
 			cy.wrap(displayText).should('equal', expectedResult)

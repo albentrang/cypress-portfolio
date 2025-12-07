@@ -34,6 +34,10 @@ function inputNumber(num: string): void {
 			currentValue = num
 			isNewEntry = false
 		}
+	} else if (calcDisplay && calcDisplay.value === 'Error') {
+		// Do nothing on error
+		console.log('Calculator in error state, ignoring input.')
+		return
 	} else if (currentValue.length < MAX_LENGTH) {
 		currentValue += num
 	}
@@ -58,24 +62,36 @@ function inputDecimal(): void {
  * @param op The operator character to input.
  */
 function inputOperator(op: string): void {
-	if (operator && !isNewEntry) {
-		calculate()
+	if (currentValue !== 'Error') {
+		if (operator && !isNewEntry) {
+			calculate()
+			updateDisplay(currentValue)
+		}
+
+		if (currentValue !== 'Error') {
+			previousValue = currentValue
+			operator = op
+			isNewEntry = true
+		} else {
+			previousValue = ''
+			operator = ''
+			isNewEntry = true
+		}
 	}
-	previousValue = currentValue
-	operator = op
-	isNewEntry = true
 }
 
 /**
  * Change the sign of the current value.
  */
 function changeSign(): void {
-	if (currentValue.startsWith('-')) {
-		currentValue = currentValue.slice(1)
-	} else if (currentValue.length < MAX_LENGTH) {
-		currentValue = '-' + currentValue
+	if (currentValue !== 'Error') {
+		if (currentValue.startsWith('-')) {
+			currentValue = currentValue.slice(1)
+		} else if (currentValue.length < MAX_LENGTH) {
+			currentValue = '-' + currentValue
+		}
+		updateDisplay(currentValue)
 	}
-	updateDisplay(currentValue)
 }
 
 /**
@@ -120,7 +136,16 @@ function calculate(): void {
 			result = curr !== 0 ? prev / curr : NaN
 			break
 		case '%':
-			result = prev % curr
+			if (curr !== 0) {
+				// Account for negative numbers in modulo
+				if ((prev < 0 && curr > 0) || (prev > 0 && curr < 0)) {
+					result = prev - curr * Math.floor(prev / curr)
+				} else {
+					result = prev % curr
+				}
+			} else {
+				result = NaN
+			}
 			break
 		default:
 			result = curr
@@ -130,6 +155,8 @@ function calculate(): void {
 		resultStr = '9999999999'
 	} else if (result < -999999999) {
 		resultStr = '-999999999'
+	} else if (isNaN(result) || !isFinite(result)) {
+		resultStr = 'Error'
 	} else {
 		// Always show decimal notation, remove trailing zeros
 		let fixed = result.toFixed(MAX_LENGTH)

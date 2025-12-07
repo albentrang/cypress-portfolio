@@ -34,6 +34,11 @@ function inputNumber(num) {
             isNewEntry = false;
         }
     }
+    else if (calcDisplay && calcDisplay.value === 'Error') {
+        // Do nothing on error
+        console.log('Calculator in error state, ignoring input.');
+        return;
+    }
     else if (currentValue.length < MAX_LENGTH) {
         currentValue += num;
     }
@@ -57,24 +62,36 @@ function inputDecimal() {
  * @param op The operator character to input.
  */
 function inputOperator(op) {
-    if (operator && !isNewEntry) {
-        calculate();
+    if (currentValue !== 'Error') {
+        if (operator && !isNewEntry) {
+            calculate();
+            updateDisplay(currentValue);
+        }
+        if (currentValue !== 'Error') {
+            previousValue = currentValue;
+            operator = op;
+            isNewEntry = true;
+        }
+        else {
+            previousValue = '';
+            operator = '';
+            isNewEntry = true;
+        }
     }
-    previousValue = currentValue;
-    operator = op;
-    isNewEntry = true;
 }
 /**
  * Change the sign of the current value.
  */
 function changeSign() {
-    if (currentValue.startsWith('-')) {
-        currentValue = currentValue.slice(1);
+    if (currentValue !== 'Error') {
+        if (currentValue.startsWith('-')) {
+            currentValue = currentValue.slice(1);
+        }
+        else if (currentValue.length < MAX_LENGTH) {
+            currentValue = '-' + currentValue;
+        }
+        updateDisplay(currentValue);
     }
-    else if (currentValue.length < MAX_LENGTH) {
-        currentValue = '-' + currentValue;
-    }
-    updateDisplay(currentValue);
 }
 /**
  * Clear all calculator state and reset display.
@@ -116,7 +133,18 @@ function calculate() {
             result = curr !== 0 ? prev / curr : NaN;
             break;
         case '%':
-            result = prev % curr;
+            if (curr !== 0) {
+                // Account for negative numbers in modulo
+                if ((prev < 0 && curr > 0) || (prev > 0 && curr < 0)) {
+                    result = prev - curr * Math.floor(prev / curr);
+                }
+                else {
+                    result = prev % curr;
+                }
+            }
+            else {
+                result = NaN;
+            }
             break;
         default:
             result = curr;
@@ -126,6 +154,9 @@ function calculate() {
     }
     else if (result < -999999999) {
         resultStr = '-999999999';
+    }
+    else if (isNaN(result) || !isFinite(result)) {
+        resultStr = 'Error';
     }
     else {
         // Always show decimal notation, remove trailing zeros

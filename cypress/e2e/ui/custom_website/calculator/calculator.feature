@@ -62,6 +62,21 @@ Feature: Calculator
 		When I try to type directly into the calculator display with the data-cy attribute "calc-display"
 		Then I should see that the value of the calculator display remains unchanged at "0"
 
+	Scenario Outline: Enter numbers into the calculator
+		When I enter "<number>" into the calculator
+		And I press =
+		Then I should see the calculator display show "<number>"
+		Examples:
+			| number     |
+			| 0          |
+			| 5          |
+			| 123        |
+			| 9999999999 |
+			| -12345     |
+			| -999999999 |
+			| 0.23456789 |
+			| -0.9876543 |
+
 	Scenario Outline: Add two numbers using the calculator
 		When I enter "<num1>" and "<num2>" and press +
 		And I press =
@@ -149,7 +164,7 @@ Feature: Calculator
 			| 1           | -2         | -0.5       |
 			| -1          | -2         | 0.5        |
 			| 0           | 1          | 0          |
-			| 1           | 0          | NaN        |
+			| 1           | 0          | Error      |
 			| 0.00000001  | 1          | 0.00000001 |
 			| 1           | 0.00000001 | 100000000  |
 			| 1234567890  | 2          | 617283945  |
@@ -174,14 +189,103 @@ Feature: Calculator
 			| 1           | 0.3         | 0.1        |
 			| 0.12345678  | 0.1         | 0.02345678 |
 			| 0.00000001  | 0.00000009  | 0.00000001 |
-			| -10         | 3           | -1         |
-			| 10          | -3          | 1          |
+			| -10         | 3           | 2          |
+			| 10          | -3          | -2         |
 			| -10         | -3          | -1         |
 			| 0           | 3           | 0          |
-			| 3           | 0           | NaN        |
+			| 3           | 0           | Error      |
 			| 9999999999  | 1           | 0          |
 			| 1           | 9999999999  | 1          |
 			| 0.00000001  | 1           | 0.00000001 |
 			| 1           | 0.00000001  | 0.00000001 |
 			| -0.00000001 | 0.00000001  | 0          |
 			| 0.00000001  | -0.00000001 | 0          |
+
+	Scenario Outline: The correct numbers appear in the results bar when one number and one operation are entered
+		When I enter "<num1>" and press "<op>"
+		And I press =
+		Then I should see the calculator display show "<result>"
+		Examples:
+			| num1 | op       | result |
+			| 10   | add      | 20     |
+			| 20   | subtract | 0      |
+			| 5    | multiply | 25     |
+			| 100  | divide   | 1      |
+			| 10   | modulo   | 0      |
+
+	Scenario Outline: Calculate with three numbers and two operations using the calculator
+		When I enter "<num1>", press "<op1>", enter "<num2>", press "<op2>", and enter "<num3>"
+		And I press =
+		Then I should see the calculator display show "<result>"
+		Examples:
+			| num1 | op1      | num2 | op2      | num3 | result |
+			| 10   | add      | 20   | add      | 30   | 60     |
+			| 10   | add      | 20   | subtract | 5    | 25     |
+			| 10   | add      | 20   | multiply | 2    | 60     |
+			| 10   | add      | 20   | divide   | 2    | 15     |
+			| 10   | add      | 20   | modulo   | 3    | 0      |
+			| 10   | subtract | 20   | add      | 5    | -5     |
+			| 10   | subtract | 20   | subtract | 5    | -15    |
+			| 10   | subtract | 20   | multiply | 2    | -20    |
+			| 10   | subtract | 20   | divide   | 2    | -5     |
+			| 10   | subtract | 20   | modulo   | 3    | 2      |
+			| 10   | multiply | 2    | add      | 5    | 25     |
+			| 10   | multiply | 2    | subtract | 5    | 15     |
+			| 10   | multiply | 2    | multiply | 3    | 60     |
+			| 10   | multiply | 2    | divide   | 4    | 5      |
+			| 10   | multiply | 2    | modulo   | 3    | 2      |
+			| 10   | divide   | 2    | add      | 5    | 10     |
+			| 10   | divide   | 2    | subtract | 5    | 0      |
+			| 10   | divide   | 2    | multiply | 3    | 15     |
+			| 10   | divide   | 2    | divide   | 5    | 1      |
+			| 10   | divide   | 2    | modulo   | 3    | 2      |
+			| 10   | modulo   | 3    | add      | 2    | 3      |
+			| 10   | modulo   | 3    | subtract | 2    | -1     |
+			| 10   | modulo   | 3    | multiply | 2    | 2      |
+			| 10   | modulo   | 3    | divide   | 2    | 0.5    |
+			| 10   | modulo   | 3    | modulo   | 2    | 1      |
+			| -10  | add      | 20   | multiply | -2   | -20    |
+			| 5.5  | multiply | 2    | subtract | 1.5  | 9.5    |
+			| 100  | divide   | 4    | add      | 25   | 50     |
+			| -50  | subtract | 25   | divide   | 5    | -15    |
+			| 0    | add      | 0    | multiply | 0    | 0      |
+			| 100  | modulo   | 33   | add      | 10   | 11     |
+			| 99.9 | subtract | 99.9 | add      | 99.9 | 99.9   |
+			| 10   | multiply | 0    | add      | 5    | 5      |
+			| 10   | divide   | 0    | add      | 5    | 5      |
+			| 10   | modulo   | 0    | add      | 5    | 5      |
+
+	Scenario Outline: Enter one number, clear entry, and then enter a new number so that the results bar should only show the new number
+		When I enter "<num1>", press CE, and enter "<num2>"
+		And I press =
+		Then I should see the calculator display show "<num2>"
+		Examples:
+			| num1 | num2 |
+			| 123  | 456  |
+			| 999  | 0    |
+			| -50  | 25   |
+			| 0.75 | 0.25 |
+
+	Scenario Outline: Enter one number, then the operation, then the next number, then clear entry, and then enter a new number so that the results bar should show the result of the first number and operation with the new number
+		When I enter "<num1>", press "<op>", enter "<num2>", press CE, and enter "<num3>"
+		And I press =
+		Then I should see the calculator display show "<result>"
+		Examples:
+			| num1 | num2 | op       | num3 | result |
+			| 10   | 20   | add      | 5    | 15     |
+			| 50   | 25   | subtract | 10   | 40     |
+			| 5    | 4    | multiply | 2    | 10     |
+			| 100  | 20   | divide   | 4    | 25     |
+			| 10   | 3    | modulo   | 2    | 0      |
+
+	Scenario Outline: Enter two numbers, press the clear button, and then do two new numbers so that the results bar should only show the result of the second calculation
+		When I enter "<num1a>", press "<op>", enter "<num2a>", press C, enter "<num1b>", press "<op>", and enter "<num2b>"
+		And I press =
+		Then I should see the calculator display show "<resultb>"
+		Examples:
+			| num1a | num2a | op       | num1b | num2b | resultb |
+			| 10    | 20    | add      | 5     | 5     | 10      |
+			| 50    | 25    | subtract | 30    | 10    | 20      |
+			| 5     | 4     | multiply | 3     | 3     | 9       |
+			| 100   | 20    | divide   | 80    | 4     | 20      |
+			| 10    | 3     | modulo   | 14    | 5     | 4       |
