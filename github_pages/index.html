@@ -10,58 +10,63 @@
 </head>
 
 <body>
-	<header>
-		<nav>
-			<a href="index.html" data-cy="home-nav-home-link">Home</a>
-			<a href="calculator.html" data-cy="home-nav-calc-link">Calculator</a>
-		</nav>
-		<hgroup>
-			<h1 data-cy="home-header">
-				Homepage
-			</h1>
-			<p data-cy="home-tagline">
-				My custom website to test various elements and interactions!
-			</p>
-		</hgroup>
-	</header>
+	<div class="content-wrapper">
+		<header>
+			<nav>
+				<a href="index.html" data-cy="home-nav-home-link">Home</a>
+				<a href="calculator.html" data-cy="home-nav-calc-link">Calculator</a>
+			</nav>
+			<hgroup>
+				<h1 data-cy="home-header">
+					Homepage
+				</h1>
+				<p data-cy="home-tagline">
+					My custom website to test various elements and interactions!
+				</p>
+			</hgroup>
+		</header>
 
-	<main>
-		<section>
-			<h2 data-cy="test-pages-header">Test Pages</h2>
-			<p data-cy="test-pages-desc">
-				Explore different test pages to validate various features.
-			</p>
-			<a href="calculator.html" data-cy="test-pages-calc-link">
-				<button type="button" data-cy="test-pages-calc-btn">Calculator</button>
-			</a>
-		</section>
-		<section>
-			<h2 data-cy="cy-test-results-header">Cypress Test Results</h2>
-			<p data-cy="cy-test-results-desc">
-				These Mochawesome test results are generated right before this website's deployment.
-			</p>
-			<ul class="test-results">
-				<li>
-					<a href="custom-report.html" data-cy="custom-web-results-link">Custom Website Test Results</a>
-				</li>
-				<li>
-					<a href="deck-report.html" data-cy="deck-api-results-link">Deck of Cards API Test Results</a>
-				</li>
-			</ul>
-		</section>
-	</main>
+		<main>
+			<section>
+				<h2 data-cy="test-pages-header">Test Pages</h2>
+				<p data-cy="test-pages-desc">
+					Explore different test pages to validate various features.
+				</p>
+				<a href="calculator.html" data-cy="test-pages-calc-link">
+					<button type="button" data-cy="test-pages-calc-btn">Calculator</button>
+				</a>
+			</section>
+			<section>
+				<h2 data-cy="cy-test-results-header">Cypress Test Results</h2>
+				<p data-cy="cy-test-results-desc">
+					These Mochawesome test results are generated right before this website's deployment.
+				</p>
+				<ul class="test-results">
+					<li>
+						<a href="custom-report.html" data-cy="custom-web-results-link">Custom Website Test Results</a>
+					</li>
+					<li>
+						<a href="deck-report.html" data-cy="deck-api-results-link">Deck of Cards API Test Results</a>
+					</li>
+				</ul>
+			</section>
+		</main>
+	</div>
 
 	<footer>
-		<p data-cy="home-footer-text">© 2025 by Alben Trang</p>
+		<p id="footer-text" data-cy="home-footer-text">© 2025 by Alben Trang<br><a href="mailto:albentrang@gmail.com"
+				id="footer-email" data-cy="home-footer-email">albentrang@gmail.com</a></p>
 		<ul class="socials">
 			<li>
-				<a href="https://www.linkedin.com/in/albentrang/" id="linkedin-link" data-cy="home-footer-linkedin-link">
+				<a href="https://www.linkedin.com/in/albentrang/" target="_blank" id="linkedin-link"
+					data-cy="home-footer-linkedin-link">
 					<img src="img/icons/LI-In-Bug-57x48.png" srcset="img/icons/LI-In-Bug-127x108.png 2x"
 						alt="LinkedIn icon that links to my LinkedIn profile" width="57" height="48" />
 				</a>
 			</li>
 			<li>
-				<a href="https://github.com/albentrang/cypress-portfolio" id="github-link" data-cy="home-footer-github-link">
+				<a href="https://github.com/albentrang/cypress-portfolio" target="_blank" id="github-link"
+					data-cy="home-footer-github-link">
 					<img src="img/icons/github-mark-48x48.png" srcset="img/icons/github-mark-108x108.png 2x"
 						alt="GitHub icon that links to this website's GitHub repository" width="48" height="48" />
 				</a>

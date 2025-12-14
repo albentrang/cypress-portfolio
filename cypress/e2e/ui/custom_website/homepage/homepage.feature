@@ -22,7 +22,10 @@ Feature: Homepage
       | cy-test-results-desc    | These Mochawesome test results are generated right before this website's deployment. |
       | custom-web-results-link | Custom Website Test Results                                                          |
       | deck-api-results-link   | Deck of Cards API Test Results                                                       |
-      | home-footer-text        | © 2025 by Alben Trang                                                                |
+
+  Scenario: Check footer text
+    When I see the footer element where the footer text has the data-cy attribute "home-footer-text"
+    Then I should see the expected text "© 2025 by Alben Trang" and the email address "albentrang@gmail.com"
 
   Scenario Outline: Check links
     When I see clickable text with the data-cy attribute "<dataCy>"
