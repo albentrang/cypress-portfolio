@@ -64,6 +64,20 @@ class CalculatorPage {
 	}
 
 	/**
+	 * Presses the decimal (.) button.
+	 */
+	pressDecimal() {
+		cy.getByCy('btn-decimal').realClick()
+	}
+
+	/**
+	 * Presses the sign change (±) button.
+	 */
+	pressSignChange() {
+		cy.getByCy('btn-sign-change').realClick()
+	}
+
+	/**
 	 * Presses the clear (C) button to reset the calculator.
 	 */
 	pressClear() {

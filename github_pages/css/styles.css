@@ -3,6 +3,8 @@
 /* Box-Model Fix */
 html {
 	box-sizing: border-box;
+	font-size: 62.5%;
+	/* Set default to 10px */
 }
 
 *,
@@ -23,6 +25,8 @@ body {
 	display: flex;
 	flex-direction: column;
 	font-family: Arial, sans-serif;
+	font-size: 1.8rem;
+	line-height: 1.4;
 	margin: 0;
 }
 
@@ -60,6 +64,15 @@ hgroup {
 	text-align: center;
 }
 
+hgroup p {
+	font-size: 1.7rem;
+	font-style: italic;
+	margin-top: -10px;
+	margin-bottom: 0;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
 /* Main Content */
 main {
 	margin-left: 20%;
@@ -83,6 +96,7 @@ footer {
 }
 
 #footer-text {
+	font-size: 1.5rem;
 	line-height: 1.5;
 }
 
@@ -102,10 +116,29 @@ footer {
 
 .socials li {
 	display: inline-block;
-	margin: 0 10px;
+	margin: 0 5px;
 	vertical-align: middle;
 }
 
 .socials img:hover {
 	opacity: 0.9;
+}
+
+/* Adjust content for mobile device screens */
+@media screen and (max-width: 500px) {
+	body {
+		font-size: 1.5rem;
+		line-height: 1.2;
+	}
+
+	hgroup p {
+		font-size: 1.4rem;
+		margin-left: 2%;
+		margin-right: 2%;
+	}
+
+	main {
+		margin-left: 5%;
+		margin-right: 5%;
+	}
 }

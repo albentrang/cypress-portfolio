@@ -794,6 +794,12 @@ Cypress.Commands.addAll({
 			case 'modulo':
 				CalculatorPage.pressModulo()
 				break
+			case 'decimal':
+				CalculatorPage.pressDecimal()
+				break
+			case 'signchange':
+				CalculatorPage.pressSignChange()
+				break
 			case 'clear':
 				CalculatorPage.pressClear()
 				break

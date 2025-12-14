@@ -65,17 +65,49 @@ Feature: Calculator
 	Scenario Outline: Enter numbers into the calculator
 		When I enter "<number>" into the calculator
 		And I press =
-		Then I should see the calculator display show "<number>"
+		Then I should see the calculator display show "<result>"
 		Examples:
-			| number     |
-			| 0          |
-			| 5          |
-			| 123        |
-			| 9999999999 |
-			| -12345     |
-			| -999999999 |
-			| 0.23456789 |
-			| -0.9876543 |
+			| number     | result     |
+			| 0          | 0          |
+			| 5          | 5          |
+			| 123        | 123        |
+			| -12345     | -12345     |
+			| 9999999999 | 9999999999 |
+			| -999999999 | -999999999 |
+			| 1234567890 | 1234567890 |
+			| -123456789 | -123456789 |
+			| 1.23456789 | 1.23456789 |
+			| -1.2345678 | -1.2345678 |
+			| 0.1        | 0.1        |
+			| .1         | 0.1        |
+			| -0.1       | -0.1       |
+			| -.1        | -0.1       |
+			| 0.01       | 0.01       |
+			| .01        | 0.01       |
+			| -0.01      | -0.01      |
+			| -.01       | -0.01      |
+			| 0.001      | 0.001      |
+			| .001       | 0.001      |
+			| -0.001     | -0.001     |
+			| -.001      | -0.001     |
+			| 0.0001     | 0.0001     |
+			| .0001      | 0.0001     |
+			| -0.0001    | -0.0001    |
+			| -.0001     | -0.0001    |
+			| 0.00001    | 0.00001    |
+			| .00001     | 0.00001    |
+			| -0.00001   | -0.00001   |
+			| -.00001    | -0.00001   |
+			| 0.000001   | 0.000001   |
+			| .000001    | 0.000001   |
+			| -0.000001  | -0.000001  |
+			| -.000001   | -0.000001  |
+			| 0.0000001  | 0.0000001  |
+			| .0000001   | 0.0000001  |
+			| -0.0000001 | -0.0000001 |
+			| -.0000001  | -0.0000001 |
+			| 0.00000001 | 0.00000001 |
+			| .00000001  | 0.00000001 |
 
 	Scenario Outline: Add two numbers using the calculator
 		When I enter "<num1>" and "<num2>" and press +
@@ -206,12 +238,42 @@ Feature: Calculator
 		And I press =
 		Then I should see the calculator display show "<result>"
 		Examples:
-			| num1 | op       | result |
-			| 10   | add      | 20     |
-			| 20   | subtract | 0      |
-			| 5    | multiply | 25     |
-			| 100  | divide   | 1      |
-			| 10   | modulo   | 0      |
+			| num1       | op       | result     |
+			| 10         | add      | 20         |
+			| -10        | add      | -20        |
+			| 0          | add      | 0          |
+			| 0.1        | add      | 0.2        |
+			| -0.1       | add      | -0.2       |
+			| 5000000000 | add      | 9999999999 |
+			| -500000000 | add      | -999999999 |
+			| 20         | subtract | 0          |
+			| -20        | subtract | 0          |
+			| 0          | subtract | 0          |
+			| 0.2        | subtract | 0          |
+			| -0.2       | subtract | 0          |
+			| 9999999999 | subtract | 0          |
+			| -999999999 | subtract | 0          |
+			| 5          | multiply | 25         |
+			| -5         | multiply | 25         |
+			| 0          | multiply | 0          |
+			| 0.2        | multiply | 0.04       |
+			| -0.2       | multiply | 0.04       |
+			| 999999999  | multiply | 9999999999 |
+			| -999999999 | multiply | 9999999999 |
+			| 100        | divide   | 1          |
+			| -100       | divide   | 1          |
+			| 0          | divide   | Error      |
+			| 0.1        | divide   | 1          |
+			| -0.1       | divide   | 1          |
+			| 9999999999 | divide   | 1          |
+			| -999999999 | divide   | 1          |
+			| 10         | modulo   | 0          |
+			| -10        | modulo   | 0          |
+			| 0          | modulo   | Error      |
+			| 0.1        | modulo   | 0          |
+			| -0.1       | modulo   | 0          |
+			| 9999999999 | modulo   | 0          |
+			| -999999999 | modulo   | 0          |
 
 	Scenario Outline: Calculate with three numbers and two operations using the calculator
 		When I enter "<num1>", press "<op1>", enter "<num2>", press "<op2>", and enter "<num3>"
@@ -289,3 +351,17 @@ Feature: Calculator
 			| 5     | 4     | multiply | 3     | 3     | 9       |
 			| 100   | 20    | divide   | 80    | 4     | 20      |
 			| 10    | 3     | modulo   | 14    | 5     | 4       |
+
+	Scenario: Clicking the negate button twice should return the number to its original value
+		When I enter a number like "12345" into the calculator
+		And I press the sign change button twice
+		And I press =
+		Then I should see the calculator display show "12345"
+
+	Scenario: Clicking the decimal button twice should not add a second decimal point to the number
+		When I first enter a number like "1" into the calculator
+		* I press the decimal button
+		* I enter more numbers like "23"
+		* I press the decimal button again
+		* I press =
+		Then I should see the calculator display show "1.23"

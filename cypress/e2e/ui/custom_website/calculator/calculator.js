@@ -189,3 +189,30 @@ When(
 		cy.calcEnterNumsAndActions(numStrs, actions)
 	}
 )
+
+// Scenario: Clicking the sign change button twice should return the number to its original value
+When('I enter a number like {string} into the calculator', (numStr) => {
+	cy.calcEnterNumsAndActions([numStr], [])
+})
+
+When('I press the sign change button twice', () => {
+	cy.calcEnterAction('signchange')
+	cy.calcEnterAction('signchange')
+})
+
+// Scenario: Clicking the decimal button twice should not add a second decimal point to the number
+When('I first enter a number like {string} into the calculator', (numStr) => {
+	cy.calcEnterNumsAndActions([numStr], [])
+})
+
+When('I press the decimal button', () => {
+	cy.calcEnterAction('decimal')
+})
+
+When('I enter more numbers like {string}', (numStr) => {
+	cy.calcEnterNumsAndActions([numStr], [])
+})
+
+When('I press the decimal button again', () => {
+	cy.calcEnterAction('decimal')
+})

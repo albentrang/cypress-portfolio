@@ -21,6 +21,7 @@ This document plans the positive and negative test cases when for my [custom web
 - [ ] Hovering over an element with a function or link using the mouse will cause the element to change its background co.lor
 - [ ] The footer of the web pages all have "© 2025 by Alben Trang".
 - [ ] The footer contains icons that link to my LinkedIn profile and the GitHub repository used to make my custom website.
+- [ ] The website is responsive and displays correctly on different screen sizes.
 
 ### Homepage
 
@@ -48,6 +49,8 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] Enter one number, clear entry, and then enter a new number. The results bar should only show the new number.
 - [x] Enter one number, then the operation, then the next number, then clear entry, and then enter a new number. The results bar should show the result of the first number and operation with the new number.
 - [x] Enter two numbers, press the clear button, and then do two new numbers. The results bar should only show the result of the second calculation.
+- [x] Clicking the sign change button twice should return the number to its original value.
+- [x] Clicking the decimal button twice should not add a second decimal point to the number.
 
 ## Notes and Ideas
 
