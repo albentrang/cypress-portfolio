@@ -18,6 +18,14 @@ button:hover {
 	background-color: mediumpurple;
 }
 
+/* Test Pages Button List */
+.test-pages-list {
+	display: flex;
+	gap: 20px;
+	list-style-type: none;
+	padding: 0;
+}
+
 /* Test Results List */
 .test-results {
 	list-style-type: none;

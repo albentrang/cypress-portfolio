@@ -52,6 +52,18 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] Clicking the sign change button twice should return the number to its original value.
 - [x] Clicking the decimal button twice should not add a second decimal point to the number.
 
+### Text to File Downloader
+
+- [x] All the elements contain their expected text when the text to file downloader page is loaded.
+- [x] The title element uses "Text to File Downloader".
+- [ ] The char count dynamically counts up and down when the user types in the text area.
+- [ ] Enter text to download a text file.
+- [ ] Enter text to download a markdown file.
+- [ ] Enter text to download a CSV file.
+- [ ] Enter text to download a JSON file.
+- [ ] Error message appears when the text area is empty and the user tries to download a file.
+- [ ] Error message appears when the file name field is empty and the user tries to download a file.
+
 ## Notes and Ideas
 
 ### Frontend
@@ -61,4 +73,4 @@ This document plans the positive and negative test cases when for my [custom web
 
 ### Backend
 
-- The backend technologies can include Python and/or SQL.
+- The backend technologies can include Python and/or SQL if possible.
