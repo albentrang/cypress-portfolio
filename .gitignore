@@ -2,6 +2,7 @@
 /node_modules
 
 # recording
+cypress/downloads
 cypress/videos
 cypress/screenshots
 cypress/reports/html

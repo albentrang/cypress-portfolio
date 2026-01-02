@@ -48,30 +48,58 @@ Feature: Text to File Downloader
 			| text-nav-text-link | 233 | 150 | 122 |
 			| download-btn       | 0   | 100 | 0   |
 
-	@skip
-	Scenario Outline: Check character count going up and down
-		When I type <charsToType> characters into the text input field
-		And I delete <charsToDelete> characters
-		Then I should see the character count update to "<count>"
+	Scenario Outline: Check text area character count going up and down
+		When I type <charsToType> characters into the text area
+		And I delete <charsToDelete> characters in the text area
+		Then I should see the character count in the text area update to "<count>"
 		Examples:
 			| charsToType | charsToDelete | count |
+			| 1           | 0             | 1     |
+			| 1           | 1             | 0     |
+			| 1           | 2             | 0     |
+			| 10          | 0             | 10    |
 			| 18          | 5             | 13    |
+			| 50          | 25            | 25    |
+			| 100         | 0             | 100   |
+			| 150         | 75            | 75    |
+			| 200         | 100           | 100   |
+			| 300         | 0             | 300   |
+			| 301         | 0             | 300   |
+			| 300         | 50            | 250   |
 
-	@skip
+	Scenario Outline: Check file name input character count going up and down
+		When I type <charsToType> characters into the file name input
+		And I delete <charsToDelete> characters in the file name input
+		Then I should see the character count in the file name input update to "<count>"
+		Examples:
+			| charsToType | charsToDelete | count |
+			| 1           | 0             | 1     |
+			| 1           | 1             | 0     |
+			| 1           | 2             | 0     |
+			| 5           | 0             | 5     |
+			| 10          | 3             | 7     |
+			| 15          | 7             | 8     |
+			| 20          | 0             | 20    |
+			| 25          | 10            | 15    |
+			| 30          | 0             | 30    |
+			| 31          | 0             | 30    |
+			| 30          | 5             | 25    |
+
+	Scenario: Go through all the file type selections
+		When I see the file type dropdown menu
+		Then I should all the file type options available
+
 	Scenario Outline: Create and download text file
 		When I type "<text>" into the text input field
-		And I delete <charsToDelete> characters
+		And I type the file name "<fileName>" into the file name input field
 		And I select the text file type from the dropdown menu
 		And I click the download button
-		Then I should see a file download dialog box with the file name "text.txt"
+		Then I should see a file with the full file name "<fileName>".txt and the file should contain the text "<text>"
+		Examples:
+			| text          | fileName |
+			| Hello, World! | test     |
 
-	@skip
-	Scenario: Check file type selection
-		When I select a file type from the dropdown menu
-		Then I should see the selected file type displayed in the dropdown menu
-
-	@skip
 	Scenario: Error message for invalid input and removing it
-		When I try to download a file with no characters in the text area
-		And I should see an error message "Please enter some text to convert to a file."
+		When I click the download button
+		And I see an error message "Please enter some text to convert to a file."
 		Then I should see the error message disappear when I type in the text area

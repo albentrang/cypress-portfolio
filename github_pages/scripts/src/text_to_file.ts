@@ -62,26 +62,27 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	/**
-	 * Returns the content for a file based on the input text and file type.
-	 * @param text The input text to be written to the file.
-	 * @param type The type of file to generate.
-	 * @returns The formatted content for the specified file type.
+	 * Show an error message in the UI.
+	 * @param message The error message to display.
 	 */
-	function getFileContent(text: string, type: string): string {
-		switch (type) {
-			case 'json':
-				// Wrap text in a JSON object
-				JSON.parse
-				return JSON.stringify({ text }, null, 2)
-			case 'csv':
-				// Simple CSV: one column, quoted
-				return 'text\n"' + text.replace(/"/g, '""') + '"'
-			case 'md':
-				// Markdown: just output as-is
-				return text
-			case 'txt':
-			default:
-				return text
+	function showError(message: string): void {
+		if (errorMsg) {
+			errorMsg.textContent = message
+			errorMsg.style.padding = '10px'
+		} else {
+			console.error('Error element not found in the DOM.')
+		}
+	}
+
+	/**
+	 * Clear any existing error message from the UI.
+	 */
+	function clearError(): void {
+		if (errorMsg) {
+			errorMsg.textContent = ''
+			errorMsg.style.padding = '0'
+		} else {
+			console.error('Error element not found in the DOM.')
 		}
 	}
 
@@ -128,13 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const count: number = textArea.value.length
 
 		textInputLabel.textContent = `Enter your text (${count}/300):`
-
-		// Clear error message if it exists
-		if (errorMsg.textContent) {
-			errorMsg.textContent = ''
-			// Remove padding
-			errorMsg.style.padding = '0'
-		}
+		clearError()
 	})
 
 	// Allow tabs in text area
@@ -156,13 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const count: number = textArea.value.length
 
 		textInputLabel.textContent = `Enter your text (${count}/300):`
-
-		// Clear error message if it exists
-		if (errorMsg.textContent) {
-			errorMsg.textContent = ''
-			// Remove padding
-			errorMsg.style.padding = '0'
-		}
+		clearError()
 	})
 
 	// Update label counter when typing in filename input
@@ -170,32 +159,25 @@ document.addEventListener('DOMContentLoaded', () => {
 		const count: number = fileNameInput.value.length
 
 		fileNameLabel.textContent = `Enter file name (${count}/30):`
-
-		// Clear error message if it exists
-		if (errorMsg.textContent) errorMsg.textContent = ''
+		clearError()
 	})
 
 	// Handle download button click
 	downloadBtn.addEventListener('click', () => {
 		if (!textArea.value) {
-			errorMsg.textContent = 'Please enter some text to convert to a file.'
-			// Add 10px of padding
-			errorMsg.style.padding = '10px'
+			showError('Please enter some text to convert to a file.')
 			return
 		} else if (!fileNameInput.value) {
-			errorMsg.textContent = 'Please enter the name for the file.'
-			errorMsg.style.padding = '10px'
+			showError('Please enter the name for the file.')
 			return
 		} else if (fileTypeSelect.value == 'csv' && !isValidCsv(textArea.value)) {
-			errorMsg.textContent = 'Please enter valid CSV.'
-			errorMsg.style.padding = '10px'
+			showError('Please enter valid CSV.')
 			return
 		} else if (
 			fileTypeSelect.value === 'json' &&
 			!isValidJson(textArea.value)
 		) {
-			errorMsg.textContent = 'Please enter valid JSON.'
-			errorMsg.style.padding = '10px'
+			showError('Please enter valid JSON.')
 			return
 		}
 
@@ -203,10 +185,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		const fileName: string = fileNameInput.value.slice(0, 30) // Enforce max length
 		const fileType: string = fileTypeSelect.value
 
-		const content: string = getFileContent(text, fileType)
 		const mimeType: string = getMimeType(fileType)
 		const extension: string = getFileExtension(fileType)
-		const blob: Blob = new Blob([content], { type: mimeType })
+		const blob: Blob = new Blob([text], { type: mimeType })
 		const url: string = URL.createObjectURL(blob)
 		const a: HTMLAnchorElement = document.createElement('a')
 

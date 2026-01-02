@@ -72,3 +72,86 @@ Then(
 		cy.get('@anchorElement').should('have.css', 'background-color', hoverColor)
 	}
 )
+
+// Scenario Outline: Check text area character count going up and down
+When('I type {int} characters into the text area', (charsToType) => {
+	cy.typeTextToFileArea('A'.repeat(charsToType))
+})
+When('I delete {int} characters in the text area', (charsToDelete) => {
+	cy.deleteTextToFileArea(charsToDelete)
+})
+Then(
+	'I should see the character count in the text area update to {string}',
+	(count) => {
+		cy.verifyTextToFileAreaCharCount(count)
+	}
+)
+
+// Scenario Outline: Check file name input character count going up and down
+When('I type {int} characters into the file name input', (charsToType) => {
+	cy.typeTextToFileNameInput('A'.repeat(charsToType))
+})
+When('I delete {int} characters in the file name input', (charsToDelete) => {
+	cy.deleteTextToFileNameInput(charsToDelete)
+})
+Then(
+	'I should see the character count in the file name input update to {string}',
+	(count) => {
+		cy.verifyTextToFileNameInputCharCount(count)
+	}
+)
+
+// Scenario: Go through all the file type selections
+When('I see the file type dropdown menu', () => {
+	cy.getByCy('file-type-select').should('be.visible').as('fileTypeSelect')
+})
+Then('I should all the file type options available', () => {
+	const optionVals = ['txt', 'md', 'csv', 'json']
+	const optionTexts = [
+		'Text (.txt)',
+		'Markdown (.md)',
+		'CSV (.csv)',
+		'JSON (.json)'
+	]
+
+	cy.get('@fileTypeSelect').find('option').as('fileOptions')
+
+	cy.get('@fileOptions').each((option, i) => {
+		cy.wrap(option).invoke('val').should('equal', optionVals[i])
+		cy.wrap(option).invoke('text').should('equal', optionTexts[i])
+	})
+})
+
+// Scenario Outline: Create and download text file
+When('I type {string} into the text input field', (text) => {
+	cy.typeTextToFileArea(text)
+})
+When(
+	'I type the file name {string} into the file name input field',
+	(fileName) => {
+		cy.typeTextToFileNameInput(fileName)
+	}
+)
+When('I select the text file type from the dropdown menu', () => {
+	cy.selectTextToFileType('txt')
+})
+When('I click the download button', () => {
+	cy.pressTextToFileDownload()
+})
+Then(
+	'I should see a file with the full file name {string}.txt and the file should contain the text {string}',
+	(fileName, text) => {
+		cy.verifyTextToFileDownload(`${fileName}.txt`, text)
+	}
+)
+
+// Scenario: Error message for invalid input and removing it
+When('I see an error message {string}', (errorMessage) => {
+	cy.verifyTextToFileErrorMessage(errorMessage)
+})
+Then(
+	'I should see the error message disappear when I type in the text area',
+	() => {
+		cy.verifyTextToFileNoErrorMessage()
+	}
+)

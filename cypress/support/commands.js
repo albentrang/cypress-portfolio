@@ -1,8 +1,10 @@
 import DeckHandler from './deck_handler'
 import CalculatorPage from './custom_website/page_objects/calculator_obj'
+import TextToFilePage from './custom_website/page_objects/text_to_file_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
+const cyDownloadsFolder = Cypress.config('downloadsFolder')
 
 // General custom commands for different projects.
 /**
@@ -821,5 +823,144 @@ Cypress.Commands.addAll({
 		CalculatorPage.getDisplayResult().then((displayText) => {
 			cy.wrap(displayText).should('equal', expectedResult)
 		})
+	},
+	/**
+	 * Command to type text into the Text to File text area.
+	 * @param {string} textToType The text to type into the text area.
+	 */
+	typeTextToFileArea(textToType) {
+		const maxTextLen = TextToFilePage.maxTextAreaLength
+
+		TextToFilePage.typeIntoTextArea(textToType)
+
+		if (textToType.length > maxTextLen) {
+			// Get the first 300 characters only.
+			const first300Chars = textToType.substring(0, maxTextLen)
+
+			cy.getByCy('text-input-area').should('have.value', first300Chars)
+		} else {
+			cy.getByCy('text-input-area').should('have.value', textToType)
+		}
+	},
+	/**
+	 * Command to delete text from the Text to File text area.
+	 * @param {number} charCount The number of characters to delete.
+	 */
+	deleteTextToFileArea(charCount) {
+		// Store the current text area content length.
+		cy.getByCy('text-input-area').invoke('val').as('beforeText')
+		cy.get('@beforeText').then((text) => {
+			const currentLength = text.length
+			const expLength = Math.max(0, currentLength - charCount)
+
+			TextToFilePage.deleteFromTextArea(charCount)
+
+			// Verify the new text area content length.
+			cy.getByCy('text-input-area').invoke('val').as('afterText')
+			cy.get('@afterText').then((afterText) => {
+				cy.wrap(afterText.length).should('equal', expLength)
+			})
+		})
+	},
+	/**
+	 * Command to type text into the Text to File file name input.
+	 * @param {string} fileName The file name to type into the input.
+	 */
+	typeTextToFileNameInput(fileName) {
+		const maxInputLen = TextToFilePage.maxFileNameLength
+
+		TextToFilePage.typeIntoFileNameInput(fileName)
+		if (fileName.length > maxInputLen) {
+			// Get the first 30 characters only.
+			const first30Chars = fileName.substring(0, maxInputLen)
+			cy.getByCy('file-name-input').should('have.value', first30Chars)
+		} else {
+			cy.getByCy('file-name-input').should('have.value', fileName)
+		}
+	},
+	/**
+	 * Command to delete text from the Text to File file name input.
+	 * @param {number} charCount The number of characters to delete.
+	 */
+	deleteTextToFileNameInput(charCount) {
+		// Store the current file name input content length.
+		cy.getByCy('file-name-input').invoke('val').as('beforeFileName')
+		cy.get('@beforeFileName').then((fileName) => {
+			const currentLength = fileName.length
+			const expLength = Math.max(0, currentLength - charCount)
+			TextToFilePage.deleteFromFileNameInput(charCount)
+
+			// Verify the new file name input content length.
+			cy.getByCy('file-name-input').invoke('val').as('afterFileName')
+			cy.get('@afterFileName').then((afterFileName) => {
+				cy.wrap(afterFileName.length).should('equal', expLength)
+			})
+		})
+	},
+	/**
+	 * Command to select the Text to File file type from the dropdown menu.
+	 * @param {string} fileVal The file type value to select.
+	 */
+	selectTextToFileType(fileVal) {
+		TextToFilePage.selectFileType(fileVal)
+
+		cy.getByCy('file-type-select')
+			.find('option:selected')
+			.should('have.value', fileVal)
+	},
+	/**
+	 * Command to press the Text to File "Download" button.
+	 */
+	pressTextToFileDownload() {
+		TextToFilePage.clickDownloadButton()
+	},
+	/**
+	 * Command to verify the character count shown for the Text to File text area.
+	 * @param {number} expectedCount The expected character count.
+	 */
+	verifyTextToFileAreaCharCount(expectedCount) {
+		const expLabel = `Enter your text (${expectedCount}/300):`
+
+		cy.getByCy('text-input-label').should('have.text', expLabel)
+	},
+	/**
+	 * Command to verify the character count for the file name input.
+	 * @param {number} expectedCount The expected character count.
+	 */
+	verifyTextToFileNameInputCharCount(expectedCount) {
+		const expLabel = `Enter file name (${expectedCount}/30):`
+
+		cy.getByCy('file-name-label').should('have.text', expLabel)
+	},
+	/**
+	 * Command to verify the downloaded file name and content.
+	 * @param {string} expectedFileName The expected file name with its extension of the downloaded file.
+	 * @param {string} expectedFileContent The expected content of the downloaded file.
+	 */
+	verifyTextToFileDownload(expectedFileName, expectedFileContent) {
+		// Verify the file is downloaded with the expected file name and content.
+		const filePath = `${cyDownloadsFolder}/${expectedFileName}`
+
+		cy.readFile(filePath, { timeout: 15000 }).should(
+			'equal',
+			expectedFileContent
+		)
+	},
+	/**
+	 * Command to verify an error message is shown on the Text to File page.
+	 * @param {string} expectedErrorMsg The expected error message shown.
+	 */
+	verifyTextToFileErrorMessage(expectedErrorMsg) {
+		cy.getByCy('error-message')
+			.should('be.visible')
+			.and('have.text', expectedErrorMsg)
+	},
+	/**
+	 * Command to verify no error message is shown on the Text to File page.
+	 */
+	verifyTextToFileNoErrorMessage() {
+		cy.getByCy('text-input-area').focus()
+		cy.realType('A')
+		cy.getByCy('error-message').should('not.be.visible')
 	}
 })

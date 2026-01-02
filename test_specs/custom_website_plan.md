@@ -56,8 +56,9 @@ This document plans the positive and negative test cases when for my [custom web
 
 - [x] All the elements contain their expected text when the text to file downloader page is loaded.
 - [x] The title element uses "Text to File Downloader".
-- [ ] The char count dynamically counts up and down when the user types in the text area.
-- [ ] Enter text to download a text file.
+- [x] The char count dynamically counts up and down when the user types in the text area.
+- [x] The char count dynamically counts up and down when the user types in the file name input.
+- [x] Enter text to download a text file.
 - [ ] Enter text to download a markdown file.
 - [ ] Enter text to download a CSV file.
 - [ ] Enter text to download a JSON file.
