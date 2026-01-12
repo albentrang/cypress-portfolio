@@ -827,19 +827,23 @@ Cypress.Commands.addAll({
 	/**
 	 * Command to type text into the Text to File text area.
 	 * @param {string} textToType The text to type into the text area.
+	 * @param {boolean} isJson Whether the text is JSON.
 	 */
-	typeTextToFileArea(textToType) {
+	typeTextToFileArea(textToType, isJson = false) {
 		const maxTextLen = TextToFilePage.maxTextAreaLength
 
-		TextToFilePage.typeIntoTextArea(textToType)
+		TextToFilePage.typeIntoTextArea(textToType, isJson)
+
+		// Replace the {enter} placeholder with actual new line characters for verification.
+		textToType = textToType.replace(/{enter}/g, '\n')
 
 		if (textToType.length > maxTextLen) {
 			// Get the first 300 characters only.
 			const first300Chars = textToType.substring(0, maxTextLen)
 
-			cy.getByCy('text-input-area').should('have.value', first300Chars)
+			TextToFilePage.textArea.should('have.value', first300Chars)
 		} else {
-			cy.getByCy('text-input-area').should('have.value', textToType)
+			TextToFilePage.textArea.should('have.value', textToType)
 		}
 	},
 	/**
@@ -848,7 +852,7 @@ Cypress.Commands.addAll({
 	 */
 	deleteTextToFileArea(charCount) {
 		// Store the current text area content length.
-		cy.getByCy('text-input-area').invoke('val').as('beforeText')
+		TextToFilePage.textArea.invoke('val').as('beforeText')
 		cy.get('@beforeText').then((text) => {
 			const currentLength = text.length
 			const expLength = Math.max(0, currentLength - charCount)
@@ -856,7 +860,7 @@ Cypress.Commands.addAll({
 			TextToFilePage.deleteFromTextArea(charCount)
 
 			// Verify the new text area content length.
-			cy.getByCy('text-input-area').invoke('val').as('afterText')
+			TextToFilePage.textArea.invoke('val').as('afterText')
 			cy.get('@afterText').then((afterText) => {
 				cy.wrap(afterText.length).should('equal', expLength)
 			})
@@ -873,9 +877,9 @@ Cypress.Commands.addAll({
 		if (fileName.length > maxInputLen) {
 			// Get the first 30 characters only.
 			const first30Chars = fileName.substring(0, maxInputLen)
-			cy.getByCy('file-name-input').should('have.value', first30Chars)
+			TextToFilePage.fileNameInput.should('have.value', first30Chars)
 		} else {
-			cy.getByCy('file-name-input').should('have.value', fileName)
+			TextToFilePage.fileNameInput.should('have.value', fileName)
 		}
 	},
 	/**
@@ -884,14 +888,14 @@ Cypress.Commands.addAll({
 	 */
 	deleteTextToFileNameInput(charCount) {
 		// Store the current file name input content length.
-		cy.getByCy('file-name-input').invoke('val').as('beforeFileName')
+		TextToFilePage.fileNameInput.invoke('val').as('beforeFileName')
 		cy.get('@beforeFileName').then((fileName) => {
 			const currentLength = fileName.length
 			const expLength = Math.max(0, currentLength - charCount)
 			TextToFilePage.deleteFromFileNameInput(charCount)
 
 			// Verify the new file name input content length.
-			cy.getByCy('file-name-input').invoke('val').as('afterFileName')
+			TextToFilePage.fileNameInput.invoke('val').as('afterFileName')
 			cy.get('@afterFileName').then((afterFileName) => {
 				cy.wrap(afterFileName.length).should('equal', expLength)
 			})
@@ -904,9 +908,8 @@ Cypress.Commands.addAll({
 	selectTextToFileType(fileVal) {
 		TextToFilePage.selectFileType(fileVal)
 
-		cy.getByCy('file-type-select')
-			.find('option:selected')
-			.should('have.value', fileVal)
+		TextToFilePage.fileTypeSelect.find('option:selected').as('selectedOption')
+		cy.get('@selectedOption').should('have.value', fileVal)
 	},
 	/**
 	 * Command to press the Text to File "Download" button.
@@ -921,7 +924,7 @@ Cypress.Commands.addAll({
 	verifyTextToFileAreaCharCount(expectedCount) {
 		const expLabel = `Enter your text (${expectedCount}/300):`
 
-		cy.getByCy('text-input-label').should('have.text', expLabel)
+		TextToFilePage.textInputLabel.should('have.text', expLabel)
 	},
 	/**
 	 * Command to verify the character count for the file name input.
@@ -930,7 +933,7 @@ Cypress.Commands.addAll({
 	verifyTextToFileNameInputCharCount(expectedCount) {
 		const expLabel = `Enter file name (${expectedCount}/30):`
 
-		cy.getByCy('file-name-label').should('have.text', expLabel)
+		TextToFilePage.fileNameInputLabel.should('have.text', expLabel)
 	},
 	/**
 	 * Command to verify the downloaded file name and content.
@@ -941,26 +944,39 @@ Cypress.Commands.addAll({
 		// Verify the file is downloaded with the expected file name and content.
 		const filePath = `${cyDownloadsFolder}/${expectedFileName}`
 
-		cy.readFile(filePath, { timeout: 15000 }).should(
-			'equal',
-			expectedFileContent
-		)
+		// Replace the {enter} placeholder with actual new line characters for verification.
+		expectedFileContent = expectedFileContent.replace(/{enter}/g, '\n')
+
+		cy.readFile(filePath, { timeout: 5000 }).then((fileContent) => {
+			// Stringify JSON content for comparison if the selected file type was JSON.
+			if (expectedFileName.endsWith('.json')) {
+				const expectedJson = JSON.parse(expectedFileContent)
+				cy.wrap(fileContent).should('deep.equal', expectedJson)
+			} else {
+				cy.wrap(fileContent).should('equal', expectedFileContent)
+			}
+		})
 	},
 	/**
 	 * Command to verify an error message is shown on the Text to File page.
 	 * @param {string} expectedErrorMsg The expected error message shown.
 	 */
 	verifyTextToFileErrorMessage(expectedErrorMsg) {
-		cy.getByCy('error-message')
+		TextToFilePage.errorMessage
 			.should('be.visible')
 			.and('have.text', expectedErrorMsg)
 	},
 	/**
 	 * Command to verify no error message is shown on the Text to File page.
+	 * @param {boolean} typeInFileName Set to true to type in the file name input. Otherwise, type in the text area instead.
 	 */
-	verifyTextToFileNoErrorMessage() {
-		cy.getByCy('text-input-area').focus()
+	verifyTextToFileNoErrorMessage(typeInFileName = false) {
+		if (typeInFileName) {
+			TextToFilePage.fileNameInput.focus()
+		} else {
+			TextToFilePage.textArea.focus()
+		}
 		cy.realType('A')
-		cy.getByCy('error-message').should('not.be.visible')
+		TextToFilePage.errorMessage.should('not.be.visible')
 	}
 })

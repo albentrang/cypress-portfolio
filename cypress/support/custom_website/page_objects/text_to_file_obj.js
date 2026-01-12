@@ -32,12 +32,77 @@ class TextToFilePage {
 	}
 
 	/**
+	 * Get the label for the text area.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The text area label element.
+	 */
+	get textInputLabel() {
+		return cy.getByCy('text-input-label')
+	}
+
+	/**
+	 * Get the text area element.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The text area element.
+	 */
+	get textArea() {
+		return cy.getByCy('text-input-area')
+	}
+
+	/**
+	 * Get the label for the file name input.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The file name input label element.
+	 */
+	get fileNameInputLabel() {
+		return cy.getByCy('file-name-label')
+	}
+
+	/**
+	 * Get the file name input element.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The file name input element.
+	 */
+	get fileNameInput() {
+		return cy.getByCy('file-name-input')
+	}
+
+	/**
+	 * Get the file type select dropdown element.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The file type select element.
+	 */
+	get fileTypeSelect() {
+		return cy.getByCy('file-type-select')
+	}
+
+	/**
+	 * Get the download button element.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The download button element.
+	 */
+	get downloadButton() {
+		return cy.getByCy('download-btn')
+	}
+
+	/**
+	 * Get the error message element.
+	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>} The error message element.
+	 */
+	get errorMessage() {
+		return cy.getByCy('error-message')
+	}
+
+	/**
 	 * Type into the text area.
 	 * @param {string} text - The text to type into the text area.
+	 * @param {boolean} isJson - Whether the text is JSON.
 	 */
-	typeIntoTextArea(text) {
-		cy.getByCy('text-input-area').focus()
-		cy.realType(text)
+	typeIntoTextArea(text, isJson = false) {
+		// For JSON, disable special character parsing to allow typing characters like { and }.
+		// For other text types, use realType to simulate real user typing.
+		if (isJson) {
+			this.textArea.type(text, {
+				parseSpecialCharSequences: false
+			})
+		} else {
+			this.textArea.focus()
+			cy.realType(text)
+		}
 	}
 
 	/**
@@ -55,7 +120,7 @@ class TextToFilePage {
 	 * @param {string} fileName - The file name to type into the input field.
 	 */
 	typeIntoFileNameInput(fileName) {
-		cy.getByCy('file-name-input').focus()
+		this.fileNameInput.focus()
 		cy.realType(fileName)
 	}
 
@@ -65,7 +130,7 @@ class TextToFilePage {
 	 */
 	deleteFromFileNameInput(charCount) {
 		if (charCount > 0) {
-			cy.getByCy('file-name-input').focus()
+			this.fileNameInput.focus()
 			cy.realType('{backspace}'.repeat(charCount))
 		}
 	}
@@ -75,14 +140,14 @@ class TextToFilePage {
 	 * @param {string} fileVal - The value of the file type to select (e.g., 'txt', 'md', 'csv', or 'json').
 	 */
 	selectFileType(fileVal) {
-		cy.getByCy('file-type-select').select(fileVal)
+		this.fileTypeSelect.select(fileVal)
 	}
 
 	/**
 	 * Click the download button.
 	 */
 	clickDownloadButton() {
-		cy.getByCy('download-btn').click()
+		this.downloadButton.click()
 	}
 }
 

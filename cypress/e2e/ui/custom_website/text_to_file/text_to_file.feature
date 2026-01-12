@@ -97,9 +97,62 @@ Feature: Text to File Downloader
 		Then I should see a file with the full file name "<fileName>".txt and the file should contain the text "<text>"
 		Examples:
 			| text          | fileName |
-			| Hello, World! | test     |
+			| Hello, World! | textTest |
 
-	Scenario: Error message for invalid input and removing it
+	Scenario Outline: Create and download Markdown file
+		When I type "<text>" into the text input field
+		And I type the file name "<fileName>" into the file name input field
+		And I select the markdown file type from the dropdown menu
+		And I click the download button
+		Then I should see a file with the full file name "<fileName>".md and the file should contain the text "<text>"
+		Examples:
+			| text    | fileName |
+			| # Hello | mdtest   |
+
+	Scenario Outline: Create and download CSV file
+		When I type "<text>" into the text input field
+		And I type the file name "<fileName>" into the file name input field
+		And I select the CSV file type from the dropdown menu
+		And I click the download button
+		Then I should see a file with the full file name "<fileName>".csv and the file should contain the text "<text>"
+		Examples:
+			| text                             | fileName |
+			| name,age,city{enter}Alben,30,NYC | csvtest  |
+
+	Scenario Outline: Create and download JSON file
+		When I type JSON "<text>" into the text input field
+		And I type the file name "<fileName>" into the file name input field
+		And I select the JSON file type from the dropdown menu
+		And I click the download button
+		Then I should see a file with the full file name "<fileName>".json and the file should contain the text "<text>"
+		Examples:
+			| text                     | fileName |
+			| {"name": "Alben"}        | jsontest |
+			| ["red", "blue", "green"] | list     |
+
+	Scenario: Error message for invalid text area input and removing it
 		When I click the download button
-		And I see an error message "Please enter some text to convert to a file."
+		And I see this error message "Please enter some text to convert to a file."
+		Then I should see the error message disappear when I type in the text area
+
+	Scenario: Error message for invalid file name input and removing it
+		When I type "Sample text" into the text input field
+		And I click the download button
+		And I see this error message "Please enter the name for the file."
+		Then I should see the error message disappear when I type in the file name input field
+
+	Scenario: Error message for invalid CSV text area input and removing it
+		When I type "name,age,city{enter}Alben,30" into the text input field
+		And I type the file name "csvErrorFile" into the file name input field
+		And I select the CSV file type from the dropdown menu
+		And I click the download button
+		And I see this error message "Please enter valid CSV. Ensure each column has the same number of values separated by commas."
+		Then I should see the error message disappear when I type in the text area
+
+	Scenario: Error message for invalid JSON text area input and removing it
+		When I type "asdf" into the text input field
+		And I type the file name "jsonErrorFile" into the file name input field
+		And I select the JSON file type from the dropdown menu
+		And I click the download button
+		And I see this error message "Please enter valid JSON. Ensure proper JSON syntax."
 		Then I should see the error message disappear when I type in the text area

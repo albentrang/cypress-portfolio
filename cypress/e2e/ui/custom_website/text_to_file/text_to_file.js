@@ -122,7 +122,7 @@ Then('I should all the file type options available', () => {
 	})
 })
 
-// Scenario Outline: Create and download text file
+// *Common steps for text to file scenarios
 When('I type {string} into the text input field', (text) => {
 	cy.typeTextToFileArea(text)
 })
@@ -132,11 +132,13 @@ When(
 		cy.typeTextToFileNameInput(fileName)
 	}
 )
-When('I select the text file type from the dropdown menu', () => {
-	cy.selectTextToFileType('txt')
-})
 When('I click the download button', () => {
 	cy.pressTextToFileDownload()
+})
+
+// Scenario Outline: Create and download text file
+When('I select the text file type from the dropdown menu', () => {
+	cy.selectTextToFileType('txt')
 })
 Then(
 	'I should see a file with the full file name {string}.txt and the file should contain the text {string}',
@@ -145,13 +147,57 @@ Then(
 	}
 )
 
-// Scenario: Error message for invalid input and removing it
-When('I see an error message {string}', (errorMessage) => {
+// Scenario Outline: Create and download Markdown file
+When('I select the markdown file type from the dropdown menu', () => {
+	cy.selectTextToFileType('md')
+})
+Then(
+	'I should see a file with the full file name {string}.md and the file should contain the text {string}',
+	(fileName, text) => {
+		cy.verifyTextToFileDownload(`${fileName}.md`, text)
+	}
+)
+
+// Scenario Outline: Create and download CSV file
+When('I select the CSV file type from the dropdown menu', () => {
+	cy.selectTextToFileType('csv')
+})
+Then(
+	'I should see a file with the full file name {string}.csv and the file should contain the text {string}',
+	(fileName, text) => {
+		cy.verifyTextToFileDownload(`${fileName}.csv`, text)
+	}
+)
+
+// Scenario Outline: Create and download JSON file
+When('I select the JSON file type from the dropdown menu', () => {
+	cy.selectTextToFileType('json')
+})
+When(/^I type JSON "(.+)" into the text input field$/, (text) => {
+	cy.typeTextToFileArea(text, true)
+})
+Then(
+	/^I should see a file with the full file name "(.+)".json and the file should contain the text "(.+)"$/,
+	(fileName, text) => {
+		cy.verifyTextToFileDownload(`${fileName}.json`, text)
+	}
+)
+
+// *Common step for error message scenarios
+When('I see this error message {string}', (errorMessage) => {
 	cy.verifyTextToFileErrorMessage(errorMessage)
 })
 Then(
 	'I should see the error message disappear when I type in the text area',
 	() => {
 		cy.verifyTextToFileNoErrorMessage()
+	}
+)
+
+// Scenario: Error message for invalid file name input and removing it
+Then(
+	'I should see the error message disappear when I type in the file name input field',
+	() => {
+		cy.verifyTextToFileNoErrorMessage(true)
 	}
 )

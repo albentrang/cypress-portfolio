@@ -152,12 +152,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         else if (fileTypeSelect.value == 'csv' && !isValidCsv(textArea.value)) {
-            showError('Please enter valid CSV.');
+            showError('Please enter valid CSV. Ensure each column has the same number of values separated by commas.');
             return;
         }
         else if (fileTypeSelect.value === 'json' &&
             !isValidJson(textArea.value)) {
-            showError('Please enter valid JSON.');
+            showError('Please enter valid JSON. Ensure proper JSON syntax.');
             return;
         }
         const text = textArea.value.slice(0, 300); // Enforce max length

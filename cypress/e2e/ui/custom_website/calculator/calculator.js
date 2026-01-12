@@ -5,11 +5,10 @@ Given('I visit the calculator page', () => {
 	cy.visit('calculator.html')
 })
 
-// Common Steps
+// *Common Steps for calculator scenarios
 When('I press =', () => {
 	cy.calcEnterAction('equals')
 })
-
 Then('I should see the calculator display show {string}', (result) => {
 	cy.verifyCalcResult(result)
 })
