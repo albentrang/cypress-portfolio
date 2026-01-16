@@ -3,8 +3,9 @@
 /* Box-Model Fix */
 html {
 	box-sizing: border-box;
+
+	/* Set default font size to 10px */
 	font-size: 62.5%;
-	/* Set default to 10px */
 }
 
 *,
@@ -125,7 +126,7 @@ footer {
 }
 
 /* Adjust content for mobile device screens */
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) {
 	body {
 		font-size: 1.5rem;
 		line-height: 1.2;

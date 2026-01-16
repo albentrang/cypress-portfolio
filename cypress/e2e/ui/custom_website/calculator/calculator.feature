@@ -13,6 +13,7 @@ Feature: Calculator
 			| dataCy             | expText                                                 |
 			| calc-nav-home-link | Home                                                    |
 			| calc-nav-calc-link | Calculator                                              |
+			| calc-nav-text-link | Text to File                                            |
 			| calc-header        | Calculator                                              |
 			| calc-tagline       | A simple calculator app to test simple math operations! |
 
@@ -27,16 +28,20 @@ Feature: Calculator
 			| dataCy                    | url                                             |
 			| calc-nav-home-link        | index.html                                      |
 			| calc-nav-calc-link        | calculator.html                                 |
+			| calc-nav-text-link        | text_to_file.html                               |
 			| calc-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
 			| calc-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
 
 	Scenario Outline: Check element hover effects
 		When I hover over the element with the data-cy attribute "<dataCy>"
-		Then I should see the element's background color change to these RGB values: <r>, <g>, <b>
+		And I see the element's background color change to these RGB values: <r>, <g>, <b>
+		And I stop hovering over the element
+		Then I should see the element's background color revert back to its original color
 		Examples:
 			| dataCy             | r   | g   | b   |
 			| calc-nav-home-link | 233 | 150 | 122 |
 			| calc-nav-calc-link | 233 | 150 | 122 |
+			| calc-nav-text-link | 233 | 150 | 122 |
 			| btn-clear          | 0   | 0   | 0   |
 			| btn-clear-entry    | 0   | 0   | 0   |
 			| btn-modulo         | 0   | 0   | 0   |

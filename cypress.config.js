@@ -9,6 +9,7 @@ const {
 } = require('@badeball/cypress-cucumber-preprocessor/esbuild')
 
 module.exports = defineConfig({
+	downloadsFolder: 'cypress/downloads',
 	reporter: 'cypress-mochawesome-reporter',
 	reporterOptions: {
 		charts: true,

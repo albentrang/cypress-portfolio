@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -12,30 +12,44 @@
 <body>
 	<div class="content-wrapper">
 		<header>
+			<!-- Navigation links for the website -->
 			<nav>
 				<a href="index.html" data-cy="home-nav-home-link">Home</a>
 				<a href="calculator.html" data-cy="home-nav-calc-link">Calculator</a>
+				<a href="text_to_file.html" data-cy="home-nav-text-link">Text to File</a>
 			</nav>
+
+			<!-- Website title and tagline -->
 			<hgroup>
-				<h1 data-cy="home-header">
-					Homepage
-				</h1>
-				<p data-cy="home-tagline">
-					My custom website to test various elements and interactions!
-				</p>
+				<h1 data-cy="home-header">Homepage</h1>
+				<p data-cy="home-tagline">My custom website to test various elements and interactions!</p>
 			</hgroup>
 		</header>
 
 		<main>
+			<!-- Test pages section -->
 			<section>
 				<h2 data-cy="test-pages-header">Test Pages</h2>
 				<p data-cy="test-pages-desc">
 					Explore different test pages to validate various features.
 				</p>
-				<a href="calculator.html" data-cy="test-pages-calc-link">
-					<button type="button" data-cy="test-pages-calc-btn">Calculator</button>
-				</a>
+				<ul class="test-pages-list">
+					<li>
+						<a href="calculator.html" data-cy="test-pages-calc-link">
+							<button type="button" data-cy="test-pages-calc-btn">Calculator</button>
+						</a>
+					</li>
+					<li>
+						<a href="text_to_file.html" data-cy="test-pages-text-link">
+							<button type="button" data-cy="test-pages-text-btn">Text to File</button>
+						</a>
+					</li>
+				</ul>
+
+
 			</section>
+
+			<!-- Cypress test results section -->
 			<section>
 				<h2 data-cy="cy-test-results-header">Cypress Test Results</h2>
 				<p data-cy="cy-test-results-desc">
@@ -54,8 +68,11 @@
 	</div>
 
 	<footer>
+		<!-- Footer text -->
 		<p id="footer-text" data-cy="home-footer-text">© 2025 by Alben Trang<br><a href="mailto:albentrang@gmail.com"
 				id="footer-email" data-cy="home-footer-email">albentrang@gmail.com</a></p>
+
+		<!-- Social media links -->
 		<ul class="socials">
 			<li>
 				<a href="https://www.linkedin.com/in/albentrang/" target="_blank" id="linkedin-link"
