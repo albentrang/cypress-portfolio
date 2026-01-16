@@ -832,6 +832,11 @@ Cypress.Commands.addAll({
 	typeTextToFileArea(textToType, isJson = false) {
 		const maxTextLen = TextToFilePage.maxTextAreaLength
 
+		// Remove any backslashes added by the Cucumber feature file.
+		if (isJson) {
+			textToType = textToType.replace(/\\/g, '')
+		}
+
 		TextToFilePage.typeIntoTextArea(textToType, isJson)
 
 		// Replace the {enter} placeholder with actual new line characters for verification.
@@ -902,6 +907,14 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
+	 * Command to clear the Text to File text area and file name input.
+	 */
+	clearTextToFileInputs() {
+		TextToFilePage.clearTextAreaAndFileNameInput()
+		TextToFilePage.textArea.should('have.value', '')
+		TextToFilePage.fileNameInput.should('have.value', '')
+	},
+	/**
 	 * Command to select the Text to File file type from the dropdown menu.
 	 * @param {string} fileVal The file type value to select.
 	 */
@@ -950,7 +963,9 @@ Cypress.Commands.addAll({
 		cy.readFile(filePath, { timeout: 5000 }).then((fileContent) => {
 			// Stringify JSON content for comparison if the selected file type was JSON.
 			if (expectedFileName.endsWith('.json')) {
-				const expectedJson = JSON.parse(expectedFileContent)
+				// Remove any backslashes added by the Cucumber feature file.
+				const expectedJson = JSON.parse(expectedFileContent.replace(/\\/g, ''))
+
 				cy.wrap(fileContent).should('deep.equal', expectedJson)
 			} else {
 				cy.wrap(fileContent).should('equal', expectedFileContent)

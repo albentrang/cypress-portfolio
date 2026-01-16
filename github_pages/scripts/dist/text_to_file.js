@@ -151,6 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
             showError('Please enter the name for the file.');
             return;
         }
+        else if (fileNameInput.value.match(/[^A-Za-z0-9_\-]+/)) {
+            showError('Please enter a valid file name (alphanumeric, hyphens, underscores).');
+            return;
+        }
         else if (fileTypeSelect.value == 'csv' && !isValidCsv(textArea.value)) {
             showError('Please enter valid CSV. Ensure each column has the same number of values separated by commas.');
             return;

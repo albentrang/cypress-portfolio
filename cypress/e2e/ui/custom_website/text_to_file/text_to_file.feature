@@ -40,7 +40,9 @@ Feature: Text to File Downloader
 
 	Scenario Outline: Check element hover effects
 		When I hover over the element with the data-cy attribute "<dataCy>"
-		Then I should see the element's background color change to these RGB values: <r>, <g>, <b>
+		And I see the element's background color change to these RGB values: <r>, <g>, <b>
+		And I stop hovering over the element
+		Then I should see the element's background color revert back to its original color
 		Examples:
 			| dataCy             | r   | g   | b   |
 			| text-nav-home-link | 233 | 150 | 122 |
@@ -96,8 +98,12 @@ Feature: Text to File Downloader
 		And I click the download button
 		Then I should see a file with the full file name "<fileName>".txt and the file should contain the text "<text>"
 		Examples:
-			| text          | fileName |
-			| Hello, World! | textTest |
+			| text                      | fileName    |
+			| Hello, World!             | textTest    |
+			| This is{enter}a test.     | textEnter   |
+			| Test	tabs	here.           | textTabs    |
+			| Special chars: !@#$%^&*() | textSpecial |
+			| Emojis: 😊🎉              | textEmoji   |
 
 	Scenario Outline: Create and download Markdown file
 		When I type "<text>" into the text input field
@@ -106,8 +112,12 @@ Feature: Text to File Downloader
 		And I click the download button
 		Then I should see a file with the full file name "<fileName>".md and the file should contain the text "<text>"
 		Examples:
-			| text    | fileName |
-			| # Hello | mdtest   |
+			| text                      | fileName  |
+			| # Hello                   | mdtest    |
+			| # Title{enter}## Subtitle | mdEnter   |
+			| Test	tabs	here.           | mdTabs    |
+			| Special chars: !@#$%^&*() | mdSpecial |
+			| Emojis: 😊🎉              | mdEmoji   |
 
 	Scenario Outline: Create and download CSV file
 		When I type "<text>" into the text input field
@@ -116,8 +126,13 @@ Feature: Text to File Downloader
 		And I click the download button
 		Then I should see a file with the full file name "<fileName>".csv and the file should contain the text "<text>"
 		Examples:
-			| text                             | fileName |
-			| name,age,city{enter}Alben,30,NYC | csvtest  |
+			| text                                          | fileName   |
+			| name,age,city{enter}Alben,30,NYC              | csvtest    |
+			| product,price,quantity{enter}Pen,,10          | csvEmpty   |
+			| item,amount{enter}Book,15.99{enter}Notebook,5 | csvMulti   |
+			| Test	{enter}tabs                              | csvTabs    |
+			| Special chars{enter}!@#$%^&*()                | csvSpecial |
+			| Emojis{enter}😊🎉{enter}🚀⭐                   | csvEmoji   |
 
 	Scenario Outline: Create and download JSON file
 		When I type JSON "<text>" into the text input field
@@ -126,33 +141,68 @@ Feature: Text to File Downloader
 		And I click the download button
 		Then I should see a file with the full file name "<fileName>".json and the file should contain the text "<text>"
 		Examples:
-			| text                     | fileName |
-			| {"name": "Alben"}        | jsontest |
-			| ["red", "blue", "green"] | list     |
+			| text                                                                                                           | fileName    |
+			| {"name": "Alben"}                                                                                              | jsontest    |
+			| ["red", "blue", "green"]                                                                                       | jsonList    |
+			| {"name": "Alben", "age": 30, "place": {"state": "NY", "city": "New York"}, "colors": ["red", "blue", "green"]} | jsonComplex |
+			| {"specialChars": "!@#$%^&*()"}                                                                                 | jsonSpecial |
+			| {"emojis": ["😊", "🎉", "🚀", "⭐"]}                                                                            | jsonEmoji   |
 
-	Scenario: Error message for invalid text area input and removing it
+	Scenario: Error message for invalid text area input, removing it, and successful download afterward
 		When I click the download button
-		And I see this error message "Please enter some text to convert to a file."
-		Then I should see the error message disappear when I type in the text area
+		* I see this error message "Please enter some text to convert to a file."
+		* I see the error message disappear when I type in the text area
+		* I clear the text area and file name input field
+		* I type "Testing after error..." into the text input field
+		* I type the file name "textAfterError" into the file name input field
+		* I click the download button
+		Then I should see a file with the full file name "textAfterError".txt and the file should contain the text "Testing after error..."
 
-	Scenario: Error message for invalid file name input and removing it
+	Scenario: Error message for invalid file name input, removing it, and successful download afterward
 		When I type "Sample text" into the text input field
-		And I click the download button
-		And I see this error message "Please enter the name for the file."
-		Then I should see the error message disappear when I type in the file name input field
+		* I click the download button
+		* I see this error message "Please enter the name for the file."
+		* I see the error message disappear when I type in the file name input field
+		* I clear the text area and file name input field
+		* I type "Testing after error..." into the text input field
+		* I type the file name "textAfterError" into the file name input field
+		* I click the download button
+		Then I should see a file with the full file name "textAfterError".txt and the file should contain the text "Testing after error..."
 
-	Scenario: Error message for invalid CSV text area input and removing it
+	Scenario: Error message for invalid file name characters, removing it, and successful download afterward
+		When I type "Sample text" into the text input field
+		* I type the file name "invalid/file*name?" into the file name input field
+		* I click the download button
+		* I see this error message "Please enter a valid file name (alphanumeric, hyphens, underscores)."
+		* I see the error message disappear when I type in the file name input field
+		* I clear the text area and file name input field
+		* I type "Testing after error..." into the text input field
+		* I type the file name "textAfterError" into the file name input field
+		* I click the download button
+		Then I should see a file with the full file name "textAfterError".txt and the file should contain the text "Testing after error..."
+
+	Scenario: Error message for invalid CSV text area input, removing it, and successful download afterward
 		When I type "name,age,city{enter}Alben,30" into the text input field
-		And I type the file name "csvErrorFile" into the file name input field
-		And I select the CSV file type from the dropdown menu
-		And I click the download button
-		And I see this error message "Please enter valid CSV. Ensure each column has the same number of values separated by commas."
-		Then I should see the error message disappear when I type in the text area
+		* I type the file name "csvErrorFile" into the file name input field
+		* I select the CSV file type from the dropdown menu
+		* I click the download button
+		* I see this error message "Please enter valid CSV. Ensure each column has the same number of values separated by commas."
+		* I see the error message disappear when I type in the text area
+		* I clear the text area and file name input field
+		* I type "name,age,city{enter}Alben,30,New York" into the text input field
+		* I type the file name "csvAfterError" into the file name input field
+		* I click the download button
+		Then I should see a file with the full file name "csvAfterError".csv and the file should contain the text "name,age,city{enter}Alben,30,New York"
 
-	Scenario: Error message for invalid JSON text area input and removing it
-		When I type "asdf" into the text input field
-		And I type the file name "jsonErrorFile" into the file name input field
-		And I select the JSON file type from the dropdown menu
-		And I click the download button
-		And I see this error message "Please enter valid JSON. Ensure proper JSON syntax."
-		Then I should see the error message disappear when I type in the text area
+	Scenario: Error message for invalid JSON text area input, removing it, and successful download afterward
+		When I type JSON "asdf" into the text input field
+		* I type the file name "jsonErrorFile" into the file name input field
+		* I select the JSON file type from the dropdown menu
+		* I click the download button
+		* I see this error message "Please enter valid JSON. Ensure proper JSON syntax."
+		* I see the error message disappear when I type in the text area
+		* I clear the text area and file name input field
+		* I type JSON "{\"name\": \"Alben\"}" into the text input field
+		* I type the file name "jsonAfterError" into the file name input field
+		* I click the download button
+		Then I should see a file with the full file name "jsonAfterError".json and the file should contain the text "{\"name\": \"Alben\"}"

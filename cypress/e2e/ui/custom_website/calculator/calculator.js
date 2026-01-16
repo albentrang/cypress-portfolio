@@ -68,16 +68,40 @@ Then('I should see the expected text {string} from that element', (expText) => {
 When(
 	'I hover over the element with the data-cy attribute {string}',
 	(dataCy) => {
+		// Alias the element to be hovered over
 		cy.getByCy(dataCy).as('anchorElement')
+
+		// Record the original background color before hover
+		cy.get('@anchorElement')
+			.invoke('css', 'background-color')
+			.as('originalBgColor')
+
+		// Perform the hover action
+		cy.get('@anchorElement').realHover()
 	}
 )
-Then(
-	"I should see the element's background color change to these RGB values: {int}, {int}, {int}",
+When(
+	"I see the element's background color change to these RGB values: {int}, {int}, {int}",
 	(r, g, b) => {
 		const hoverColor = `rgb(${r}, ${g}, ${b})`
 
-		cy.get('@anchorElement').realHover()
 		cy.get('@anchorElement').should('have.css', 'background-color', hoverColor)
+	}
+)
+When('I stop hovering over the element', () => {
+	// Move the mouse to the top left corner to stop hovering
+	cy.get('body').realMouseMove(0, 0)
+})
+Then(
+	"I should see the element's background color revert back to its original color",
+	() => {
+		cy.get('@originalBgColor').then((originalColor) => {
+			cy.get('@anchorElement').should(
+				'have.css',
+				'background-color',
+				originalColor
+			)
+		})
 	}
 )
 

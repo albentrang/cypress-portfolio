@@ -60,16 +60,40 @@ Then('I should see the expected text {string} from that element', (expText) => {
 When(
 	'I hover over the element with the data-cy attribute {string}',
 	(dataCy) => {
+		// Alias the element to be hovered over
 		cy.getByCy(dataCy).as('anchorElement')
+
+		// Record the original background color before hover
+		cy.get('@anchorElement')
+			.invoke('css', 'background-color')
+			.as('originalBgColor')
+
+		// Perform the hover action
+		cy.get('@anchorElement').realHover()
 	}
 )
-Then(
-	"I should see the element's background color change to these RGB values: {int}, {int}, {int}",
+When(
+	"I see the element's background color change to these RGB values: {int}, {int}, {int}",
 	(r, g, b) => {
 		const hoverColor = `rgb(${r}, ${g}, ${b})`
 
-		cy.get('@anchorElement').realHover()
 		cy.get('@anchorElement').should('have.css', 'background-color', hoverColor)
+	}
+)
+When('I stop hovering over the element', () => {
+	// Move the mouse to the top left corner to stop hovering
+	cy.get('body').realMouseMove(0, 0)
+})
+Then(
+	"I should see the element's background color revert back to its original color",
+	() => {
+		cy.get('@originalBgColor').then((originalColor) => {
+			cy.get('@anchorElement').should(
+				'have.css',
+				'background-color',
+				originalColor
+			)
+		})
 	}
 )
 
@@ -179,6 +203,7 @@ When(/^I type JSON "(.+)" into the text input field$/, (text) => {
 Then(
 	/^I should see a file with the full file name "(.+)".json and the file should contain the text "(.+)"$/,
 	(fileName, text) => {
+		cy.log(text)
 		cy.verifyTextToFileDownload(`${fileName}.json`, text)
 	}
 )
@@ -187,17 +212,15 @@ Then(
 When('I see this error message {string}', (errorMessage) => {
 	cy.verifyTextToFileErrorMessage(errorMessage)
 })
-Then(
-	'I should see the error message disappear when I type in the text area',
-	() => {
-		cy.verifyTextToFileNoErrorMessage()
-	}
-)
-
-// Scenario: Error message for invalid file name input and removing it
-Then(
-	'I should see the error message disappear when I type in the file name input field',
+When('I see the error message disappear when I type in the text area', () => {
+	cy.verifyTextToFileNoErrorMessage()
+})
+When(
+	'I see the error message disappear when I type in the file name input field',
 	() => {
 		cy.verifyTextToFileNoErrorMessage(true)
 	}
 )
+When('I clear the text area and file name input field', () => {
+	cy.clearTextToFileInputs()
+})

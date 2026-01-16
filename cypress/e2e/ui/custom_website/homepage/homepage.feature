@@ -46,7 +46,9 @@ Feature: Homepage
 
   Scenario Outline: Check element hover effects
     When I hover over the element with the data-cy attribute "<dataCy>"
-    Then I should see the element's background color change to these RGB values: <r>, <g>, <b>
+		And I see the element's background color change to these RGB values: <r>, <g>, <b>
+		And I stop hovering over the element
+		Then I should see the element's background color revert back to its original color
     Examples:
       | dataCy                  | r   | g   | b   |
       | home-nav-home-link      | 233 | 150 | 122 |

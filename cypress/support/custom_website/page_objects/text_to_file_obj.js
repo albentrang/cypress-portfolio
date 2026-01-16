@@ -94,14 +94,12 @@ class TextToFilePage {
 	 */
 	typeIntoTextArea(text, isJson = false) {
 		// For JSON, disable special character parsing to allow typing characters like { and }.
-		// For other text types, use realType to simulate real user typing.
 		if (isJson) {
 			this.textArea.type(text, {
 				parseSpecialCharSequences: false
 			})
 		} else {
-			this.textArea.focus()
-			cy.realType(text)
+			this.textArea.type(text)
 		}
 	}
 
@@ -120,8 +118,7 @@ class TextToFilePage {
 	 * @param {string} fileName - The file name to type into the input field.
 	 */
 	typeIntoFileNameInput(fileName) {
-		this.fileNameInput.focus()
-		cy.realType(fileName)
+		this.fileNameInput.type(fileName)
 	}
 
 	/**
@@ -133,6 +130,14 @@ class TextToFilePage {
 			this.fileNameInput.focus()
 			cy.realType('{backspace}'.repeat(charCount))
 		}
+	}
+
+	/**
+	 * Clear the text area and file name input field.
+	 */
+	clearTextAreaAndFileNameInput() {
+		this.textArea.clear()
+		this.fileNameInput.clear()
 	}
 
 	/**
