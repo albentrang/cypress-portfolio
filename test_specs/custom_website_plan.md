@@ -35,6 +35,7 @@ This document plans the positive and negative test cases when for my [custom web
 
 - [x] All the elements contain their expected text when the calculator page is loaded.
 - [x] The title element uses "Calculator".
+- [x] The calculator application will display up to ten digits including the decimal point and negative sign if needed.
 - [x] The correct numbers appear in the results bar when one number is entered.
 - [x] The correct numbers appear in the results bar when two different whole or decimal numbers are added.
 - [x] The correct numbers appear in the results bar when two different whole or decimal numbers are subtracted.
@@ -58,22 +59,40 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] The title element uses "Text to File Downloader".
 - [x] The char count dynamically counts up and down when the user types in the text area.
 - [x] The char count dynamically counts up and down when the user types in the file name input.
+- [x] The text to file downloader's text area has a character limit of 300 characters.
+- [x] The text to file downloader's file name field has a character limit of 30 characters.
 - [x] Enter text to download a text file.
 - [x] Enter text to download a markdown file.
 - [x] Enter text to download a CSV file.
 - [x] Enter text to download a JSON file.
 - [x] Error message appears when the text area is empty and the user tries to download a file.
 - [x] Error message appears when the file name field is empty and the user tries to download a file.
+- [x] Error message appears when the file name field contains invalid characters and the user tries to download a file.
 - [x] Error message appears when the text area contains invalid CSV content and the user tries to download a CSV file.
 - [x] Error message appears when the text area contains invalid JSON content and the user tries to download a JSON file.
+
+### Less or More Game
+
+- [ ] All the elements contain their expected text when the less or more game page is loaded.
+- [ ] The title element uses "Less or More Game".
+- [ ] A random number between 0 and 9 is generated to the left of the screen when the game page is loaded.
+- [ ] The right part of the screen shows a question mark before the user makes a guess.
+- [ ] The user can guess if the next number will be less than or more than the current number using the Less or More buttons.
+- [ ] After the user makes a guess, the next random number between 0 and 9 is generated and displayed.
+- [ ] The game indicates to the user if their guess was correct or incorrect using text and the less than and greater than symbols.
+- [ ] The Next button appears while the Less and More buttons are hidden after the user makes a guess.
+- [ ] Clicking the Next button takes the right number as the current number on the left side, the right side shows a question mark again, the Next button is hidden, and the Less and More buttons reappear.
+- [ ] The score and high score update correctly when the user makes a correct guess.
+- [ ] The score resets to 0 when the user makes an incorrect guess.
 
 ## Notes and Ideas
 
 ### Frontend
 
 - The website will use TypeScript for its functionality, but the Cypress tests and supporting scripts will use JavaScript.
-- The calculator application will display up to ten digits including the decimal point and negative sign if needed.
+- The website will use responsive web design principles to ensure it looks good on all devices.
 
 ### Backend
 
+- After the static version of this custom website is complete in the cypress-portfolio repository, there can be another version of this website in another repository that uses backend technologies, containerization, and Playwright testing.
 - The backend technologies can include Python and/or SQL if possible.

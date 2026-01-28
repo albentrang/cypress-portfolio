@@ -1,6 +1,7 @@
 import DeckHandler from './deck_handler'
 import CalculatorPage from './custom_website/page_objects/calculator_obj'
 import TextToFilePage from './custom_website/page_objects/text_to_file_obj'
+import LessOrMorePage from './custom_website/page_objects/less_or_more_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
@@ -993,5 +994,60 @@ Cypress.Commands.addAll({
 		}
 		cy.realType('A')
 		TextToFilePage.errorMessage.should('not.be.visible')
+	},
+	/**
+	 * Command for the Less or More game to guess a given number of times
+	 * by only guessing that the left number is less than the right number.
+	 * @param {number} guessCount The number of times to guess.
+	 */
+	lessOrMoreGuessLess(guessCount) {
+		cy.wrap(0).as('expScore')
+		cy.wrap(0).as('expHighScore')
+
+		for (let i = 0; i < guessCount; i++) {
+			LessOrMorePage.pressGuessLess()
+
+			LessOrMorePage.leftNumber.invoke('text').then((leftNumText) => {
+				LessOrMorePage.rightNumber.invoke('text').then((rightNumText) => {
+					const leftNum = parseInt(leftNumText)
+					const rightNum = parseInt(rightNumText)
+
+					if (leftNum <= rightNum) {
+						// Correct guess, increment score by 1.
+						cy.get('@expScore').then((currentScore) => {
+							const newScore = currentScore + 1
+							cy.wrap(newScore).as('expScore')
+							// Update high score if needed.
+							cy.get('@expHighScore').then((currentHighScore) => {
+								if (newScore > currentHighScore) {
+									cy.wrap(newScore).as('expHighScore')
+								}
+							})
+						})
+					} else {
+						// Incorrect guess, score resets to 0.
+						cy.get('@expScore').then(() => {
+							cy.wrap(0).as('expScore')
+						})
+					}
+
+					LessOrMorePage.pressNext()
+				})
+			})
+		}
+	},
+	verifyLessOrMoreGuesses() {
+		cy.get('@expScore').then((expScore) => {
+			LessOrMorePage.scoreNum.invoke('text').then((scoreText) => {
+				const actualScore = parseInt(scoreText)
+				cy.wrap(actualScore).should('equal', expScore)
+			})
+		})
+		cy.get('@expHighScore').then((expHighScore) => {
+			LessOrMorePage.highScoreNum.invoke('text').then((highScoreText) => {
+				const actualHighScore = parseInt(highScoreText)
+				cy.wrap(actualHighScore).should('equal', expHighScore)
+			})
+		})
 	}
 })
