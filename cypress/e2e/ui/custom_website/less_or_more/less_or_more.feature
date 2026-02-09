@@ -63,6 +63,10 @@ Feature: Less or More
     When I play the Less or More game by making 100 guesses with the More button
     Then I should see the expected final score and high score are displayed
 
+  Scenario: Alternate guesses 100 times
+    When I play the Less or More game by making 100 guesses by alternating between the Less and More buttons
+    Then I should see the expected final score and high score are displayed
+
   Scenario: Guess optimally 100 times
     When I play the Less or More game by making 100 guesses by clicking the Less button if the left number is 5 or more or clicking the More button if the left number is 4 or less
     Then I should see the expected final score and high score are displayed

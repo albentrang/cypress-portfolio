@@ -109,7 +109,7 @@ class TextToFilePage {
 	 */
 	deleteFromTextArea(charCount) {
 		if (charCount > 0) {
-			cy.realType('{backspace}'.repeat(charCount))
+			this.textArea.type('{backspace}'.repeat(charCount))
 		}
 	}
 
@@ -127,8 +127,7 @@ class TextToFilePage {
 	 */
 	deleteFromFileNameInput(charCount) {
 		if (charCount > 0) {
-			this.fileNameInput.focus()
-			cy.realType('{backspace}'.repeat(charCount))
+			this.fileNameInput.type('{backspace}'.repeat(charCount))
 		}
 	}
 

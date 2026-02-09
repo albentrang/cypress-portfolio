@@ -53,9 +53,16 @@ nav a {
 	text-decoration: none;
 }
 
-nav a:hover {
+nav>a:hover {
 	background-color: darksalmon;
 	font-weight: bold;
+}
+
+/* Dropdown Menu - Hidden by default, shown on small screens via media query */
+#dropdown-btn,
+#dropdown-menu,
+#dropdown-menu>li {
+	display: none;
 }
 
 hgroup {
@@ -141,5 +148,50 @@ footer {
 	main {
 		margin-left: 5%;
 		margin-right: 5%;
+	}
+
+	/* Show dropdown menu button only on small screens */
+	#dropdown-btn {
+		background-color: lightsalmon;
+		border: none;
+		color: black;
+		cursor: pointer;
+		display: inline-block;
+		font-size: 2rem;
+		padding: 14px 20px;
+	}
+
+	/* Hide nav links on small screens */
+	nav>a {
+		display: none;
+	}
+
+	/* Show the Home link on the left side of the nav bar */
+	nav>a:first-child {
+		display: inline-block;
+		font-size: 2rem;
+	}
+
+	/* Show the Menu button on the right side of the nav bar */
+	nav>#dropdown-btn {
+		float: right;
+	}
+
+	/* Show dropdown menu if open (optional, can be handled by JS) */
+	#dropdown-menu {
+		background-color: lightsalmon;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		position: static;
+		width: 100%;
+		z-index: 1000;
+	}
+
+	#dropdown-menu li {
+		background-color: linen;
+		border-bottom: 1px solid antiquewhite;
+		display: list-item;
+		text-align: center;
 	}
 }

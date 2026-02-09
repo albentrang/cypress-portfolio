@@ -123,7 +123,9 @@ Then('I should see the Next button is not visible', () => {
 	cy.getByCy('lm-next-btn').should('not.be.visible')
 })
 Then('I should see the score and high score are both 0', () => {
+	cy.getByCy('lm-score-label').should('have.text', 'Score:')
 	cy.getByCy('lm-score').should('have.text', '0')
+	cy.getByCy('lm-high-score-label').should('have.text', 'High Score:')
 	cy.getByCy('lm-high-score').should('have.text', '0')
 })
 
@@ -140,7 +142,7 @@ Then(
 When(
 	'I play the Less or More game by making 100 guesses with the Less button',
 	() => {
-		cy.todo('Implement guessing with Less button 100 times')
+		cy.lessOrMoreGuessLess(100)
 	}
 )
 
@@ -148,7 +150,15 @@ When(
 When(
 	'I play the Less or More game by making 100 guesses with the More button',
 	() => {
-		cy.todo('Implement guessing with More button 100 times')
+		cy.lessOrMoreGuessMore(100)
+	}
+)
+
+// Scenario: Alternate guesses 100 times
+When(
+	'I play the Less or More game by making 100 guesses by alternating between the Less and More buttons',
+	() => {
+		cy.lessOrMoreGuessAlternating(100)
 	}
 )
 
@@ -156,11 +166,11 @@ When(
 When(
 	'I play the Less or More game by making 100 guesses by clicking the Less button if the left number is 5 or more or clicking the More button if the left number is 4 or less',
 	() => {
-		cy.todo('Implement optimal guessing strategy for Less or More game')
+		cy.lessOrMoreGuessOptimal(100)
 	}
 )
 
 // Scenario: Guess randomly 100 times
 When('I play the Less or More game by making 100 guesses randomly', () => {
-	cy.todo('Implement random guessing strategy for Less or More game')
+	cy.lessOrMoreGuessRandom(100)
 })

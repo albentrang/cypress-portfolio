@@ -15,7 +15,7 @@ class LessOrMorePage {
 	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>}
 	 */
 	get gameStatus() {
-		return cy.getByCy('game-status')
+		return cy.getByCy('game-status-text')
 	}
 
 	/**
@@ -71,7 +71,7 @@ class LessOrMorePage {
 	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>}
 	 */
 	get score() {
-		return cy.getByCy('score-text')
+		return cy.getByCy('score-label')
 	}
 
 	/**
@@ -87,7 +87,7 @@ class LessOrMorePage {
 	 * @returns {Cypress.Chainable<JQuery<HTMLElement>>}
 	 */
 	get highScore() {
-		return cy.getByCy('high-score-text')
+		return cy.getByCy('high-score-label')
 	}
 
 	/**
