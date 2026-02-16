@@ -1,6 +1,7 @@
 import DeckHandler from './deck_handler'
 import CalculatorPage from './custom_website/page_objects/calculator_obj'
 import TextToFilePage from './custom_website/page_objects/text_to_file_obj'
+import LessOrMorePage from './custom_website/page_objects/less_or_more_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
@@ -755,7 +756,7 @@ Cypress.Commands.addAll({
 	}
 })
 
-// Custom commands for the custom website project.
+// Custom commands for the custom website's Calculator webpage.
 Cypress.Commands.addAll({
 	/**
 	 * Enter numbers and actions into the calculator.
@@ -823,7 +824,11 @@ Cypress.Commands.addAll({
 		CalculatorPage.getDisplayResult().then((displayText) => {
 			cy.wrap(displayText).should('equal', expectedResult)
 		})
-	},
+	}
+})
+
+// Custom commands for the custom website's Text to File webpage.
+Cypress.Commands.addAll({
 	/**
 	 * Command to type text into the Text to File text area.
 	 * @param {string} textToType The text to type into the text area.
@@ -987,11 +992,187 @@ Cypress.Commands.addAll({
 	 */
 	verifyTextToFileNoErrorMessage(typeInFileName = false) {
 		if (typeInFileName) {
-			TextToFilePage.fileNameInput.focus()
+			TextToFilePage.fileNameInput.type('A')
 		} else {
-			TextToFilePage.textArea.focus()
+			TextToFilePage.textArea.type('A')
 		}
-		cy.realType('A')
 		TextToFilePage.errorMessage.should('not.be.visible')
+	}
+})
+
+// Custom commands for the custom website's Less or More webpage.
+Cypress.Commands.addAll({
+	/**
+	 * Command for the Less or More game to guess a given number of times
+	 * by only guessing that the left number is less than the right number.
+	 * @param {number} guessCount The number of times to guess.
+	 */
+	lessOrMoreGuessLess(guessCount) {
+		cy.initLessOrMoreExpScores()
+
+		for (let i = 0; i < guessCount; i++) {
+			LessOrMorePage.pressGuessLess()
+
+			cy.updateLessOrMoreExpScores('less')
+		}
+	},
+	/**
+	 * Command for the Less or More game to guess a given number of times
+	 * by only guessing that the left number is more than the right number.
+	 * @param {number} guessCount The number of times to guess.
+	 */
+	lessOrMoreGuessMore(guessCount) {
+		cy.initLessOrMoreExpScores()
+
+		for (let i = 0; i < guessCount; i++) {
+			LessOrMorePage.pressGuessMore()
+
+			cy.updateLessOrMoreExpScores('more')
+		}
+	},
+	/**
+	 * Command for the Less or More game to guess a given number of times
+	 * by guessing less and more alternately.
+	 * @param {number} guessCount The number of times to guess.
+	 */
+	lessOrMoreGuessAlternating(guessCount) {
+		cy.initLessOrMoreExpScores()
+
+		for (let i = 0; i < guessCount; i++) {
+			if (i % 2 === 0) {
+				LessOrMorePage.pressGuessLess()
+			} else {
+				LessOrMorePage.pressGuessMore()
+			}
+			cy.updateLessOrMoreExpScores(i % 2 === 0 ? 'less' : 'more')
+		}
+	},
+	/**
+	 * Command for the Less or More game to guess a given number of times
+	 * by guessing less if the left number is 5 or more or guessing more if the left number is 4 or less.
+	 * @param {number} guessCount The number of times to guess.
+	 */
+	lessOrMoreGuessOptimal(guessCount) {
+		cy.initLessOrMoreExpScores()
+
+		for (let i = 0; i < guessCount; i++) {
+			LessOrMorePage.leftNumber.invoke('text').then((leftNumText) => {
+				const leftNum = parseInt(leftNumText)
+
+				if (leftNum >= 5) {
+					LessOrMorePage.pressGuessLess()
+					cy.updateLessOrMoreExpScores('less')
+				} else if (leftNum <= 4) {
+					LessOrMorePage.pressGuessMore()
+					cy.updateLessOrMoreExpScores('more')
+				}
+			})
+		}
+	},
+	/**
+	 * Command for the Less or More game to guess a given number of times
+	 * by guessing less or more randomly.
+	 * @param {number} guessCount The number of times to guess.
+	 */
+	lessOrMoreGuessRandom(guessCount) {
+		cy.initLessOrMoreExpScores()
+
+		for (let i = 0; i < guessCount; i++) {
+			if (Math.random() < 0.5) {
+				LessOrMorePage.pressGuessLess()
+				cy.updateLessOrMoreExpScores('less')
+			} else {
+				LessOrMorePage.pressGuessMore()
+				cy.updateLessOrMoreExpScores('more')
+			}
+		}
+	},
+	/**
+	 * Helper command to initialize expected score and high score
+	 * for the Less or More game.
+	 */
+	initLessOrMoreExpScores() {
+		cy.wrap(0).as('expScore')
+		cy.wrap(0).as('expHighScore')
+	},
+	/**
+	 * Helper command to update expected score and high score
+	 * after a correct or incorrect guess in the Less or More game.
+	 * Also presses the "Next" button to continue.
+	 * @param {string} buttonPressed The button that was pressed: "less" or "more".
+	 */
+	updateLessOrMoreExpScores(buttonPressed) {
+		LessOrMorePage.leftNumber.invoke('text').then((leftNumText) => {
+			LessOrMorePage.rightNumber.invoke('text').then((rightNumText) => {
+				const leftNum = parseInt(leftNumText)
+				const rightNum = parseInt(rightNumText)
+				let isCorrectGuess = false
+
+				if (buttonPressed.toLowerCase() === 'less') {
+					isCorrectGuess = rightNum <= leftNum
+				} else if (buttonPressed.toLowerCase() === 'more') {
+					isCorrectGuess = rightNum >= leftNum
+				}
+
+				if (isCorrectGuess) {
+					// Correct guess, increment score by 1.
+					cy.get('@expScore').then((currentScore) => {
+						const newScore = currentScore + 1
+
+						cy.wrap(newScore).as('expScore')
+						// Update high score if needed.
+						cy.get('@expHighScore').then((currentHighScore) => {
+							if (newScore > currentHighScore) {
+								cy.wrap(newScore).as('expHighScore')
+							}
+						})
+					})
+				} else {
+					// Incorrect guess, score resets to 0.
+					cy.get('@expScore').then(() => {
+						cy.wrap(0).as('expScore')
+					})
+				}
+
+				// Press the "Next" button to continue.
+				LessOrMorePage.pressNext()
+			})
+		})
+	},
+	/**
+	 * Command to verify the initial state of the Less or More game before any guesses.
+	 */
+	verifyLessOrMoreInitialState() {
+		LessOrMorePage.gameStatus.should('have.text', 'Less or more?')
+		LessOrMorePage.leftNumber.invoke('text').then((leftNumText) => {
+			const leftNum = parseInt(leftNumText)
+			cy.wrap(leftNum).should('be.at.least', 0).and('be.at.most', 9)
+			LessOrMorePage.comparisonSymbol.should('have.text', '?')
+			LessOrMorePage.rightNumber.should('have.text', '?')
+			LessOrMorePage.lessButton.should('be.visible').and('be.enabled')
+			LessOrMorePage.moreButton.should('be.visible').and('be.enabled')
+			LessOrMorePage.nextButton.should('not.be.visible')
+			LessOrMorePage.score.should('have.text', 'Score:')
+			LessOrMorePage.scoreNum.should('have.text', '0')
+			LessOrMorePage.highScore.should('have.text', 'High Score:')
+			LessOrMorePage.highScoreNum.should('have.text', '0')
+		})
+	},
+	/**
+	 * Command to verify the score and high score in the Less or More game.
+	 */
+	verifyLessOrMoreGuesses() {
+		cy.get('@expScore').then((expScore) => {
+			LessOrMorePage.scoreNum.invoke('text').then((scoreText) => {
+				const actualScore = parseInt(scoreText)
+				cy.wrap(actualScore).should('equal', expScore)
+			})
+		})
+		cy.get('@expHighScore').then((expHighScore) => {
+			LessOrMorePage.highScoreNum.invoke('text').then((highScoreText) => {
+				const actualHighScore = parseInt(highScoreText)
+				cy.wrap(actualHighScore).should('equal', expHighScore)
+			})
+		})
 	}
 })

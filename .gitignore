@@ -5,7 +5,7 @@
 cypress/downloads
 cypress/videos
 cypress/screenshots
-cypress/reports/html
+cypress/reports
 
 # environment variables
 cypress.env.json

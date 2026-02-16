@@ -14,6 +14,7 @@ Feature: Calculator
 			| calc-nav-home-link | Home                                                    |
 			| calc-nav-calc-link | Calculator                                              |
 			| calc-nav-text-link | Text to File                                            |
+			| calc-nav-lm-link   | Less or More                                            |
 			| calc-header        | Calculator                                              |
 			| calc-tagline       | A simple calculator app to test simple math operations! |
 
@@ -29,6 +30,7 @@ Feature: Calculator
 			| calc-nav-home-link        | index.html                                      |
 			| calc-nav-calc-link        | calculator.html                                 |
 			| calc-nav-text-link        | text_to_file.html                               |
+			| calc-nav-lm-link          | less_or_more.html                               |
 			| calc-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
 			| calc-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
 
@@ -42,6 +44,7 @@ Feature: Calculator
 			| calc-nav-home-link | 233 | 150 | 122 |
 			| calc-nav-calc-link | 233 | 150 | 122 |
 			| calc-nav-text-link | 233 | 150 | 122 |
+			| calc-nav-lm-link   | 233 | 150 | 122 |
 			| btn-clear          | 0   | 0   | 0   |
 			| btn-clear-entry    | 0   | 0   | 0   |
 			| btn-modulo         | 0   | 0   | 0   |
