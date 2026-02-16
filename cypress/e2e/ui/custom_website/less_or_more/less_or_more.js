@@ -98,79 +98,61 @@ Then(
 )
 
 // Scenario: Check initial page state
-When('I check the initial state of the Less or More page', () => {
-	// No-op: page is already loaded in Background
+When('I load the initial state of the Less or More page', () => {
+	// The page is already loaded in the Background step, so we can just verify that we're on the correct page
+	cy.location('pathname').should('eq', `/less_or_more.html`)
 })
-Then('I should see that the message is {string}', (msg) => {
-	cy.getByCy('lm-message').should('have.text', msg)
-})
-Then('I should see that the left number is from 0 to 9', () => {
-	cy.getByCy('lm-left-num')
-		.invoke('text')
-		.then((text) => {
-			const num = Number(text.trim())
-			expect(num).to.be.at.least(0).and.at.most(9)
-		})
-})
-Then('I should see that the right number is "?"', () => {
-	cy.getByCy('lm-right-num').should('have.text', '?')
-})
-Then('I should see the Less and More buttons are visible and enabled', () => {
-	cy.getByCy('lm-less-btn').should('be.visible').and('be.enabled')
-	cy.getByCy('lm-more-btn').should('be.visible').and('be.enabled')
-})
-Then('I should see the Next button is not visible', () => {
-	cy.getByCy('lm-next-btn').should('not.be.visible')
-})
-Then('I should see the score and high score are both 0', () => {
-	cy.getByCy('lm-score-label').should('have.text', 'Score:')
-	cy.getByCy('lm-score').should('have.text', '0')
-	cy.getByCy('lm-high-score-label').should('have.text', 'High Score:')
-	cy.getByCy('lm-high-score').should('have.text', '0')
-})
+Then(
+	'I should see the left number, the question marks, the Less and More buttons, and the scores at 0',
+	() => {
+		cy.verifyLessOrMoreInitialState()
+	}
+)
 
 // *Common step for all game playing scenarios
-
 Then(
 	'I should see the expected final score and high score are displayed',
 	() => {
-		cy.todo('Implement final score and high score verification')
+		cy.verifyLessOrMoreGuesses()
 	}
 )
 
-// Scenario: Guess less 100 times
+// Scenario: Guess less a number of times times
 When(
-	'I play the Less or More game by making 100 guesses with the Less button',
-	() => {
-		cy.lessOrMoreGuessLess(100)
+	'I play the Less or More game by making {int} number of guesses with the Less button',
+	(guessNum) => {
+		cy.lessOrMoreGuessLess(guessNum)
 	}
 )
 
-// Scenario: Guess more 100 times
+// Scenario: Guess more a number of times times
 When(
-	'I play the Less or More game by making 100 guesses with the More button',
-	() => {
-		cy.lessOrMoreGuessMore(100)
+	'I play the Less or More game by making {int} number of guesses with the More button',
+	(guessNum) => {
+		cy.lessOrMoreGuessMore(guessNum)
 	}
 )
 
-// Scenario: Alternate guesses 100 times
+// Scenario: Alternate guesses a number of times times
 When(
-	'I play the Less or More game by making 100 guesses by alternating between the Less and More buttons',
-	() => {
-		cy.lessOrMoreGuessAlternating(100)
+	'I play the Less or More game by making {int} number of guesses by alternating between the Less and More buttons',
+	(guessNum) => {
+		cy.lessOrMoreGuessAlternating(guessNum)
 	}
 )
 
-// Scenario: Guess optimally 100 times
+// Scenario: Guess optimally a number of times times
 When(
-	'I play the Less or More game by making 100 guesses by clicking the Less button if the left number is 5 or more or clicking the More button if the left number is 4 or less',
-	() => {
-		cy.lessOrMoreGuessOptimal(100)
+	'I play the Less or More game by making {int} number of guesses by clicking the Less button if the left number is 5 or more or clicking the More button if the left number is 4 or less',
+	(guessNum) => {
+		cy.lessOrMoreGuessOptimal(guessNum)
 	}
 )
 
-// Scenario: Guess randomly 100 times
-When('I play the Less or More game by making 100 guesses randomly', () => {
-	cy.lessOrMoreGuessRandom(100)
-})
+// Scenario: Guess randomly a number of times times
+When(
+	'I play the Less or More game by making {int} number of guesses randomly',
+	(guessNum) => {
+		cy.lessOrMoreGuessRandom(guessNum)
+	}
+)

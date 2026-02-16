@@ -16,12 +16,13 @@ This document plans the positive and negative test cases when for my [custom web
 
 ### All Website Pages
 
-- [ ] The navigation bar at the top of the website is consistent across all web pages.
-- [ ] The navigation bar contains buttons for navigating the different pages of the website.
-- [ ] Hovering over an element with a function or link using the mouse will cause the element to change its background co.lor
-- [ ] The footer of the web pages all have "© 2025 by Alben Trang".
-- [ ] The footer contains icons that link to my LinkedIn profile and the GitHub repository used to make my custom website.
-- [ ] The website is responsive and displays correctly on different screen sizes.
+- [x] The navigation bar at the top of the website is consistent across all web pages.
+- [x] The navigation bar contains buttons for navigating the different pages of the website.
+- [x] The navigation bar will only show the Home button and the Menu button when the screen size is small, and the Menu button will show a dropdown with the buttons for navigating the different pages of the website.
+- [x] Hovering over an element with a function or link using the mouse will cause the element to change its background co.lor
+- [x] The footer of the web pages all have "© 2025 by Alben Trang".
+- [x] The footer contains icons that link to my LinkedIn profile and the GitHub repository used to make my custom website.
+- [x] The website is responsive and displays correctly on different screen sizes.
 
 ### Homepage
 
@@ -73,17 +74,17 @@ This document plans the positive and negative test cases when for my [custom web
 
 ### Less or More Game
 
-- [ ] All the elements contain their expected text when the less or more game page is loaded.
-- [ ] The title element uses "Less or More Game".
-- [ ] A random number between 0 and 9 is generated to the left of the screen when the game page is loaded.
-- [ ] The right part of the screen shows a question mark before the user makes a guess.
-- [ ] The user can guess if the next number will be less than or more than the current number using the Less or More buttons.
-- [ ] After the user makes a guess, the next random number between 0 and 9 is generated and displayed.
-- [ ] The game indicates to the user if their guess was correct or incorrect using text and the less than and greater than symbols.
-- [ ] The Next button appears while the Less and More buttons are hidden after the user makes a guess.
-- [ ] Clicking the Next button takes the right number as the current number on the left side, the right side shows a question mark again, the Next button is hidden, and the Less and More buttons reappear.
-- [ ] The score and high score update correctly when the user makes a correct guess.
-- [ ] The score resets to 0 when the user makes an incorrect guess.
+- [x] All the elements contain their expected text when the less or more game page is loaded.
+- [x] The title element uses "Less or More Game".
+- [x] A random number between 0 and 9 is generated to the left of the screen when the game page is loaded.
+- [x] The right part of the screen shows a question mark before the user makes a guess.
+- [x] The user can guess if the next number will be less than or more than the current number using the Less or More buttons.
+- [x] After the user makes a guess, a new random number between 0 and 9 is generated on the right side of the screen.
+- [x] The game indicates to the user if their guess was correct or incorrect using text and the less than and greater than symbols.
+- [x] The Next button appears while the Less and More buttons are hidden after the user makes a guess.
+- [x] Clicking the Next button takes the right number as the current number on the left side, the right side shows a question mark again, the Next button is hidden, and the Less and More buttons reappear.
+- [x] The score and high score update correctly when the user makes a correct guess.
+- [x] The score resets to 0 when the user makes an incorrect guess.
 
 ## Notes and Ideas
 

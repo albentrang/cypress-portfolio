@@ -45,32 +45,54 @@ Feature: Less or More
       | lm-nav-calc-link | 233 | 150 | 122 |
       | lm-nav-text-link | 233 | 150 | 122 |
       | lm-nav-lm-link   | 233 | 150 | 122 |
+      | less-button      | 0   | 250 | 154 |
+      | more-button      | 0   | 250 | 154 |
 
   Scenario: Check initial page state
-    When I check the initial state of the Less or More page
-    Then I should see that the message is "Make your guess!"
-    And I should see that the left number is from 0 to 9
-    And I should see that the right number is "?"
-    And I should see the Less and More buttons are visible and enabled
-    And I should see the Next button is not visible
-    And I should see the score and high score are both 0
+    When I load the initial state of the Less or More page
+    Then I should see the left number, the question marks, the Less and More buttons, and the scores at 0
 
-  Scenario: Guess less 100 times
-    When I play the Less or More game by making 100 guesses with the Less button
+  Scenario Outline: Guess less a number of times
+    When I play the Less or More game by making <guessNum> number of guesses with the Less button
     Then I should see the expected final score and high score are displayed
+    Examples:
+      | guessNum |
+      | 1        |
+      | 10       |
+      | 100      |
 
-  Scenario: Guess more 100 times
-    When I play the Less or More game by making 100 guesses with the More button
+  Scenario Outline: Guess more a number of times
+    When I play the Less or More game by making <guessNum> number of guesses with the More button
     Then I should see the expected final score and high score are displayed
+    Examples:
+      | guessNum |
+      | 1        |
+      | 10       |
+      | 100      |
 
-  Scenario: Alternate guesses 100 times
-    When I play the Less or More game by making 100 guesses by alternating between the Less and More buttons
+  Scenario Outline: Alternate guesses a number of times
+    When I play the Less or More game by making <guessNum> number of guesses by alternating between the Less and More buttons
     Then I should see the expected final score and high score are displayed
+    Examples:
+      | guessNum |
+      | 1        |
+      | 10       |
+      | 100      |
 
-  Scenario: Guess optimally 100 times
-    When I play the Less or More game by making 100 guesses by clicking the Less button if the left number is 5 or more or clicking the More button if the left number is 4 or less
+  Scenario Outline: Guess optimally a number of times
+    When I play the Less or More game by making <guessNum> number of guesses by clicking the Less button if the left number is 5 or more or clicking the More button if the left number is 4 or less
     Then I should see the expected final score and high score are displayed
+    Examples:
+      | guessNum |
+      | 1        |
+      | 10       |
+      | 100      |
 
-  Scenario: Guess randomly 100 times
-    When I play the Less or More game by making 100 guesses randomly
+  Scenario Outline: Guess randomly a number of times
+    When I play the Less or More game by making <guessNum> number of guesses randomly
     Then I should see the expected final score and high score are displayed
+    Examples:
+      | guessNum |
+      | 1        |
+      | 10       |
+      | 100      |

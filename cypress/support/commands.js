@@ -756,7 +756,7 @@ Cypress.Commands.addAll({
 	}
 })
 
-// Custom commands for the custom website project.
+// Custom commands for the custom website's Calculator webpage.
 Cypress.Commands.addAll({
 	/**
 	 * Enter numbers and actions into the calculator.
@@ -824,7 +824,11 @@ Cypress.Commands.addAll({
 		CalculatorPage.getDisplayResult().then((displayText) => {
 			cy.wrap(displayText).should('equal', expectedResult)
 		})
-	},
+	}
+})
+
+// Custom commands for the custom website's Text to File webpage.
+Cypress.Commands.addAll({
 	/**
 	 * Command to type text into the Text to File text area.
 	 * @param {string} textToType The text to type into the text area.
@@ -993,7 +997,11 @@ Cypress.Commands.addAll({
 			TextToFilePage.textArea.type('A')
 		}
 		TextToFilePage.errorMessage.should('not.be.visible')
-	},
+	}
+})
+
+// Custom commands for the custom website's Less or More webpage.
+Cypress.Commands.addAll({
 	/**
 	 * Command for the Less or More game to guess a given number of times
 	 * by only guessing that the left number is less than the right number.
@@ -1101,9 +1109,9 @@ Cypress.Commands.addAll({
 				let isCorrectGuess = false
 
 				if (buttonPressed.toLowerCase() === 'less') {
-					isCorrectGuess = leftNum <= rightNum
+					isCorrectGuess = rightNum <= leftNum
 				} else if (buttonPressed.toLowerCase() === 'more') {
-					isCorrectGuess = leftNum >= rightNum
+					isCorrectGuess = rightNum >= leftNum
 				}
 
 				if (isCorrectGuess) {
@@ -1129,6 +1137,25 @@ Cypress.Commands.addAll({
 				// Press the "Next" button to continue.
 				LessOrMorePage.pressNext()
 			})
+		})
+	},
+	/**
+	 * Command to verify the initial state of the Less or More game before any guesses.
+	 */
+	verifyLessOrMoreInitialState() {
+		LessOrMorePage.gameStatus.should('have.text', 'Less or more?')
+		LessOrMorePage.leftNumber.invoke('text').then((leftNumText) => {
+			const leftNum = parseInt(leftNumText)
+			cy.wrap(leftNum).should('be.at.least', 0).and('be.at.most', 9)
+			LessOrMorePage.comparisonSymbol.should('have.text', '?')
+			LessOrMorePage.rightNumber.should('have.text', '?')
+			LessOrMorePage.lessButton.should('be.visible').and('be.enabled')
+			LessOrMorePage.moreButton.should('be.visible').and('be.enabled')
+			LessOrMorePage.nextButton.should('not.be.visible')
+			LessOrMorePage.score.should('have.text', 'Score:')
+			LessOrMorePage.scoreNum.should('have.text', '0')
+			LessOrMorePage.highScore.should('have.text', 'High Score:')
+			LessOrMorePage.highScoreNum.should('have.text', '0')
 		})
 	},
 	/**
