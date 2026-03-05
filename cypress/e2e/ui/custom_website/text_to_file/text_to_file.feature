@@ -16,6 +16,7 @@ Feature: Text to File Downloader
 			| text-nav-calc-link | Calculator                                  |
 			| text-nav-text-link | Text to File                                |
 			| text-nav-lm-link   | Less or More                                |
+			| text-nav-todo-link | To Do List                                  |
 			| text-header        | Text to File Downloader                     |
 			| text-tagline       | Turn text into different files to download! |
 			| text-input-label   | Enter your text (0/300):                    |
@@ -37,6 +38,7 @@ Feature: Text to File Downloader
 			| text-nav-calc-link        | calculator.html                                 |
 			| text-nav-text-link        | text_to_file.html                               |
 			| text-nav-lm-link          | less_or_more.html                               |
+			| text-nav-todo-link        | to_do_list.html                                 |
 			| text-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
 			| text-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
 
@@ -51,6 +53,7 @@ Feature: Text to File Downloader
 			| text-nav-calc-link | 233 | 150 | 122 |
 			| text-nav-text-link | 233 | 150 | 122 |
 			| text-nav-lm-link   | 233 | 150 | 122 |
+			| text-nav-todo-link | 233 | 150 | 122 |
 			| download-btn       | 0   | 100 | 0   |
 
 	Scenario Outline: Check text area character count going up and down

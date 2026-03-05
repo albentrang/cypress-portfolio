@@ -15,6 +15,7 @@ Feature: Less or More
       | lm-nav-calc-link | Calculator                             |
       | lm-nav-text-link | Text to File                           |
       | lm-nav-lm-link   | Less or More                           |
+      | lm-nav-todo-link | To Do List                             |
       | lm-header        | Less or More                           |
       | lm-tagline       | Test your luck and guess less or more! |
 
@@ -31,6 +32,7 @@ Feature: Less or More
       | lm-nav-calc-link        | calculator.html                                 |
       | lm-nav-text-link        | text_to_file.html                               |
       | lm-nav-lm-link          | less_or_more.html                               |
+      | lm-nav-todo-link        | to_do_list.html                                 |
       | lm-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
       | lm-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
 
@@ -45,6 +47,7 @@ Feature: Less or More
       | lm-nav-calc-link | 233 | 150 | 122 |
       | lm-nav-text-link | 233 | 150 | 122 |
       | lm-nav-lm-link   | 233 | 150 | 122 |
+      | lm-nav-todo-link | 233 | 150 | 122 |
       | less-button      | 0   | 250 | 154 |
       | more-button      | 0   | 250 | 154 |
 

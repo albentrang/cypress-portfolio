@@ -2,6 +2,7 @@ import DeckHandler from './deck_handler'
 import CalculatorPage from './custom_website/page_objects/calculator_obj'
 import TextToFilePage from './custom_website/page_objects/text_to_file_obj'
 import LessOrMorePage from './custom_website/page_objects/less_or_more_obj'
+import ToDoListPage from './custom_website/page_objects/to_do_list_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
@@ -1176,3 +1177,6 @@ Cypress.Commands.addAll({
 		})
 	}
 })
+
+// Custom commands for the custom website's To Do List webpage.
+Cypress.Commands.addAll({})

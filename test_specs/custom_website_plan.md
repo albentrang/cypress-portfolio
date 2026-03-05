@@ -86,6 +86,27 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] The score and high score update correctly when the user makes a correct guess.
 - [x] The score resets to 0 when the user makes an incorrect guess.
 
+### To Do List
+
+- [ ] All the elements contain their expected text when the to do list page is loaded.
+- [ ] The title element uses "To Do List".
+- [ ] The search bar filters the tags either by text or tag when it starts with a hash symbol.
+- [ ] There is an Add Task button that adds a new task to the list.
+- [ ] There can only be a maximum of 20 tasks in the list at any given time, and the Add Task button is disabled when this limit is reached.
+- [ ] There are two buttons that allow the user to sort the list by priority from low to high and from high to low.
+- [ ] There is an input field for the user to enter the file name when downloading the JSON file, with placeholder text "Enter file name like 'to-do-list.json'" and a default value of "to-do-list.json".
+- [ ] There is a Download button to download a JSON file that contains all the information from the list.
+- [ ] Each task is represented as a row with the task number, description, priority level, and tags displayed.
+- [ ] The task number is automatically generated based on the order of the tasks in the list, starting from 1 for the first task, and updates accordingly when tasks are added, moved, or deleted.
+- [ ] The task description is a text input field that allows the user to edit the task directly in the list, with placeholder text "Enter task description here" and a maximum of 50 characters.
+- [ ] The priority level is a dropdown menu with four options: "Low", "Medium", "High", and "Critical", and the background of each task item is colored based on its priority level.
+- [ ] The list items can be dragged up and down by clicking and dragging the drag handle on the left of each item, which is a small icon that visually indicates that the item can be dragged.
+- [ ] There is a section for tags under the item description and priority level where the user can add multiple tags to each task, with each tag starting with a hash symbol (#) followed by the tag name.
+- [ ] There is a delete button to the right of each task item that removes the task from the list when clicked, with task numbers updating accordingly when a task is deleted.
+- [ ] List items persist even after refreshing the page.
+- [ ] There's a Reset button under the last list item and anchored to the right that removes all the tasks from the list, which is hidden when there are no tasks in the list and visible when there is at least one task.
+- [ ] The Reset button first prompts the user with a confirmation popup before clearing the list, with "Yes" and "No" buttons to confirm or cancel the reset action, respectively.
+
 ## Notes and Ideas
 
 ### Frontend

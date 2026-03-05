@@ -15,6 +15,7 @@ Feature: Homepage
       | home-nav-calc-link      | Calculator                                                                           |
       | home-nav-text-link      | Text to File                                                                         |
       | home-nav-lm-link        | Less or More                                                                         |
+      | home-nav-todo-link      | To Do List                                                                           |
       | home-header             | Homepage                                                                             |
       | home-tagline            | My custom website to test various elements and interactions!                         |
       | test-pages-header       | Test Pages                                                                           |
@@ -22,6 +23,7 @@ Feature: Homepage
       | test-pages-calc-link    | Calculator                                                                           |
       | test-pages-text-link    | Text to File                                                                         |
       | test-pages-lm-link      | Less or More                                                                         |
+      | test-pages-todo-link    | To Do List                                                                           |
       | cy-test-results-header  | Cypress Test Results                                                                 |
       | cy-test-results-desc    | These Mochawesome test results are generated right before this website's deployment. |
       | custom-web-results-link | Custom Website Test Results                                                          |
@@ -40,9 +42,11 @@ Feature: Homepage
       | home-nav-calc-link        | calculator.html                                 |
       | home-nav-text-link        | text_to_file.html                               |
       | home-nav-lm-link          | less_or_more.html                               |
+      | home-nav-todo-link        | to_do_list.html                                 |
       | test-pages-calc-link      | calculator.html                                 |
       | test-pages-text-link      | text_to_file.html                               |
       | test-pages-lm-link        | less_or_more.html                               |
+      | test-pages-todo-link      | to_do_list.html                                 |
       | custom-web-results-link   | custom-report.html                              |
       | deck-api-results-link     | deck-report.html                                |
       | home-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
@@ -59,8 +63,10 @@ Feature: Homepage
       | home-nav-calc-link      | 233 | 150 | 122 |
       | home-nav-text-link      | 233 | 150 | 122 |
       | home-nav-lm-link        | 233 | 150 | 122 |
+      | home-nav-todo-link      | 233 | 150 | 122 |
       | test-pages-calc-btn     | 147 | 112 | 219 |
       | test-pages-text-btn     | 147 | 112 | 219 |
       | test-pages-lm-btn       | 147 | 112 | 219 |
+      | test-pages-todo-btn     | 147 | 112 | 219 |
       | custom-web-results-link | 0   | 250 | 154 |
       | deck-api-results-link   | 0   | 250 | 154 |
