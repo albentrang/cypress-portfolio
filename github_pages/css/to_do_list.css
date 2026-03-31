@@ -1,0 +1,336 @@
+/* Specific Styles for To Do List Page */
+nav {
+	/* Change the position to absolute because having it to fixed will cause the navigation
+	to be behind the tasks elements. */
+	position: absolute;
+}
+
+button {
+	border: none;
+	border-radius: 4px;
+	color: white;
+	cursor: pointer;
+}
+
+.todo-top-grid {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: 2fr 1fr;
+	grid-template-rows: repeat(3, 1fr);
+}
+
+#search-bar,
+#add-task-btn,
+#filename-input {
+	width: 80%;
+}
+
+#search-bar {
+	border: 1px solid gainsboro;
+	border-radius: 4px;
+	font-size: 1.6rem;
+	padding: 10px;
+}
+
+#clear-search-btn {
+	background-color: tomato;
+	font-size: 1.6rem;
+	padding: 10px 15px;
+}
+
+#clear-search-btn:hover {
+	background-color: orangered;
+}
+
+#add-task-btn {
+	background: royalblue;
+	font-size: 1.6rem;
+	padding: 1rem;
+}
+
+#add-task-btn:hover {
+	background: navy;
+}
+
+#add-task-btn:disabled {
+	background: gray;
+	cursor: not-allowed;
+}
+
+#sort-section {
+	align-items: center;
+	display: flex;
+	gap: 0.5rem;
+	justify-content: flex-start;
+}
+
+#sort-label {
+	font-weight: bold;
+}
+
+#sort-highest-btn,
+#sort-lowest-btn {
+	background: white;
+	border: 1px solid lightgray;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 1.6rem;
+	padding: 0.8rem 0.9rem;
+}
+
+#sort-highest-btn:hover,
+#sort-lowest-btn:hover {
+	background: aliceblue;
+}
+
+#filename-input {
+	border: 1px solid gainsboro;
+	border-radius: 4px;
+	flex: 1;
+	font-size: 1.6rem;
+	padding: 0.5rem;
+}
+
+#download-btn {
+	background: forestgreen;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 1.6rem;
+	padding: 0.5rem 1rem;
+}
+
+#download-btn:hover {
+	background: darkgreen;
+}
+
+#todo-list {
+	list-style-type: none;
+	padding: 0;
+}
+
+.todo-item {
+	align-items: flex-start;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-bottom: 1rem;
+	padding: 1rem;
+	position: relative;
+}
+
+.todo-top-row {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	width: 100%;
+}
+
+.todo-bottom-row {
+	align-items: flex-start;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+}
+
+.tags-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.drag-handle,
+.todo-number,
+.todo-desc,
+.todo-priority,
+.delete-task-btn {
+	margin-top: 1rem;
+}
+
+.drag-handle {
+	cursor: grab;
+	margin-right: 0.5rem;
+	user-select: none;
+}
+
+.todo-number {
+	font-weight: bold;
+	margin-right: 0.5rem;
+}
+
+.todo-desc {
+	border-radius: 4px;
+	border: 1px solid lightgray;
+	flex: 6;
+	padding: 0.3rem;
+}
+
+.todo-priority {
+	border: 1px solid lightgray;
+	border-radius: 4px;
+	flex: 1;
+	margin-left: 1rem;
+	padding: 0.3rem;
+}
+
+.add-tag-section {
+	align-items: center;
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.add-tag-btn {
+	background: white;
+	border: none;
+	border-radius: 4px;
+	color: black;
+	cursor: pointer;
+	margin-top: 0.5rem;
+	margin-left: 0.2rem;
+	padding: 0.3rem 0.7rem;
+}
+
+.add-tag-btn:disabled {
+	background: gray;
+	cursor: not-allowed;
+}
+
+.add-tag-input {
+	border: 1px solid lightgray;
+	border-radius: 4px;
+	margin-top: 0.4rem;
+	margin-left: 0.5rem;
+	padding: 0.3rem;
+}
+
+.tag {
+	align-items: center;
+	background: white;
+	border: 1px solid lightgray;
+	border-radius: 4px;
+	display: flex;
+	font-size: 1.2rem;
+	margin-top: 5px;
+	margin-left: 1px;
+	margin-right: 3px;
+	padding: 0.2rem 0.7rem;
+}
+
+.tag .remove-tag {
+	background: none;
+	border: none;
+	color: red;
+	cursor: pointer;
+	font-size: 1.2rem;
+}
+
+.delete-task-btn {
+	background: black;
+	border: none;
+	border-radius: 4px;
+	color: white;
+	cursor: pointer;
+	margin-left: 1rem;
+	padding: 0.4rem 0.7rem;
+}
+
+/* Priority backgrounds */
+.todo-item[data-priority="Low"] {
+	background: paleturquoise;
+}
+
+.todo-item[data-priority="Medium"] {
+	background: palegreen;
+}
+
+.todo-item[data-priority="High"] {
+	background: palegoldenrod;
+}
+
+.todo-item[data-priority="Critical"] {
+	background: palevioletred;
+}
+
+#reset-btn {
+	background: red;
+	border: none;
+	border-radius: 4px;
+	color: white;
+	cursor: pointer;
+	float: right;
+	font-size: 1.6rem;
+	margin-bottom: 2rem;
+	padding: 0.5rem 1rem;
+}
+
+#reset-popup {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+	position: fixed;
+	z-index: 2000;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+.reset-popup-bg {
+	background: rgba(0, 0, 0, 0.4);
+	position: absolute;
+	z-index: 2001;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+}
+
+.reset-popup-dialog {
+	background: white;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+	border-radius: 8px;
+	padding: 2rem;
+	position: relative;
+	text-align: center;
+	z-index: 2002;
+}
+
+.reset-popup-dialog button {
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 1rem;
+	margin: 1rem 0.5rem 0 0.5rem;
+	padding: 0.5rem 1rem;
+}
+
+.reset-popup-dialog #confirm-reset-btn {
+	background: red;
+	color: white;
+	font-size: 1.6rem;
+}
+
+.reset-popup-dialog #cancel-reset-btn {
+	background: black;
+	color: white;
+	font-size: 1.6rem;
+}
+
+@media screen and (max-width: 850px) {
+
+	#search-bar,
+	#clear-search-btn,
+	#add-task-btn,
+	#sort-label,
+	#sort-highest-btn,
+	#sort-lowest-btn,
+	#filename-input,
+	#download-btn {
+		font-size: 1.2rem;
+	}
+}
