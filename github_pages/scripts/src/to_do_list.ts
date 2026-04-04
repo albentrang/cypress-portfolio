@@ -5,11 +5,11 @@ interface Task {
 	tags: string[]
 }
 
-const MAX_TASKS = 20
-const MAX_TAGS = 5
-const MAX_TAG_LENGTH = 20
-const MAX_DESC_LENGTH = 50
-const TASKS_KEY = 'todo_tasks'
+const MAX_TASKS: number = 20
+const MAX_TAGS: number = 5
+const MAX_TAG_LENGTH: number = 20
+const MAX_DESC_LENGTH: number = 50
+const TASKS_KEY: string = 'todo_tasks' // Key for localStorage
 
 const searchBar = document.getElementById('search-bar') as HTMLInputElement
 const clearSearchBtn = document.getElementById(
@@ -67,6 +67,7 @@ function renderTasks(filteredTasks?: Task[]) {
 		li.className = 'todo-item'
 		li.setAttribute('data-priority', task.priority)
 		li.setAttribute('draggable', 'true')
+		li.setAttribute('data-cy', `task-${idx}`)
 
 		// Set the top and bottom rows and put them in the list item
 		const topRow = document.createElement('div')
@@ -79,32 +80,37 @@ function renderTasks(filteredTasks?: Task[]) {
 		// Drag handle
 		const dragHandle = document.createElement('span')
 		dragHandle.className = 'drag-handle'
+		dragHandle.setAttribute('data-cy', `drag-handle-${idx}`)
 		dragHandle.innerText = '☰'
 		topRow.appendChild(dragHandle)
 
 		// Task number
 		const numSpan = document.createElement('span')
 		numSpan.className = 'todo-number'
+		numSpan.setAttribute('data-cy', `task-number-${idx}`)
 		numSpan.innerText = (idx + 1).toString()
 		topRow.appendChild(numSpan)
 
 		// Task description
-		const descInput = document.createElement('input')
+		const descInput = document.createElement('textarea')
 		descInput.className = 'todo-desc'
-		descInput.type = 'text'
+		descInput.id = `desc-input-${idx}`
 		descInput.maxLength = MAX_DESC_LENGTH
-		descInput.value = task.task
+		descInput.rows = 3
 		descInput.placeholder = 'Enter task description here'
+		descInput.setAttribute('data-cy', `desc-input-${idx}`)
+		descInput.value = task.task
 		descInput.addEventListener('input', () => {
 			task.task = descInput.value
 			saveTasks()
-			renderTasks()
 		})
 		topRow.appendChild(descInput)
 
 		// Priority dropdown
 		const prioritySelect = document.createElement('select')
 		prioritySelect.className = 'todo-priority'
+		prioritySelect.id = `priority-select-${idx}`
+		prioritySelect.setAttribute('data-cy', `priority-select-${idx}`)
 		;['Low', 'Medium', 'High', 'Critical'].forEach((p) => {
 			const opt = document.createElement('option')
 			opt.value = p
@@ -122,6 +128,7 @@ function renderTasks(filteredTasks?: Task[]) {
 		// Delete task button
 		const deleteBtn = document.createElement('button')
 		deleteBtn.className = 'delete-task-btn'
+		deleteBtn.setAttribute('data-cy', `delete-btn-${idx}`)
 		deleteBtn.innerText = 'Delete'
 		deleteBtn.addEventListener('click', () => {
 			tasks.splice(idx, 1)
@@ -135,6 +142,7 @@ function renderTasks(filteredTasks?: Task[]) {
 		// Add tag button
 		const addTagBtn = document.createElement('button')
 		addTagBtn.className = 'add-tag-btn'
+		addTagBtn.setAttribute('data-cy', `add-tag-btn-${idx}`)
 		addTagBtn.innerText = 'Add Tag'
 		addTagBtn.disabled = task.tags.length >= MAX_TAGS
 		addTagBtn.addEventListener('click', () => {
@@ -155,9 +163,11 @@ function renderTasks(filteredTasks?: Task[]) {
 		// Add tag input
 		const addTagInput = document.createElement('input')
 		addTagInput.className = 'add-tag-input'
+		addTagInput.id = `add-tag-input-${idx}`
 		addTagInput.type = 'text'
 		addTagInput.maxLength = MAX_TAG_LENGTH
-		addTagInput.placeholder = 'Add tag (#tag)'
+		addTagInput.placeholder = 'Add a tag (e.g. #work)'
+		addTagInput.setAttribute('data-cy', `add-tag-input-${idx}`)
 		addTagInput.addEventListener('keydown', (e) => {
 			if (e.key === 'Enter') addTagBtn.click()
 		})
@@ -167,11 +177,13 @@ function renderTasks(filteredTasks?: Task[]) {
 		task.tags.forEach((tag, tagIdx) => {
 			const tagSpan = document.createElement('span')
 			tagSpan.className = 'tag'
+			tagSpan.setAttribute('data-cy', `tag-${idx}-${tagIdx}`)
 			tagSpan.innerText = tag
 
 			// Remove tag button
 			const removeBtn = document.createElement('button')
 			removeBtn.className = 'remove-tag'
+			removeBtn.setAttribute('data-cy', `remove-tag-btn-${idx}-${tagIdx}`)
 			removeBtn.innerText = 'x'
 			removeBtn.title = 'Remove tag'
 			removeBtn.addEventListener('click', () => {
@@ -233,6 +245,14 @@ function updateAddTaskBtn() {
  */
 function updateResetBtn() {
 	resetBtn.style.display = tasks.length > 0 ? 'block' : 'none'
+}
+
+/**
+ * Clear the search bar and re-render the full task list.
+ */
+function clearSearch() {
+	searchBar.value = ''
+	renderTasks()
 }
 
 /**
@@ -326,8 +346,9 @@ addTaskBtn.addEventListener('click', () => {
 	updateAddTaskBtn()
 })
 searchBar.addEventListener('input', filterTasks)
-sortHighestBtn.addEventListener('click', () => sortTasks('asc'))
-sortLowestBtn.addEventListener('click', () => sortTasks('desc'))
+clearSearchBtn.addEventListener('click', clearSearch)
+sortHighestBtn.addEventListener('click', () => sortTasks('desc'))
+sortLowestBtn.addEventListener('click', () => sortTasks('asc'))
 downloadBtn.addEventListener('click', downloadJSON)
 resetBtn.addEventListener('click', showResetPopup)
 confirmResetBtn.addEventListener('click', resetTasks)
