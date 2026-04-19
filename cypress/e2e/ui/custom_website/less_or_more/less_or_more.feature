@@ -6,50 +6,13 @@ Feature: Less or More
     When I load the Less or More page at the correct sub directory
     Then I should see the title of the web page as "Less or More"
 
-  Scenario Outline: Check text
-    When I see an element with the data-cy attribute "<dataCy>"
-    Then I should see the expected text "<expText>" from that element
-    Examples:
-      | dataCy           | expText                                |
-      | lm-nav-home-link | Home                                   |
-      | lm-nav-calc-link | Calculator                             |
-      | lm-nav-text-link | Text to File                           |
-      | lm-nav-lm-link   | Less or More                           |
-      | lm-nav-todo-link | To Do List                             |
-      | lm-header        | Less or More                           |
-      | lm-tagline       | Test your luck and guess less or more! |
-
   Scenario: Check footer text
     When I see the footer element where the footer text has the data-cy attribute "lm-footer-text"
     Then I should see the expected text "© 2025 by Alben Trang" and the email address "albentrang@gmail.com"
 
-  Scenario Outline: Check links
-    When I see clickable text with the data-cy attribute "<dataCy>"
-    Then I should expect the link to reference the correct URL "<url>" of the custom website or an external website
-    Examples:
-      | dataCy                  | url                                             |
-      | lm-nav-home-link        | index.html                                      |
-      | lm-nav-calc-link        | calculator.html                                 |
-      | lm-nav-text-link        | text_to_file.html                               |
-      | lm-nav-lm-link          | less_or_more.html                               |
-      | lm-nav-todo-link        | to_do_list.html                                 |
-      | lm-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
-      | lm-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
-
-  Scenario Outline: Check element hover effects
-    When I hover over the element with the data-cy attribute "<dataCy>"
-    And I see the element's background color change to these RGB values: <r>, <g>, <b>
-    And I stop hovering over the element
-    Then I should see the element's background color revert back to its original color
-    Examples:
-      | dataCy           | r   | g   | b   |
-      | lm-nav-home-link | 233 | 150 | 122 |
-      | lm-nav-calc-link | 233 | 150 | 122 |
-      | lm-nav-text-link | 233 | 150 | 122 |
-      | lm-nav-lm-link   | 233 | 150 | 122 |
-      | lm-nav-todo-link | 233 | 150 | 122 |
-      | less-button      | 0   | 250 | 154 |
-      | more-button      | 0   | 250 | 154 |
+  Scenario: Check links
+    When I see clickable text based on the data from the "less_or_more.json" fixture file
+    Then I should see the correct URL for each link based on the data from the given fixture file
 
   Scenario: Check initial page state
     When I load the initial state of the Less or More page

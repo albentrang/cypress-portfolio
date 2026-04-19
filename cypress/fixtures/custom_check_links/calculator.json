@@ -1,0 +1,15 @@
+[
+	{ "dataCy": "calc-nav-home-link", "url": "index.html" },
+	{ "dataCy": "calc-nav-calc-link", "url": "calculator.html" },
+	{ "dataCy": "calc-nav-text-link", "url": "text_to_file.html" },
+	{ "dataCy": "calc-nav-lm-link", "url": "less_or_more.html" },
+	{ "dataCy": "calc-nav-todo-link", "url": "to_do_list.html" },
+	{
+		"dataCy": "calc-footer-linkedin-link",
+		"url": "https://www.linkedin.com/in/albentrang/"
+	},
+	{
+		"dataCy": "calc-footer-github-link",
+		"url": "https://github.com/albentrang/cypress-portfolio"
+	}
+]

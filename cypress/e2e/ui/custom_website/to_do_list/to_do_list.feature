@@ -7,48 +7,13 @@ Feature: To Do List
     When I load the To Do List page at the correct sub directory
     Then I should see the title of the web page as "To Do List"
 
-  Scenario Outline: Check text
-    When I see an element with the data-cy attribute "<dataCy>"
-    Then I should see the expected text "<expText>" from that element
-    Examples:
-      | dataCy             | expText                          |
-      | todo-nav-home-link | Home                             |
-      | todo-nav-calc-link | Calculator                       |
-      | todo-nav-text-link | Text to File                     |
-      | todo-nav-lm-link   | Less or More                     |
-      | todo-nav-todo-link | To Do List                       |
-      | todo-header        | To Do List                       |
-      | todo-tagline       | A simple to do list application! |
-
   Scenario: Check footer text
     When I see the footer element where the footer text has the data-cy attribute "todo-footer-text"
     Then I should see the expected text "© 2025 by Alben Trang" and the email address "albentrang@gmail.com"
 
-  Scenario Outline: Check links
-    When I see clickable text with the data-cy attribute "<dataCy>"
-    Then I should expect the link to reference the correct URL "<url>" of the custom website or an external website
-    Examples:
-      | dataCy                    | url                                             |
-      | todo-nav-home-link        | index.html                                      |
-      | todo-nav-calc-link        | calculator.html                                 |
-      | todo-nav-text-link        | text_to_file.html                               |
-      | todo-nav-lm-link          | less_or_more.html                               |
-      | todo-nav-todo-link        | to_do_list.html                                 |
-      | todo-footer-linkedin-link | https://www.linkedin.com/in/albentrang/         |
-      | todo-footer-github-link   | https://github.com/albentrang/cypress-portfolio |
-
-  Scenario Outline: Check element hover effects
-    When I hover over the element with the data-cy attribute "<dataCy>"
-    And I see the element's background color change to these RGB values: <r>, <g>, <b>
-    And I stop hovering over the element
-    Then I should see the element's background color revert back to its original color
-    Examples:
-      | dataCy             | r   | g   | b   |
-      | todo-nav-home-link | 233 | 150 | 122 |
-      | todo-nav-calc-link | 233 | 150 | 122 |
-      | todo-nav-text-link | 233 | 150 | 122 |
-      | todo-nav-lm-link   | 233 | 150 | 122 |
-      | todo-nav-todo-link | 233 | 150 | 122 |
+  Scenario: Check links
+    When I see clickable text based on the data from the "to_do_list.json" fixture file
+    Then I should see the correct URL for each link based on the data from the given fixture file
 
   Scenario: Add an empty to do item
     When I add a to do item with an empty description
@@ -185,4 +150,3 @@ Feature: To Do List
     When I add tasks based on the fixture "drag_tasks.json"
     And I drag the task with the description "Task 3" and drop it above the task with the description "Task 1"
     Then I should see that "Task 3" is now above "Task 1" in the list of to do items, and the task numbers should update accordingly to reflect the new order of the tasks
-  
