@@ -1179,4 +1179,60 @@ Cypress.Commands.addAll({
 })
 
 // Custom commands for the custom website's To Do List webpage.
-Cypress.Commands.addAll({})
+Cypress.Commands.addAll({
+	/**
+	 * Command to add a new to do item with that can have a description, priority, and tags.
+	 * @param {string} [desc = ''] The description of the to do item.
+	 * @param {string} [priority = ''] The priority level which can be "Low", "Medium", "High", or "Critical".
+	 * @param {string[]} [tags = []] An array of tags to add to the to do item.
+	 */
+	addToDoItem(desc = '', priority = '', tags = []) {
+		ToDoListPage.clickAddTask()
+
+		cy.get('@newTaskIdx').then((newTaskIdx) => {
+			ToDoListPage.typeTaskDescription(newTaskIdx, desc)
+
+			if (priority) {
+				ToDoListPage.chooseTaskPriority(newTaskIdx, priority)
+			}
+
+			tags.forEach((tag) => {
+				ToDoListPage.clickAddTag(newTaskIdx, tag)
+			})
+		})
+	},
+	/**
+	 * Command to verify the number of to do items shown in the list.
+	 * @param {number} expectedCount The expected number of to do items in the list.
+	 */
+	verifyTaskCount(expectedCount) {
+		ToDoListPage.todoList.children().should('have.length', expectedCount)
+	},
+	/**
+	 * Command to verify a to do item is shown in the list with the expected task number, description, and priority.
+	 * @param {number} taskNum The index of the to do item in the list, starting from 0.
+	 * @param {string} desc The expected description of the to do item.
+	 * @param {string} priority The expected priority level which can be "Low", "Medium", "High", or "Critical".
+	 */
+	verifyToDoTask(taskNum, desc, priority) {
+		const taskIdx = taskNum - 1
+
+		ToDoListPage.selectTaskNumber(taskIdx)
+			.invoke('text')
+			.should('equal', `${taskNum}`)
+		ToDoListPage.selectTaskDescription(taskIdx).should('have.value', desc)
+		ToDoListPage.selectTaskPriority(taskIdx).should('have.value', priority)
+	},
+	/**
+	 * Command to verify the tags shown for a to do item.
+	 * @param {number} taskNum The index of the to do item in the list, starting from 0.
+	 * @param {string[]} [expectedTags = []] An array of expected tags shown for the to do item.
+	 */
+	verifyTags(taskNum, expectedTags = []) {
+		const taskIdx = taskNum - 1
+
+		cy.wrap(expectedTags).each((tag, idx) => {
+			ToDoListPage.selectTaskTag(taskIdx, idx).should('have.text', tag)
+		})
+	}
+})

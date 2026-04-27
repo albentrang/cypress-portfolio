@@ -65,7 +65,7 @@ class ToDoListPage {
 	 * @returns {Cypress.Chainable}
 	 */
 	get clearSearchButton() {
-		return cy.getByCy('clear-search-button')
+		return cy.getByCy('clear-search-btn')
 	}
 
 	/**
@@ -73,7 +73,7 @@ class ToDoListPage {
 	 * @returns {Cypress.Chainable}
 	 */
 	get addTaskButton() {
-		return cy.getByCy('add-task-button')
+		return cy.getByCy('add-task-btn')
 	}
 
 	/**
@@ -249,7 +249,9 @@ class ToDoListPage {
 		if (clear) {
 			this.searchBar.clear()
 		}
-		this.searchBar.type(text)
+		if (text) {
+			this.searchBar.type(text)
+		}
 	}
 
 	/**
@@ -264,6 +266,16 @@ class ToDoListPage {
 	 */
 	clickAddTask() {
 		this.addTaskButton.click()
+
+		// Set an alias for the new task's index number, starting at 0, to use in later steps.
+		this.todoList
+			.children()
+			.last()
+			.invoke('attr', 'data-cy')
+			.then((dataCyVal) => {
+				const taskIdx = parseInt(dataCyVal.split('-')[1])
+				cy.wrap(taskIdx).as('newTaskIdx')
+			})
 	}
 
 	/**
@@ -289,7 +301,9 @@ class ToDoListPage {
 		if (clear) {
 			this.filenameInput.clear()
 		}
-		this.filenameInput.type(filename)
+		if (filename) {
+			this.filenameInput.type(filename)
+		}
 		this.downloadButton.click()
 	}
 
@@ -316,13 +330,15 @@ class ToDoListPage {
 		if (clear) {
 			descInput.clear()
 		}
-		descInput.type(description)
+		if (description) {
+			descInput.type(description)
+		}
 	}
 
 	/**
 	 * Chooses a priority for a task.
 	 * @param {number} taskNum - The task number.
-	 * @param {string} priority - The priority to select (e.g., 'Low', 'Medium', 'High').
+	 * @param {string} priority - The priority to select that's "Low", "Medium", "High", or "Critical".
 	 */
 	chooseTaskPriority(taskNum, priority) {
 		this.selectTaskPriority(taskNum).select(priority)
@@ -339,11 +355,13 @@ class ToDoListPage {
 	/**
 	 * Clicks the add tag button and types a tag for a task.
 	 * @param {number} taskNum - The task number.
-	 * @param {string} tag - The tag to add.
+	 * @param {string} tag - The tag to add. Can start with a "#" but doesn't have to, and it's handled in the website's JavaScript code.
 	 */
-	clickAddTag(taskNum, tag) {
-		this.selectTaskAddTagButton(taskNum).click()
-		this.selectTaskAddTagInput(taskNum).type(tag)
+	addTag(taskNum, tag) {
+		if (tag) {
+			this.selectTaskAddTagInput(taskNum).type(tag)
+			this.selectTaskAddTagButton(taskNum).click()
+		}
 	}
 
 	/**

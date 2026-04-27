@@ -41,7 +41,7 @@ Then(
 	}
 )
 
-// Scenario Outline: Check links
+// Scenario: Check links
 When(
 	'I see clickable text based on the data from the {string} fixture file',
 	(fixtureFile) => {
