@@ -27,23 +27,31 @@ Feature: To Do List
     And I should see the task number is "1", the task description is "Buy groceries", and the priority is "Low"
     And There are no tags displayed for to do item 1
 
-# Scenario: Add 20 to do items
-#   When I add 20 to do items with the text "Task <num>" where <num> is the task number from 1 to 20
-#   Then I should see all 20 new to do items with the correct text and task numbers in the list of to do items
-#   And I should see that the Add button is disabled after adding the 20th to do item
+  Scenario: Add 20 to do items
+    When I add 20 to do items with the text "Task num" where num is the task number from 1 to 20
+    Then I should see all 20 new to do items with the correct text and task numbers in the list of to do items
+    And I should see that the Add button is disabled after adding the 20th to do item
 
-# Scenario: Delete a to do item and check that the task numbers update
-#   When I add tasks based on the fixture "delete_tasks.json"
-#   And I delete the task with the description "Task 2"
-#   Then I should see that "Task 2" is no longer in the list of to do items, and the task numbers should update accordingly with "Task 1" being number 1 and "Task 3" being number 2
+  Scenario: Delete a to do item and check that the task numbers update
+    When I add tasks based on the fixture "delete_tasks.json"
+    And I delete task 2
+    Then I should see that task 2 with the description "Task 2" is gone
+    And The first task is still there with the description "Task 1", and the third task is now the second task with the description "Task 3" in the list of to do items
+    And I should see that the Reset button is still visible when there are still tasks in the list
 
-# Scenario: Delete all to do items individually and check that the list is empty
-#   When I add tasks based on the fixture "delete_tasks.json"
-#   And I delete the task with the description "Task 1"
-#   And I delete the task with the description "Task 2"
-#   And I delete the task with the description "Task 3"
-#   Then I should see that there are no tasks displayed in the list of to do items
-#   And I should see that the Reset button is hidden when there are no tasks in the list
+  Scenario: Add 20 to do items and then delete one
+    When I add 20 to do items with the text "Task num" where num is the task number from 1 to 20
+    And I delete task 20
+    Then I should see that task 20 is gone
+    And I should see that the Add button is enabled again after deleting a task from the list
+
+  Scenario: Delete all to do items individually and check that the list is empty
+    When I add tasks based on the fixture "delete_tasks.json"
+    And I delete task 3
+    And I delete task 2
+    And I delete task 1
+    Then I should see that there are no tasks displayed in the list of to do items
+    And I should see that the Reset button is hidden when there are no tasks in the list
 
 # Scenario: Search for tasks with the word "a"
 #   When I add tasks based on the fixture "search_tasks_desc.json"

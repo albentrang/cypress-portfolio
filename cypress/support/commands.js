@@ -1197,9 +1197,40 @@ Cypress.Commands.addAll({
 			}
 
 			tags.forEach((tag) => {
-				ToDoListPage.clickAddTag(newTaskIdx, tag)
+				ToDoListPage.addTag(newTaskIdx, tag)
 			})
 		})
+	},
+	/**
+	 * Command to add multiple to do items using a fixture file. The fixture file should have an array of to do items with their description, priority, and tags.
+	 * The command will read the fixture file and add each to do item in the array to the list.
+	 * @param {string} fixtureFile The fixture file name with the array of to do items.
+	 */
+	addMultipleToDoItems(fixtureFile) {
+		const fixtureDir = 'custom_to_do_list/'
+
+		cy.fixture(`${fixtureDir}${fixtureFile}`).then((tasks) => {
+			cy.wrap(tasks).each((task) => {
+				// Check for omitted priority and tags in the fixture file and set them to empty string or empty array if not provided.
+				if (!task.priority) {
+					task.priority = ''
+				}
+				if (!task.tags) {
+					task.tags = []
+				}
+
+				cy.addToDoItem(task.task, task.priority, task.tags)
+			})
+		})
+	},
+	/**
+	 * Command to delete a to do item based on its task number shown in the list.
+	 * @param {number} taskNum The number of the to do item in the list, starting from 1.
+	 */
+	deleteToDoItem(taskNum) {
+		const taskIdx = taskNum - 1
+
+		ToDoListPage.clickDeleteTask(taskIdx)
 	},
 	/**
 	 * Command to verify the number of to do items shown in the list.
@@ -1234,5 +1265,51 @@ Cypress.Commands.addAll({
 		cy.wrap(expectedTags).each((tag, idx) => {
 			ToDoListPage.selectTaskTag(taskIdx, idx).should('have.text', tag)
 		})
+	},
+	/**
+	 * Command to verify the "Add Task" button is either enabled or disabled based on the number of tasks in the list.
+	 * @param {boolean} shouldBeEnabled Set to true to verify the button is enabled. Set to false to verify the button is disabled.
+	 */
+	verifyAddButtonStatus(shouldBeEnabled) {
+		if (shouldBeEnabled) {
+			ToDoListPage.addTaskButton.should('be.enabled')
+
+			// Also verify that there are less than 20 tasks in the list.
+			ToDoListPage.todoList
+				.children()
+				.should('have.length.lessThan', ToDoListPage.maxTasks)
+		} else {
+			ToDoListPage.addTaskButton.should('be.disabled')
+
+			// Also verify that there are 20 tasks in the list.
+			ToDoListPage.todoList
+				.children()
+				.should('have.length', ToDoListPage.maxTasks)
+		}
+	},
+	/**
+	 * Command to verify a to do item is deleted from the list based on its task number and/or description.
+	 * @param {number} taskNum The number of the to do item in the list, starting from 1.
+	 * @param {string} [desc = ''] The description of the to do item, which is optional to verify if the task number is not sufficient to identify the deleted item.
+	 */
+	verifyTaskDeleted(taskNum, desc = '') {
+		const taskIdx = taskNum - 1
+
+		if (desc) {
+			ToDoListPage.selectTaskDescription(taskIdx).should('not.have.value', desc)
+		} else {
+			ToDoListPage.selectTaskNumber(taskIdx).should('not.exist')
+		}
+	},
+	/**
+	 * Command to verify the "Reset List" button is either visible or not based on whether there are any tasks in the list.
+	 * @param {boolean} shouldBeEnabled Set to true to verify the button is visible. Set to false to verify the button is not visible.
+	 */
+	verifyResetButtonStatus(shouldBeEnabled) {
+		if (shouldBeEnabled) {
+			ToDoListPage.resetButton.should('be.visible')
+		} else {
+			ToDoListPage.resetButton.should('not.be.visible')
+		}
 	}
 })

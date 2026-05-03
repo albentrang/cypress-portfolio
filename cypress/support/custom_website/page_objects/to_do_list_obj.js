@@ -149,95 +149,95 @@ class ToDoListPage {
 	}
 
 	/**
-	 * Selects a task element by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects a task element by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTask(taskNum) {
-		return cy.getByCy(`task-${taskNum}`)
+	selectTask(taskIdx) {
+		return cy.getByCy(`task-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the drag handle for a task by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the drag handle for a task by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectDragHandle(taskNum) {
-		return cy.getByCy(`drag-handle-${taskNum}`)
+	selectDragHandle(taskIdx) {
+		return cy.getByCy(`drag-handle-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the task number element by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the task number element by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskNumber(taskNum) {
-		return cy.getByCy(`task-number-${taskNum}`)
+	selectTaskNumber(taskIdx) {
+		return cy.getByCy(`task-number-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the description input for a task by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the description input for a task by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskDescription(taskNum) {
-		return cy.getByCy(`desc-input-${taskNum}`)
+	selectTaskDescription(taskIdx) {
+		return cy.getByCy(`desc-input-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the priority select element for a task by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the priority select element for a task by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskPriority(taskNum) {
-		return cy.getByCy(`priority-select-${taskNum}`)
+	selectTaskPriority(taskIdx) {
+		return cy.getByCy(`priority-select-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the delete button for a task by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the delete button for a task by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskDeleteButton(taskNum) {
-		return cy.getByCy(`delete-btn-${taskNum}`)
+	selectTaskDeleteButton(taskIdx) {
+		return cy.getByCy(`delete-btn-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the add tag button for a task by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the add tag button for a task by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskAddTagButton(taskNum) {
-		return cy.getByCy(`add-tag-btn-${taskNum}`)
+	selectTaskAddTagButton(taskIdx) {
+		return cy.getByCy(`add-tag-btn-${taskIdx}`)
 	}
 
 	/**
-	 * Selects the add tag input for a task by its number.
-	 * @param {number} taskNum - The task number.
+	 * Selects the add tag input for a task by its index.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskAddTagInput(taskNum) {
-		return cy.getByCy(`add-tag-input-${taskNum}`)
+	selectTaskAddTagInput(taskIdx) {
+		return cy.getByCy(`add-tag-input-${taskIdx}`)
 	}
 
 	/**
-	 * Selects a tag element for a task by task and tag number.
-	 * @param {number} taskNum - The task number.
-	 * @param {number} tagNum - The tag number.
+	 * Selects a tag element for a task by task and tag index.
+	 * @param {number} taskIdx - The task index starting at 0.
+	 * @param {number} tagIdx - The tag index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskTag(taskNum, tagNum) {
-		return cy.getByCy(`tag-${taskNum}-${tagNum}`)
+	selectTaskTag(taskIdx, tagIdx) {
+		return cy.getByCy(`tag-${taskIdx}-${tagIdx}`)
 	}
 
 	/**
-	 * Selects the remove button for a tag by task and tag number.
-	 * @param {number} taskNum - The task number.
-	 * @param {number} tagNum - The tag number.
+	 * Selects the remove button for a tag by task and tag index.
+	 * @param {number} taskIdx - The task index starting at 0.
+	 * @param {number} tagIdx - The tag index starting at 0.
 	 * @returns {Cypress.Chainable}
 	 */
-	selectTaskTagRemoveButton(taskNum, tagNum) {
-		return cy.getByCy(`remove-tag-btn-${taskNum}-${tagNum}`)
+	selectTaskTagRemoveButton(taskIdx, tagIdx) {
+		return cy.getByCy(`remove-tag-btn-${taskIdx}-${tagIdx}`)
 	}
 
 	/**
