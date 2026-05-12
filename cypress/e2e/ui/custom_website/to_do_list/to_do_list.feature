@@ -32,11 +32,25 @@ Feature: To Do List
     Then I should see all 20 new to do items with the correct text and task numbers in the list of to do items
     And I should see that the Add button is disabled after adding the 20th to do item
 
-  Scenario: Delete a to do item and check that the task numbers update
+  Scenario: Delete the first to do item and check that the task numbers update
+    When I add tasks based on the fixture "delete_tasks.json"
+    And I delete task 1
+    Then I should see that task 1 with the description "Task 1" is gone
+    And The second task is now the first task with the description "Task 2", and the third task is now the second task with the description "Task 3" in the list of to do items
+    And I should see that the Reset button is still visible when there are still tasks in the list
+
+  Scenario: Delete a to do item in the middle and check that the task numbers update
     When I add tasks based on the fixture "delete_tasks.json"
     And I delete task 2
     Then I should see that task 2 with the description "Task 2" is gone
     And The first task is still there with the description "Task 1", and the third task is now the second task with the description "Task 3" in the list of to do items
+    And I should see that the Reset button is still visible when there are still tasks in the list
+
+  Scenario: Delete the last to do item and check that the task numbers update
+    When I add tasks based on the fixture "delete_tasks.json"
+    And I delete task 3
+    Then I should see that task 3 is gone
+    And The first task is still there with the description "Task 1", and the second task is still there with the description "Task 2" in the list of to do items
     And I should see that the Reset button is still visible when there are still tasks in the list
 
   Scenario: Add 20 to do items and then delete one
@@ -53,30 +67,25 @@ Feature: To Do List
     Then I should see that there are no tasks displayed in the list of to do items
     And I should see that the Reset button is hidden when there are no tasks in the list
 
-# Scenario: Search for tasks with the word "a"
-#   When I add tasks based on the fixture "search_tasks_desc.json"
-#   And I search for tasks with the keyword "a"
-#   Then I should see only the tasks that contain the word "a" in their description displayed in the list of to do items even if the word "A" is in a different case
+  Scenario: Search for tasks with the word "a"
+    When I add tasks based on the fixture "search_tasks_desc.json"
+    And I search for tasks with the keyword "a"
+    Then I should see 6 tasks that contain the "a" in their descriptions while ignoring casing
 
-# Scenario: Search for tasks with the word "Task"
-#   When I add tasks based on the fixture "search_tasks_desc.json"
-#   And I search for tasks with the keyword "Task"
-#   Then I should see only the tasks that contain the word "task" in their description displayed in the list of to do items even if the word "Task" is in a different case
+  Scenario: Search for tasks with the word "Task"
+    When I add tasks based on the fixture "search_tasks_desc.json"
+    And I search for tasks with the keyword "Task"
+    Then I should see 3 tasks that contain the "Task" in their descriptions while ignoring casing
 
-# Scenario: Search for tasks with the word "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee"
-#   When I add tasks based on the fixture "search_tasks_desc.json"
-#   And I search for tasks with the keyword "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee"
-#   Then I should see only the tasks that contain the word "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee" in their description displayed in the list of to do items even if the word "Task" is in a different case
+  Scenario: Search for tasks with the word "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee"
+    When I add tasks based on the fixture "search_tasks_desc.json"
+    And I search for tasks with the keyword "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee"
+    Then I should see 1 tasks that contain the "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeee" in their descriptions while ignoring casing
 
-# Scenario: Search for tasks with the word "Nothing" and get no results
-#   When I add tasks based on the fixture "search_tasks_desc.json"
-#   And I search for tasks with the keyword "Nothing"
-#   Then I should see no tasks displayed in the list of to do items
-
-# Scenario: Search for tasks with the word "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeef" and get no results
-#   When I add tasks based on the fixture "search_tasks_desc.json"
-#   And I search for tasks with the keyword "aaaaaaaaaabbbbbbbbbbccccccccccddddddddddeeeeeeeeeef"
-#   Then I should see no tasks displayed in the list of to do items
+  Scenario: Search for tasks with the word "Nothing" and get no results
+    When I add tasks based on the fixture "search_tasks_desc.json"
+    And I search for tasks with the keyword "Nothing"
+    Then I should see that there are no tasks displayed in the list of to do items
 
 # Scenario: Add a to do item with tags
 #   When I add a to do item with the text "Finish project report" and the tags "#work #urgent"

@@ -9,12 +9,26 @@ const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
 const cyDownloadsFolder = Cypress.config('downloadsFolder')
 
 // General custom commands for different projects.
-/**
- * Get an element using its data-cy attribute.
- * @param {string} cyVal The value of the data-cy attribute.
- */
-Cypress.Commands.add('getByCy', (cyVal, args = {}) => {
-	return cy.get(`[data-cy="${cyVal}"]`, args)
+Cypress.Commands.addAll({
+	/**
+	 * Get an element using its data-cy attribute.
+	 * @param {string} cyVal The value of the data-cy attribute.
+	 * @param {Object} args Arguments for the cy.get() command.
+	 * @return {Cypress.Chainable}
+	 */
+	getByCy(cyVal, args = {}) {
+		return cy.get(`[data-cy="${cyVal}"]`, args)
+	},
+	/**
+	 * Get multiple elements using the starting portion of their data-cy attribute.
+	 * Useful for getting multiple elements that have a common prefix in their data-cy attribute, such as "task-0", "task-1", etc.
+	 * @param {string} cyVal The starting portion of the data-cy attribute.
+	 * @param {Object} args Arguments for the cy.get() command.
+	 * @return {Cypress.Chainable}
+	 */
+	startByCy(cyVal, args = {}) {
+		return cy.get(`[data-cy^="${cyVal}"]`, args)
+	}
 })
 
 // Custom commands for the Deck of Cards API project.
@@ -1181,6 +1195,16 @@ Cypress.Commands.addAll({
 // Custom commands for the custom website's To Do List webpage.
 Cypress.Commands.addAll({
 	/**
+	 * Command to search for tasks based on a keyword.
+	 * @param {string} searchTerm The keyword to search for.
+	 */
+	searchTasks(searchTerm) {
+		ToDoListPage.searchBar.type(searchTerm)
+
+		// Check that the search bar value has the search term for verification.
+		ToDoListPage.searchBar.should('have.value', searchTerm)
+	},
+	/**
 	 * Command to add a new to do item with that can have a description, priority, and tags.
 	 * @param {string} [desc = ''] The description of the to do item.
 	 * @param {string} [priority = ''] The priority level which can be "Low", "Medium", "High", or "Critical".
@@ -1237,7 +1261,25 @@ Cypress.Commands.addAll({
 	 * @param {number} expectedCount The expected number of to do items in the list.
 	 */
 	verifyTaskCount(expectedCount) {
-		ToDoListPage.todoList.children().should('have.length', expectedCount)
+		ToDoListPage.allTasks.should('have.length', expectedCount)
+	},
+	/**
+	 * Command to verify the number of search results shown after searching for a keyword and that each search result contains the keyword in its description regardless of case.
+	 * @param {number} expectedCount The expected number of search results shown after searching for the keyword.
+	 * @param {string} keyword The keyword that should be contained in each search result's description.
+	 */
+	verifyTaskCountAfterSearch(expectedCount, keyword) {
+		const lowerWord = keyword.toLowerCase()
+
+		ToDoListPage.allTasks.should('have.length', expectedCount)
+		ToDoListPage.allTaskDescriptions.each((taskDesc) => {
+			// Get the description text and convert it to lower case for case-insensitive comparison.
+			cy.wrap(taskDesc)
+				.invoke('val')
+				.then((descText) => {
+					cy.wrap(descText.toLowerCase()).should('contain', lowerWord)
+				})
+		})
 	},
 	/**
 	 * Command to verify a to do item is shown in the list with the expected task number, description, and priority.

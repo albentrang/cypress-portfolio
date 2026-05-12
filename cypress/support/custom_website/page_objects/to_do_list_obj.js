@@ -117,6 +117,22 @@ class ToDoListPage {
 	}
 
 	/**
+	 * Gets all the task elements.
+	 * @returns {Cypress.Chainable}
+	 */
+	get allTasks() {
+		return this.todoList.children()
+	}
+
+	/**
+	 * Gets all the description input elements for the tasks.
+	 * @returns {Cypress.Chainable}
+	 */
+	get allTaskDescriptions() {
+		return this.allTasks.startByCy('desc-input-')
+	}
+
+	/**
 	 * Gets the reset button element.
 	 * @returns {Cypress.Chainable}
 	 */

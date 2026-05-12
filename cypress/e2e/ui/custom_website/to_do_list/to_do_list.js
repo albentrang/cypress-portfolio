@@ -114,8 +114,6 @@ When('I add tasks based on the fixture {string}', (fixtureFile) => {
 When('I delete task {int}', (taskNum) => {
 	cy.deleteToDoItem(taskNum)
 })
-
-// Scenario: Delete a to do item and check that the task numbers update
 Then(
 	'I should see that task {int} with the description {string} is gone',
 	(taskNum, taskDesc) => {
@@ -123,16 +121,36 @@ Then(
 	}
 )
 Then(
+	'I should see that the Reset button is still visible when there are still tasks in the list',
+	() => {
+		cy.verifyResetButtonStatus(true)
+	}
+)
+
+// Scenario: Delete the first to do item and check that the task numbers update
+Then(
+	'The second task is now the first task with the description "Task 2", and the third task is now the second task with the description "Task 3" in the list of to do items',
+	() => {
+		cy.verifyToDoTask(1, 'Task 2', 'Low')
+		cy.verifyToDoTask(2, 'Task 3', 'Low')
+	}
+)
+
+// Scenario: Delete a to do item in the middle and check that the task numbers update
+Then(
 	'The first task is still there with the description "Task 1", and the third task is now the second task with the description "Task 3" in the list of to do items',
 	() => {
 		cy.verifyToDoTask(1, 'Task 1', 'High')
 		cy.verifyToDoTask(2, 'Task 3', 'Low')
 	}
 )
+
+// Scenario: Delete the last to do item and check that the task numbers update
 Then(
-	'I should see that the Reset button is still visible when there are still tasks in the list',
+	'The first task is still there with the description "Task 1", and the second task is still there with the description "Task 2" in the list of to do items',
 	() => {
-		cy.verifyResetButtonStatus(true)
+		cy.verifyToDoTask(1, 'Task 1', 'High')
+		cy.verifyToDoTask(2, 'Task 2', 'Low')
 	}
 )
 
@@ -158,5 +176,18 @@ Then(
 	'I should see that the Reset button is hidden when there are no tasks in the list',
 	() => {
 		cy.verifyResetButtonStatus(false)
+	}
+)
+
+// *Common step for searching for tasks in multiple scenarios
+When('I search for tasks with the keyword {string}', (keyword) => {
+	cy.searchTasks(keyword)
+})
+
+// Scenario: Search for tasks with the word "a"
+Then(
+	'I should see {int} tasks that contain the {string} in their descriptions while ignoring casing',
+	(count, keyword) => {
+		cy.verifyTaskCountAfterSearch(count, keyword)
 	}
 )
