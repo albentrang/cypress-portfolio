@@ -4,7 +4,7 @@ import { Given, When, Then } from '@badeball/cypress-cucumber-preprocessor'
 Given('I visit the To Do List page', () => {
 	cy.visit('to_do_list.html')
 })
-Given('I click the Reset button to clear any existing to do items', () => {
+Given('I click the Reset button to clear any existing tasks', () => {
 	// Use querySelector to check if the Reset button is present before trying to click it, since it's only there when there are existing tasks.
 	cy.document().then((doc) => {
 		const resetButton = doc.querySelector('[data-cy="reset-button"]')
@@ -60,11 +60,11 @@ Then(
 	}
 )
 
-// Scenario: Add an empty to do item, Scenario: Add a to do item
-When('I add a to do item with {string} as the description', (taskDesc) => {
-	cy.addToDoItem(taskDesc)
+// Scenario: Add an empty task, Scenario: Add a task
+When('I add a task with {string} as the description', (taskDesc) => {
+	cy.addTask(taskDesc)
 })
-Then('I should see {int} task in the list of to do items', (taskCount) => {
+Then('I should see {int} task in the list of tasks', (taskCount) => {
 	cy.verifyTaskCount(taskCount)
 })
 Then(
@@ -73,25 +73,25 @@ Then(
 		cy.verifyToDoTask(taskNum, description, priority)
 	}
 )
-Then('There are no tags displayed for to do item {int}', (taskNum) => {
+Then('There are no tags displayed for task {int}', (taskNum) => {
 	cy.verifyTags(taskNum, [])
 })
 
 // *Common step for adding 20 tasks in multiple scenarios
 When(
-	'I add 20 to do items with the text "Task num" where num is the task number from 1 to 20',
+	'I add 20 tasks with the text "Task num" where num is the task number from 1 to 20',
 	() => {
 		const taskDescs = Array.from({ length: 20 }, (_, i) => `Task ${i + 1}`)
 
 		cy.wrap(taskDescs).each((desc) => {
-			cy.addToDoItem(desc)
+			cy.addTask(desc)
 		})
 	}
 )
 
-// Scenario: Add 20 to do items
+// Scenario: Add 20 tasks
 Then(
-	'I should see all 20 new to do items with the correct text and task numbers in the list of to do items',
+	'I should see all 20 new tasks with the correct text and task numbers in the list of tasks',
 	() => {
 		for (let i = 1; i <= 20; i++) {
 			cy.verifyToDoTask(i, `Task ${i}`, 'Low')
@@ -99,7 +99,7 @@ Then(
 	}
 )
 Then(
-	'I should see that the Add button is disabled after adding the 20th to do item',
+	'I should see that the Add button is disabled after adding the 20th task',
 	() => {
 		cy.verifyAddButtonStatus(false)
 	}
@@ -107,12 +107,12 @@ Then(
 
 // *Common step for using a fixture to add tasks in multiple scenarios
 When('I add tasks based on the fixture {string}', (fixtureFile) => {
-	cy.addMultipleToDoItems(fixtureFile)
+	cy.addMultipleTasks(fixtureFile)
 })
 
 // *Common step for deleting a task in multiple scenarios
 When('I delete task {int}', (taskNum) => {
-	cy.deleteToDoItem(taskNum)
+	cy.deleteTask(taskNum)
 })
 Then(
 	'I should see that task {int} with the description {string} is gone',
@@ -127,34 +127,34 @@ Then(
 	}
 )
 
-// Scenario: Delete the first to do item and check that the task numbers update
+// Scenario: Delete the first task and check that the task numbers update
 Then(
-	'The second task is now the first task with the description "Task 2", and the third task is now the second task with the description "Task 3" in the list of to do items',
+	'The second task is now the first task with the description "Task 2", and the third task is now the second task with the description "Task 3" in the list of tasks',
 	() => {
 		cy.verifyToDoTask(1, 'Task 2', 'Low')
 		cy.verifyToDoTask(2, 'Task 3', 'Low')
 	}
 )
 
-// Scenario: Delete a to do item in the middle and check that the task numbers update
+// Scenario: Delete a task in the middle and check that the task numbers update
 Then(
-	'The first task is still there with the description "Task 1", and the third task is now the second task with the description "Task 3" in the list of to do items',
+	'The first task is still there with the description "Task 1", and the third task is now the second task with the description "Task 3" in the list of tasks',
 	() => {
 		cy.verifyToDoTask(1, 'Task 1', 'High')
 		cy.verifyToDoTask(2, 'Task 3', 'Low')
 	}
 )
 
-// Scenario: Delete the last to do item and check that the task numbers update
+// Scenario: Delete the last task and check that the task numbers update
 Then(
-	'The first task is still there with the description "Task 1", and the second task is still there with the description "Task 2" in the list of to do items',
+	'The first task is still there with the description "Task 1", and the second task is still there with the description "Task 2" in the list of tasks',
 	() => {
 		cy.verifyToDoTask(1, 'Task 1', 'High')
 		cy.verifyToDoTask(2, 'Task 2', 'Low')
 	}
 )
 
-// Scenario: Add 20 to do items and then delete one
+// Scenario: Add 20 tasks and then delete one
 Then('I should see that task {int} is gone', (taskNum) => {
 	cy.verifyTaskDeleted(taskNum)
 })
@@ -165,9 +165,9 @@ Then(
 	}
 )
 
-// Scenario: Delete all to do items individually and check that the list is empty
+// Scenario: Delete all tasks individually and check that the list is empty
 Then(
-	'I should see that there are no tasks displayed in the list of to do items',
+	'I should see that there are no tasks displayed in the list of tasks',
 	() => {
 		cy.verifyTaskCount(0)
 	}
@@ -189,5 +189,51 @@ Then(
 	'I should see {int} tasks that contain the {string} in their descriptions while ignoring casing',
 	(count, keyword) => {
 		cy.verifyTaskCountAfterSearch(count, keyword)
+	}
+)
+
+// *Common steps for adding a task with description and tags in multiple scenarios
+When(
+	'I add a task with the text {string} and the tags {string}',
+	(text, tags) => {
+		cy.addTask(text, 'Low', tags)
+	}
+)
+Then(
+	'I should see task {int} with the text {string} and the tags {string} in the list of tasks',
+	(taskNum, text, tags) => {
+		cy.verifyToDoTask(taskNum, text, 'Low')
+		cy.verifyTags(taskNum, tags.split(' '))
+	}
+)
+
+// Scenario: Add a task with five tags
+Then(
+	'I should see that the Add Tag button is disabled after adding the 5th tag on task {int}',
+	(taskNum) => {
+		cy.verifyAddTagButtonStatus(taskNum, false)
+	}
+)
+
+// *Common steps for deleting tags from a task in multiple scenarios
+When('I delete the tag {int} from task {int}', (tagIdx, taskNum) => {
+	cy.deleteTaskTag(taskNum, tagIdx)
+})
+When('I add the tag {string} to task {int}', (tag, taskNum) => {
+	cy.addTaskTag(taskNum, tag)
+})
+Then('I should see only {int} tags for task {int}', (tagCount, taskNum) => {
+	cy.verifyTagCount(taskNum, tagCount)
+})
+Then(
+	'I should see that the tag {string} is no longer displayed for task {int}',
+	(tag, taskNum) => {
+		cy.verifyTagDeleted(taskNum, tag)
+	}
+)
+Then(
+	'I should see that the Add Tag button is enabled again for task {int}',
+	(taskNum) => {
+		cy.verifyAddTagButtonStatus(taskNum, true)
 	}
 )

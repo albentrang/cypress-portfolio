@@ -1205,12 +1205,14 @@ Cypress.Commands.addAll({
 		ToDoListPage.searchBar.should('have.value', searchTerm)
 	},
 	/**
-	 * Command to add a new to do item with that can have a description, priority, and tags.
-	 * @param {string} [desc = ''] The description of the to do item.
+	 * Command to add a new task with that can have a description, priority, and tags.
+	 * @param {string} [desc = ''] The description of the task.
 	 * @param {string} [priority = ''] The priority level which can be "Low", "Medium", "High", or "Critical".
-	 * @param {string[]} [tags = []] An array of tags to add to the to do item.
+	 * @param {string | string[]} [tags = []] A string or an array of strings for the tags to add for the task.
+	 * If a string is provided, it will be separated into multiple tags based on spaces only.
+	 * If an array is provided, each string in the array will be added as a separate tag.
 	 */
-	addToDoItem(desc = '', priority = '', tags = []) {
+	addTask(desc = '', priority = '', tags = []) {
 		ToDoListPage.clickAddTask()
 
 		cy.get('@newTaskIdx').then((newTaskIdx) => {
@@ -1220,17 +1222,33 @@ Cypress.Commands.addAll({
 				ToDoListPage.chooseTaskPriority(newTaskIdx, priority)
 			}
 
+			// Handle tags input as either a string or an array of strings.
+			if (typeof tags === 'string') {
+				// If it's a string, split it into an array of tags based on spaces.
+				tags = tags.split(' ')
+			}
+
 			tags.forEach((tag) => {
 				ToDoListPage.addTag(newTaskIdx, tag)
 			})
 		})
 	},
 	/**
-	 * Command to add multiple to do items using a fixture file. The fixture file should have an array of to do items with their description, priority, and tags.
-	 * The command will read the fixture file and add each to do item in the array to the list.
-	 * @param {string} fixtureFile The fixture file name with the array of to do items.
+	 * Command to add a tag to a task based on the task number shown in the list and the tag name.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {string} tag The tag to add to the task.
 	 */
-	addMultipleToDoItems(fixtureFile) {
+	addTaskTag(taskNum, tag) {
+		const taskIdx = taskNum - 1
+
+		ToDoListPage.addTag(taskIdx, tag)
+	},
+	/**
+	 * Command to add multiple tasks using a fixture file. The fixture file should have an array of tasks with their description, priority, and tags.
+	 * The command will read the fixture file and add each task in the array to the list.
+	 * @param {string} fixtureFile The fixture file name with the array of tasks.
+	 */
+	addMultipleTasks(fixtureFile) {
 		const fixtureDir = 'custom_to_do_list/'
 
 		cy.fixture(`${fixtureDir}${fixtureFile}`).then((tasks) => {
@@ -1243,22 +1261,28 @@ Cypress.Commands.addAll({
 					task.tags = []
 				}
 
-				cy.addToDoItem(task.task, task.priority, task.tags)
+				cy.addTask(task.task, task.priority, task.tags)
 			})
 		})
 	},
 	/**
-	 * Command to delete a to do item based on its task number shown in the list.
-	 * @param {number} taskNum The number of the to do item in the list, starting from 1.
+	 * Command to delete a task based on its task number shown in the list.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
 	 */
-	deleteToDoItem(taskNum) {
+	deleteTask(taskNum) {
 		const taskIdx = taskNum - 1
 
 		ToDoListPage.clickDeleteTask(taskIdx)
 	},
+	deleteTaskTag(taskNum, tagNum) {
+		const taskIdx = taskNum - 1
+		const tagIdx = tagNum - 1
+
+		ToDoListPage.clickRemoveTag(taskIdx, tagIdx)
+	},
 	/**
-	 * Command to verify the number of to do items shown in the list.
-	 * @param {number} expectedCount The expected number of to do items in the list.
+	 * Command to verify the number of tasks shown in the list.
+	 * @param {number} expectedCount The expected number of tasks in the list.
 	 */
 	verifyTaskCount(expectedCount) {
 		ToDoListPage.allTasks.should('have.length', expectedCount)
@@ -1282,9 +1306,9 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
-	 * Command to verify a to do item is shown in the list with the expected task number, description, and priority.
-	 * @param {number} taskNum The index of the to do item in the list, starting from 0.
-	 * @param {string} desc The expected description of the to do item.
+	 * Command to verify a task is shown in the list with the expected task number, description, and priority.
+	 * @param {number} taskNum The index of the task in the list, starting from 0.
+	 * @param {string} desc The expected description of the task.
 	 * @param {string} priority The expected priority level which can be "Low", "Medium", "High", or "Critical".
 	 */
 	verifyToDoTask(taskNum, desc, priority) {
@@ -1297,15 +1321,20 @@ Cypress.Commands.addAll({
 		ToDoListPage.selectTaskPriority(taskIdx).should('have.value', priority)
 	},
 	/**
-	 * Command to verify the tags shown for a to do item.
-	 * @param {number} taskNum The index of the to do item in the list, starting from 0.
-	 * @param {string[]} [expectedTags = []] An array of expected tags shown for the to do item.
+	 * Command to verify the tags shown for a task.
+	 * @param {number} taskNum The index of the task in the list, starting from 0.
+	 * @param {string[]} [expectedTags = []] An array of expected tags shown for the task.
 	 */
 	verifyTags(taskNum, expectedTags = []) {
 		const taskIdx = taskNum - 1
 
 		cy.wrap(expectedTags).each((tag, idx) => {
-			ToDoListPage.selectTaskTag(taskIdx, idx).should('have.text', tag)
+			ToDoListPage.selectTaskTag(taskIdx, idx).then(($el) => {
+				// childNodes[0] grabs the first element inside the span, which is the text
+				const tagText = $el[0].childNodes[0].textContent.trim()
+
+				cy.wrap(tagText).should('equal', tag)
+			})
 		})
 	},
 	/**
@@ -1330,9 +1359,23 @@ Cypress.Commands.addAll({
 		}
 	},
 	/**
-	 * Command to verify a to do item is deleted from the list based on its task number and/or description.
-	 * @param {number} taskNum The number of the to do item in the list, starting from 1.
-	 * @param {string} [desc = ''] The description of the to do item, which is optional to verify if the task number is not sufficient to identify the deleted item.
+	 * Command to verify the "Add Tag" button for a task is either enabled or disabled based on whether the maximum number of tags has been added for that item.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {boolean} shouldBeEnabled Set to true to verify the button is enabled. Set to false to verify the button is disabled.
+	 */
+	verifyAddTagButtonStatus(taskNum, shouldBeEnabled) {
+		const taskIdx = taskNum - 1
+
+		if (shouldBeEnabled) {
+			ToDoListPage.selectTaskAddTagButton(taskIdx).should('be.enabled')
+		} else {
+			ToDoListPage.selectTaskAddTagButton(taskIdx).should('be.disabled')
+		}
+	},
+	/**
+	 * Command to verify a task is deleted from the list based on its task number and/or description.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {string} [desc = ''] The description of the task, which is optional to verify if the task number is not sufficient to identify the deleted item.
 	 */
 	verifyTaskDeleted(taskNum, desc = '') {
 		const taskIdx = taskNum - 1

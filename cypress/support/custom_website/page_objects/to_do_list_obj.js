@@ -337,12 +337,12 @@ class ToDoListPage {
 
 	/**
 	 * Types a description for a task.
-	 * @param {number} taskNum - The task number.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @param {string} description - The description to type.
 	 * @param {boolean} [clear=false] - Whether to clear the description input before typing.
 	 */
-	typeTaskDescription(taskNum, description, clear = false) {
-		const descInput = this.selectTaskDescription(taskNum)
+	typeTaskDescription(taskIdx, description, clear = false) {
+		const descInput = this.selectTaskDescription(taskIdx)
 		if (clear) {
 			descInput.clear()
 		}
@@ -353,40 +353,40 @@ class ToDoListPage {
 
 	/**
 	 * Chooses a priority for a task.
-	 * @param {number} taskNum - The task number.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @param {string} priority - The priority to select that's "Low", "Medium", "High", or "Critical".
 	 */
-	chooseTaskPriority(taskNum, priority) {
-		this.selectTaskPriority(taskNum).select(priority)
+	chooseTaskPriority(taskIdx, priority) {
+		this.selectTaskPriority(taskIdx).select(priority)
 	}
 
 	/**
 	 * Clicks the delete button for a task.
-	 * @param {number} taskNum - The task number.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 */
-	clickDeleteTask(taskNum) {
-		this.selectTaskDeleteButton(taskNum).click()
+	clickDeleteTask(taskIdx) {
+		this.selectTaskDeleteButton(taskIdx).click()
 	}
 
 	/**
 	 * Clicks the add tag button and types a tag for a task.
-	 * @param {number} taskNum - The task number.
+	 * @param {number} taskIdx - The task index starting at 0.
 	 * @param {string} tag - The tag to add. Can start with a "#" but doesn't have to, and it's handled in the website's JavaScript code.
 	 */
-	addTag(taskNum, tag) {
+	addTag(taskIdx, tag) {
 		if (tag) {
-			this.selectTaskAddTagInput(taskNum).type(tag)
-			this.selectTaskAddTagButton(taskNum).click()
+			this.selectTaskAddTagInput(taskIdx).type(tag)
+			this.selectTaskAddTagButton(taskIdx).click()
 		}
 	}
 
 	/**
 	 * Clicks the remove button for a tag.
-	 * @param {number} taskNum - The task number.
-	 * @param {number} tagNum - The tag number.
+	 * @param {number} taskIdx - The task index starting at 0.
+	 * @param {number} tagIdx - The tag index starting at 0.
 	 */
-	clickRemoveTag(taskNum, tagNum) {
-		this.selectTaskTagRemoveButton(taskNum, tagNum).click()
+	clickRemoveTag(taskIdx, tagIdx) {
+		this.selectTaskTagRemoveButton(taskIdx, tagIdx).click()
 	}
 
 	/**
