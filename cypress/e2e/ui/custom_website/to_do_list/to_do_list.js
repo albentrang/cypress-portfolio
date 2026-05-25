@@ -64,7 +64,7 @@ Then(
 When('I add a task with {string} as the description', (taskDesc) => {
 	cy.addTask(taskDesc)
 })
-Then('I should see {int} task in the list of tasks', (taskCount) => {
+Then('I should see {int} tasks in the list of tasks', (taskCount) => {
 	cy.verifyTaskCount(taskCount)
 })
 Then(
@@ -235,5 +235,13 @@ Then(
 	'I should see that the Add Tag button is enabled again for task {int}',
 	(taskNum) => {
 		cy.verifyAddTagButtonStatus(taskNum, true)
+	}
+)
+
+// *Common steps for searching for tasks with specific tags in multiple scenarios
+Then(
+	'Each task contains at least one tag that has the text {string} while ignoring casing and the hashtag symbol',
+	(tag) => {
+		cy.verifyTasksContainTag(tag)
 	}
 )

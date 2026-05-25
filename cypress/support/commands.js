@@ -1338,6 +1338,35 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
+	 * Command to verify that at least one task in the list contains the search term as a tag regardless of case and ignoring the hashtag symbol.
+	 * @param {string} tag The tag to search for.
+	 */
+	verifyTasksContainTag(tag) {
+		// Remove the hashtag symbol and convert the tag to lower case for case-insensitive comparison.
+		const cleanTag = tag.replace('#', '').toLowerCase()
+
+		ToDoListPage.allTasks.each((task) => {
+			// Get the tags text in an array, remove the hashtag symbols, and convert them to lower case for case-insensitive comparison.
+			cy.wrap(task)
+				.startByCy('tag-')
+				.then(($tags) => {
+					// childNodes[0] grabs the first element inside the span, which is the text, and ignoring the cancel button.
+					const tagsText = Array.from($tags).map((tagEl) =>
+						tagEl.childNodes[0].textContent
+							.trim()
+							.replace('#', '')
+							.toLowerCase()
+					)
+
+					// Assert that at least one of the tags for the task matches the text for the searched tag.
+					const hasMatchingTag = tagsText.some((tagText) =>
+						tagText.includes(cleanTag)
+					)
+					cy.wrap(hasMatchingTag).should('equal', true)
+				})
+		})
+	},
+	/**
 	 * Command to verify the "Add Task" button is either enabled or disabled based on the number of tasks in the list.
 	 * @param {boolean} shouldBeEnabled Set to true to verify the button is enabled. Set to false to verify the button is disabled.
 	 */

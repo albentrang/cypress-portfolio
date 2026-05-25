@@ -17,13 +17,13 @@ Feature: To Do List
 
   Scenario: Add an empty task
     When I add a task with "" as the description
-    Then I should see 1 task in the list of tasks
+    Then I should see 1 tasks in the list of tasks
     And I should see the task number is "1", the task description is "", and the priority is "Low"
     And There are no tags displayed for task 1
 
   Scenario: Add a task
     When I add a task with "Buy groceries" as the description
-    Then I should see 1 task in the list of tasks
+    Then I should see 1 tasks in the list of tasks
     And I should see the task number is "1", the task description is "Buy groceries", and the priority is "Low"
     And There are no tags displayed for task 1
 
@@ -134,30 +134,33 @@ Feature: To Do List
     And I add the tag "a" to task 1
     Then I should see task 1 with the text "Check duplicate tags" and the tags "#a" in the list of tasks
 
-# Scenario: Search for tasks with the tag "#Work"
-#   When I add tasks based on the fixture "search_tasks_tags.json"
-#   And I search for tasks with the keyword "#Work"
-#   Then I should see only the tasks that have the tag "#work" displayed in the list of tasks even if the tag is in a different case
+  Scenario: Search for tasks with the tag "#Work"
+    When I add tasks based on the fixture "search_tasks_tags.json"
+    And I search for tasks with the keyword "#Work"
+    Then I should see 2 tasks in the list of tasks
+    And Each task contains at least one tag that has the text "#Work" while ignoring casing and the hashtag symbol
 
-# Scenario: Search for tasks with the tag "#a"
-#   When I add tasks based on the fixture "search_tasks_tags.json"
-#   And I search for tasks with the keyword "#a"
-#   Then I should see only the tasks that have the tag "#a" displayed in the list of tasks even if the tag is in a different case
+  Scenario: Search for tasks with the tag "#a"
+    When I add tasks based on the fixture "search_tasks_tags.json"
+    And I search for tasks with the keyword "#a"
+    Then I should see 2 tasks in the list of tasks
+    And Each task contains at least one tag that has the text "#a" while ignoring casing and the hashtag symbol
 
-# Scenario: Search for tasks with the tag "#aaaaaaaaaabbbbbbbbbb"
-#   When I add tasks based on the fixture "search_tasks_tags.json"
-#   And I search for tasks with the keyword "#aaaaaaaaaabbbbbbbbbb"
-#   Then I should see only the tasks that have the tag "#aaaaaaaaaabbbbbbbbbb" displayed in the list of tasks even if the tag is in a different case
+  Scenario: Search for tasks with the tag "#aaaaaaaaaabbbbbbbbbb"
+    When I add tasks based on the fixture "search_tasks_tags.json"
+    And I search for tasks with the keyword "#aaaaaaaaaabbbbbbbbbb"
+    Then I should see 1 tasks in the list of tasks
+    And Each task contains at least one tag that has the text "#aaaaaaaaaabbbbbbbbbb" while ignoring casing and the hashtag symbol
 
-# Scenario: Search for tasks with the tag "#Nothing" and get no results
-#   When I add tasks based on the fixture "search_tasks_tags.json"
-#   And I search for tasks with the keyword "#Nothing"
-#   Then I should see no tasks displayed in the list of tasks
+  Scenario: Search for tasks with the tag "#Nothing" and get no results
+    When I add tasks based on the fixture "search_tasks_tags.json"
+    And I search for tasks with the keyword "#Nothing"
+    Then I should see that there are no tasks displayed in the list of tasks
 
-# Scenario: Search for tasks with the tag "#aaaaaaaaaabbbbbbbbbbc" and get no results
-#   When I add tasks based on the fixture "search_tasks_tags.json"
-#   And I search for tasks with the keyword "#aaaaaaaaaabbbbbbbbbbc"
-#   Then I should see no tasks displayed in the list of tasks
+  Scenario: Search for tasks with the tag "#aaaaaaaaaabbbbbbbbbbc" and get no results
+    When I add tasks based on the fixture "search_tasks_tags.json"
+    And I search for tasks with the keyword "#aaaaaaaaaabbbbbbbbbbc"
+    Then I should see that there are no tasks displayed in the list of tasks
 
 # Scenario: Check that the priority levels are present in the priority dropdown menu
 #   When I add a task with the text "Task with priority" and select the priority level dropdown menu
