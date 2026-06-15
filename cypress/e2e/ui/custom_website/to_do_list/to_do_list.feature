@@ -172,21 +172,20 @@ Feature: To Do List
     And I click the sort button to sort by priority from high to low
     Then I should see the tasks from "sort_tasks.json" sorted by priority and alphabetically from high to low in the list of tasks
 
-# Scenario: Download the to do list as a JSON file
-#   When I add tasks based on the fixture "download_tasks.json"
-#   And I click the Download button
-#   Then I should see a JSON file named "to_do_list.json" downloaded to my computer that contains all the information from the list of tasks
+  Scenario: Download the to do list as a JSON file
+    When I add tasks based on the fixture "download_tasks.json"
+    And I click the Download button
+    Then I should see a JSON file named "to_do_list.json" downloaded to my computer that contains all the information from "download_tasks.json"
 
-# Scenario Outline: Download the to do list with a specific file name as a JSON file
-#   When I add tasks based on the fixture "download_tasks.json"
-#   And I enter the file name "<fileName>" in the file name input field
-#   And I click the Download button
-#   Then I should see a JSON file named "<fileName>" downloaded to my computer that contains all the information from the list of tasks
-#   Examples:
-#     | fileName                       |
-#     | a                              |
-#     | tasks_backup                   |
-#     | abcdefghijabcdefghijabcdefghij |
+  Scenario Outline: Download the to do list with a specific file name as a JSON file
+    When I add tasks based on the fixture "download_tasks.json"
+    And I enter the file name "<fileName>.json" in the file name input field and click the Download button
+    Then I should see a JSON file named "<fileName>.json" downloaded to my computer that contains all the information from "download_tasks.json"
+    Examples:
+      | fileName                       |
+      | a                              |
+      | tasks_backup                   |
+      | abcdefghijabcdefghijabcdefghij |
 
 # Scenario: Drag and drop to reorder tasks
 #   When I add tasks based on the fixture "drag_tasks.json"

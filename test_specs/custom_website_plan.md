@@ -94,8 +94,8 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] There is an Add Task button that adds a new task to the list.
 - [x] There can only be a maximum of 20 tasks in the list at any given time, and the Add Task button is disabled when this limit is reached.
 - [x] There are two buttons that allow the user to sort the list by priority from low to high and from high to low.
-- [x] There is an input field for the user to enter the file name when downloading the JSON file, with placeholder text "Enter file name like 'to-do-list.json'" and a default value of "to-do-list.json".
-- [ ] There is a Download button to download a JSON file that contains all the information from the list.
+- [x] There is an input field for the user to enter the file name when downloading the JSON file, with placeholder text "Enter file name like 'to_do_list.json'" and a default value of "to_do_list.json".
+- [x] There is a Download button to download a JSON file that contains all the information from the list.
 - [x] Each task is represented as a row with the task number, description, priority level, and tags displayed.
 - [x] The task number is automatically generated based on the order of the tasks in the list, starting from 1 for the first task, and updates accordingly when tasks are added, moved, or deleted.
 - [x] The task description is a text input field that allows the user to edit the task directly in the list, with placeholder text "Enter task description here" and a maximum of 50 characters.

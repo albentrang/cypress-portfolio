@@ -298,7 +298,7 @@ function sortTasks(order: 'asc' | 'desc') {
  */
 function downloadJSON() {
 	let filename = filenameInput.value.trim()
-	if (!filename) filename = 'to-do-list.json'
+	if (!filename) filename = 'to_do_list.json'
 	if (!filename.endsWith('.json')) filename += '.json'
 	filename = filename.slice(0, 30)
 	const blob = new Blob([JSON.stringify(tasks, null, 2)], {

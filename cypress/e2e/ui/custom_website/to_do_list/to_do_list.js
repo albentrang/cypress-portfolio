@@ -267,3 +267,22 @@ Then(
 		cy.verifySortedTasks(fixtureFile, 'desc')
 	}
 )
+
+// *Common steps for downloading the list of tasks as a JSON file in multiple scenarios
+When('I click the Download button', () => {
+	cy.downloadTasks()
+})
+Then(
+	'I should see a JSON file named {string} downloaded to my computer that contains all the information from {string}',
+	(filename, fixtureFile) => {
+		cy.verifyToDoListDownload(filename, fixtureFile)
+	}
+)
+
+// Scenario Outline: Download the to do list with a specific file name as a JSON file
+When(
+	'I enter the file name {string} in the file name input field and click the Download button',
+	(fileName) => {
+		cy.downloadTasks(fileName)
+	}
+)

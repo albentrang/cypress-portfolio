@@ -1247,6 +1247,14 @@ Cypress.Commands.addAll({
 		ToDoListPage.clickSortLowest()
 	},
 	/**
+	 * Download the tasks in the list as a JSON file.
+	 * @param {string} filename The name of the file to download.
+	 * @param {boolean} [clear=false] - Whether to clear the filename input before typing.
+	 */
+	downloadTasks(filename = '', clear = false) {
+		ToDoListPage.downloadToDoList(filename, clear)
+	},
+	/**
 	 * Command to add a tag to a task based on the task number shown in the list and the tag name.
 	 * @param {number} taskNum The number of the task in the list, starting from 1.
 	 * @param {string} tag The tag to add to the task.
@@ -1358,6 +1366,25 @@ Cypress.Commands.addAll({
 				})
 			}
 		)
+	},
+	/**
+	 * Command to verify that the downloaded to do list JSON file is exactly the same as the fixture file used for adding the tasks to the list.
+	 *
+	 * @param {string} filename The name of the downloaded file.
+	 * @param {string} fixtureFile The name of the fixture file.
+	 */
+	verifyToDoListDownload(filename, fixtureFile) {
+		// The file name is either the default file name "to_do_list.json" or the custom file name provided for downloading the to do list.
+		const expectedFileName = filename || 'to_do_list.json'
+		const filePath = `${cyDownloadsFolder}/${expectedFileName}`
+
+		cy.readFile(filePath, { timeout: 5000 }).then((fileContent) => {
+			cy.fixture(`${customWebsiteToDoFixtureDir}${fixtureFile}`).then(
+				(expectedToDoList) => {
+					cy.wrap(fileContent).should('deep.equal', expectedToDoList)
+				}
+			)
+		})
 	},
 	/**
 	 * Command to verify a task is shown in the list with the expected task number, description, and priority.
