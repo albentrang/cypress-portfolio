@@ -6,6 +6,7 @@ import ToDoListPage from './custom_website/page_objects/to_do_list_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
+const customWebsiteToDoFixtureDir = 'custom_to_do_list/'
 const cyDownloadsFolder = Cypress.config('downloadsFolder')
 
 // General custom commands for different projects.
@@ -1234,6 +1235,18 @@ Cypress.Commands.addAll({
 		})
 	},
 	/**
+	 * Command to sort tasks by priority level from highest to lowest.
+	 */
+	sortTasksByHighestPriority() {
+		ToDoListPage.clickSortHighest()
+	},
+	/**
+	 * Command to sort tasks by priority level from lowest to highest.
+	 */
+	sortTasksByLowestPriority() {
+		ToDoListPage.clickSortLowest()
+	},
+	/**
 	 * Command to add a tag to a task based on the task number shown in the list and the tag name.
 	 * @param {number} taskNum The number of the task in the list, starting from 1.
 	 * @param {string} tag The tag to add to the task.
@@ -1304,6 +1317,47 @@ Cypress.Commands.addAll({
 					cy.wrap(descText.toLowerCase()).should('contain', lowerWord)
 				})
 		})
+	},
+	/**
+	 * Command to verify that tasks are sorted by priority and task description.
+	 * @param {string} fixtureFile The fixture file name with the array of unsorted tasks to be sorted and verified.
+	 * @param {'asc' | 'desc'} sortOrder The order to verify the tasks are sorted in. Use "asc" for lowest to highest priority and "desc" for highest to lowest priority.
+	 * The tasks should be sorted by priority level first and then by task description alphabetically for tasks with the same priority level.
+	 */
+	verifySortedTasks(fixtureFile, sortOrder = 'asc') {
+		// Get the fixture data for the unsorted tasks to be sorted later
+		cy.fixture(`${customWebsiteToDoFixtureDir}${fixtureFile}`).then(
+			(taskJson) => {
+				// Sort the fixture data by priority level from highest to lowest alphabetically to get the expected order of task descriptions after sorting.
+				taskJson.sort((a, b) => {
+					const priorities = { Low: 1, Medium: 2, High: 3, Critical: 4 }
+					if (priorities[a.priority] === priorities[b.priority]) {
+						return a.task.localeCompare(b.task)
+					}
+					return sortOrder === 'asc'
+						? priorities[a.priority] - priorities[b.priority]
+						: priorities[b.priority] - priorities[a.priority]
+				})
+
+				// Get the descriptions of the tasks shown in the list and verify they are in the expected order after sorting.
+				ToDoListPage.allTaskDescriptions.each((taskDesc, index) => {
+					cy.wrap(taskDesc)
+						.invoke('val')
+						.then((descText) => {
+							cy.wrap(descText).should('equal', taskJson[index].task)
+						})
+				})
+
+				// Get the priority levels of the tasks shown in the list and verify they are in the expected order after sorting.
+				ToDoListPage.allTaskPriorities.each((taskPriority, index) => {
+					cy.wrap(taskPriority)
+						.invoke('val')
+						.then((priorityText) => {
+							cy.wrap(priorityText).should('equal', taskJson[index].priority)
+						})
+				})
+			}
+		)
 	},
 	/**
 	 * Command to verify a task is shown in the list with the expected task number, description, and priority.

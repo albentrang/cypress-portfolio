@@ -245,3 +245,25 @@ Then(
 		cy.verifyTasksContainTag(tag)
 	}
 )
+
+// Scenario: Sort tasks by priority from low to high
+When('I click the sort button to sort by priority from low to high', () => {
+	cy.sortTasksByLowestPriority()
+})
+Then(
+	'I should see the tasks from {string} sorted by priority and alphabetically from low to high in the list of tasks',
+	(fixtureFile) => {
+		cy.verifySortedTasks(fixtureFile, 'asc')
+	}
+)
+
+// Scenario: Sort tasks by priority from high to low
+When('I click the sort button to sort by priority from high to low', () => {
+	cy.sortTasksByHighestPriority()
+})
+Then(
+	'I should see the tasks from {string} sorted by priority and alphabetically from high to low in the list of tasks',
+	(fixtureFile) => {
+		cy.verifySortedTasks(fixtureFile, 'desc')
+	}
+)

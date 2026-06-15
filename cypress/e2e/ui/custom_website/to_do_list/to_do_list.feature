@@ -162,35 +162,31 @@ Feature: To Do List
     And I search for tasks with the keyword "#aaaaaaaaaabbbbbbbbbbc"
     Then I should see that there are no tasks displayed in the list of tasks
 
-# Scenario: Check that the priority levels are present in the priority dropdown menu
-#   When I add a task with the text "Task with priority" and select the priority level dropdown menu
-#   Then I should see the options "Low", "Medium", "High", and "Critical" in the priority level dropdown menu
+  Scenario: Sort tasks by priority from low to high
+    When I add tasks based on the fixture "sort_tasks.json"
+    And I click the sort button to sort by priority from low to high
+    Then I should see the tasks from "sort_tasks.json" sorted by priority and alphabetically from low to high in the list of tasks
 
-# Scenario: Sort tasks by priority from low to high
-#   When I add tasks based on the fixture "sort_tasks.json"
-#   And I click the sort button to sort by priority from low to high
-#   Then I should see the tasks sorted by priority from low to high in the list of tasks, and if there are tasks with the same priority level, they should be sorted in alphabetical order based on their task description
-
-# Scenario: Sort tasks by priority from high to low
-#   When I add tasks based on the fixture "sort_tasks.json"
-#   And I click the sort button to sort by priority from high to low
-#   Then I should see the tasks sorted by priority from high to low in the list of tasks, and if there are tasks with the same priority level, they should be sorted in alphabetical order based on their task description
+  Scenario: Sort tasks by priority from high to low
+    When I add tasks based on the fixture "sort_tasks.json"
+    And I click the sort button to sort by priority from high to low
+    Then I should see the tasks from "sort_tasks.json" sorted by priority and alphabetically from high to low in the list of tasks
 
 # Scenario: Download the to do list as a JSON file
 #   When I add tasks based on the fixture "download_tasks.json"
 #   And I click the Download button
 #   Then I should see a JSON file named "to_do_list.json" downloaded to my computer that contains all the information from the list of tasks
 
-# Scenario: Download the to do list with a specific file name as a JSON file
+# Scenario Outline: Download the to do list with a specific file name as a JSON file
 #   When I add tasks based on the fixture "download_tasks.json"
-#   And I enter the file name "my_list.json" in the file name input field
+#   And I enter the file name "<fileName>" in the file name input field
 #   And I click the Download button
-#   Then I should see a JSON file named "my_list.json" downloaded to my computer that contains all the information from the list of tasks
-
-# Scenario: Download the to do list with a long file name and enforce character limit
-#   When I add tasks based on the fixture "download_tasks.json"
-#   And I enter the file name "aaaaaaaaaabbbbbbbbbbccccccccccddddd.json" in the file name input field
-#   Then I should see that the file name input field only shows the first 30 characters "aaaaaaaaaabbbbbbbbbbccccccccccdd.json" and does not allow me to enter more than 30 characters in the file name input field
+#   Then I should see a JSON file named "<fileName>" downloaded to my computer that contains all the information from the list of tasks
+#   Examples:
+#     | fileName                       |
+#     | a                              |
+#     | tasks_backup                   |
+#     | abcdefghijabcdefghijabcdefghij |
 
 # Scenario: Drag and drop to reorder tasks
 #   When I add tasks based on the fixture "drag_tasks.json"

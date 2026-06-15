@@ -133,6 +133,14 @@ class ToDoListPage {
 	}
 
 	/**
+	 * Gets all the priority select elements for the tasks.
+	 * @returns {Cypress.Chainable}
+	 */
+	get allTaskPriorities() {
+		return this.allTasks.startByCy('priority-select-')
+	}
+
+	/**
 	 * Gets the reset button element.
 	 * @returns {Cypress.Chainable}
 	 */
