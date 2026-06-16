@@ -34,7 +34,7 @@ body {
 /* Top Header Elements */
 nav {
 	background-color: lightsalmon;
-	border-bottom: 3px solid darksalmon;
+	border-bottom: 1px solid darksalmon;
 
 	/* For a fixed navigation bar */
 	position: fixed;
@@ -48,8 +48,8 @@ nav a {
 	display: inline-block;
 	padding-top: 14px;
 	padding-bottom: 14px;
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-left: 15px;
+	padding-right: 15px;
 	text-decoration: none;
 }
 
@@ -178,8 +178,13 @@ footer {
 	}
 
 	/* Show dropdown menu if open (optional, can be handled by JS) */
+	/* style="display:none; position:absolute;" */
 	#dropdown-menu {
 		background-color: lightsalmon;
+		border: 1px solid darksalmon;
+		/* This will be toggled by JavaScript */
+		display: none;
+		list-style: none;
 		list-style-type: none;
 		margin: 0;
 		padding: 0;

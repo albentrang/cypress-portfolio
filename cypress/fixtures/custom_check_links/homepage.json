@@ -1,0 +1,21 @@
+[
+	{ "dataCy": "home-nav-home-link", "url": "index.html" },
+	{ "dataCy": "home-nav-calc-link", "url": "calculator.html" },
+	{ "dataCy": "home-nav-text-link", "url": "text_to_file.html" },
+	{ "dataCy": "home-nav-lm-link", "url": "less_or_more.html" },
+	{ "dataCy": "home-nav-todo-link", "url": "to_do_list.html" },
+	{ "dataCy": "test-pages-calc-link", "url": "calculator.html" },
+	{ "dataCy": "test-pages-text-link", "url": "text_to_file.html" },
+	{ "dataCy": "test-pages-lm-link", "url": "less_or_more.html" },
+	{ "dataCy": "test-pages-todo-link", "url": "to_do_list.html" },
+	{ "dataCy": "custom-web-results-link", "url": "custom-report.html" },
+	{ "dataCy": "deck-api-results-link", "url": "deck-report.html" },
+	{
+		"dataCy": "home-footer-linkedin-link",
+		"url": "https://www.linkedin.com/in/albentrang/"
+	},
+	{
+		"dataCy": "home-footer-github-link",
+		"url": "https://github.com/albentrang/cypress-portfolio"
+	}
+]

@@ -1,0 +1,62 @@
+[
+	{
+		"task": "Apple",
+		"priority": "High"
+	},
+	{
+		"task": "Orange",
+		"priority": "Low"
+	},
+	{
+		"task": "Banana",
+		"priority": "Critical"
+	},
+	{
+		"task": "Grapes",
+		"priority": "High"
+	},
+	{
+		"task": "Pineapple",
+		"priority": "Medium"
+	},
+	{
+		"task": "Mango",
+		"priority": "High"
+	},
+	{
+		"task": "Strawberry",
+		"priority": "Critical"
+	},
+	{
+		"task": "Blueberry",
+		"priority": "Medium"
+	},
+	{
+		"task": "Watermelon",
+		"priority": "Critical"
+	},
+	{
+		"task": "Kiwi",
+		"priority": "Medium"
+	},
+	{
+		"task": "Peach",
+		"priority": "Medium"
+	},
+	{
+		"task": "Cherry",
+		"priority": "Low"
+	},
+	{
+		"task": "Pear",
+		"priority": "Medium"
+	},
+	{
+		"task": "Plum",
+		"priority": "Medium"
+	},
+	{
+		"task": "Raspberry",
+		"priority": "Low"
+	}
+]

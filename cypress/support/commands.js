@@ -2,18 +2,34 @@ import DeckHandler from './deck_handler'
 import CalculatorPage from './custom_website/page_objects/calculator_obj'
 import TextToFilePage from './custom_website/page_objects/text_to_file_obj'
 import LessOrMorePage from './custom_website/page_objects/less_or_more_obj'
+import ToDoListPage from './custom_website/page_objects/to_do_list_obj'
 
 const decksPosFixturePath = 'deck_of_cards_api/current_decks_pos.json'
 const decksNegFixturePath = 'deck_of_cards_api/current_decks_neg.json'
+const customWebsiteToDoFixtureDir = 'custom_to_do_list/'
 const cyDownloadsFolder = Cypress.config('downloadsFolder')
 
 // General custom commands for different projects.
-/**
- * Get an element using its data-cy attribute.
- * @param {string} cyVal The value of the data-cy attribute.
- */
-Cypress.Commands.add('getByCy', (cyVal, args = {}) => {
-	return cy.get(`[data-cy="${cyVal}"]`, args)
+Cypress.Commands.addAll({
+	/**
+	 * Get an element using its data-cy attribute.
+	 * @param {string} cyVal The value of the data-cy attribute.
+	 * @param {Object} args Arguments for the cy.get() command.
+	 * @return {Cypress.Chainable}
+	 */
+	getByCy(cyVal, args = {}) {
+		return cy.get(`[data-cy="${cyVal}"]`, args)
+	},
+	/**
+	 * Get multiple elements using the starting portion of their data-cy attribute.
+	 * Useful for getting multiple elements that have a common prefix in their data-cy attribute, such as "task-0", "task-1", etc.
+	 * @param {string} cyVal The starting portion of the data-cy attribute.
+	 * @param {Object} args Arguments for the cy.get() command.
+	 * @return {Cypress.Chainable}
+	 */
+	startByCy(cyVal, args = {}) {
+		return cy.get(`[data-cy^="${cyVal}"]`, args)
+	}
 })
 
 // Custom commands for the Deck of Cards API project.
@@ -1174,5 +1190,390 @@ Cypress.Commands.addAll({
 				cy.wrap(actualHighScore).should('equal', expHighScore)
 			})
 		})
+	}
+})
+
+// Custom commands for the custom website's To Do List webpage.
+Cypress.Commands.addAll({
+	/**
+	 * Command to search for tasks based on a keyword.
+	 * @param {string} searchTerm The keyword to search for.
+	 */
+	searchTasks(searchTerm) {
+		ToDoListPage.searchBar.type(searchTerm)
+
+		// Check that the search bar value has the search term for verification.
+		ToDoListPage.searchBar.should('have.value', searchTerm)
+	},
+	/**
+	 * Command to add a new task with that can have a description, priority, and tags.
+	 * @param {string} [desc = ''] The description of the task.
+	 * @param {string} [priority = ''] The priority level which can be "Low", "Medium", "High", or "Critical".
+	 * @param {string | string[]} [tags = []] A string or an array of strings for the tags to add for the task.
+	 * If a string is provided, it will be separated into multiple tags based on spaces only.
+	 * If an array is provided, each string in the array will be added as a separate tag.
+	 */
+	addTask(desc = '', priority = '', tags = []) {
+		ToDoListPage.clickAddTask()
+
+		cy.get('@newTaskIdx').then((newTaskIdx) => {
+			ToDoListPage.typeTaskDescription(newTaskIdx, desc)
+
+			if (priority) {
+				ToDoListPage.chooseTaskPriority(newTaskIdx, priority)
+			}
+
+			// Handle tags input as either a string or an array of strings.
+			if (typeof tags === 'string') {
+				// If it's a string, split it into an array of tags based on spaces.
+				tags = tags.split(' ')
+			}
+
+			tags.forEach((tag) => {
+				ToDoListPage.addTag(newTaskIdx, tag)
+			})
+		})
+	},
+	/**
+	 * Command to sort tasks by priority level from highest to lowest.
+	 */
+	sortTasksByHighestPriority() {
+		ToDoListPage.clickSortHighest()
+	},
+	/**
+	 * Command to sort tasks by priority level from lowest to highest.
+	 */
+	sortTasksByLowestPriority() {
+		ToDoListPage.clickSortLowest()
+	},
+	/**
+	 * Download the tasks in the list as a JSON file.
+	 * @param {string} filename The name of the file to download.
+	 * @param {boolean} [clear=false] - Whether to clear the filename input before typing.
+	 */
+	downloadTasks(filename = '', clear = false) {
+		ToDoListPage.downloadToDoList(filename, clear)
+	},
+	/**
+	 * Command to drag and drop a task from one position in the list to another based on their task numbers shown in the list.
+	 * @param {number} sourceTaskNum The number of the source task in the list, starting from 1.
+	 * @param {number} targetTaskNum The number of the target task in the list, starting from 1.
+	 */
+	dragTask(sourceTaskNum, targetTaskNum) {
+		const taskIdx = sourceTaskNum - 1
+		const targetTaskIdx = targetTaskNum - 1
+
+		ToDoListPage.dragAndDropTask(taskIdx, targetTaskIdx)
+	},
+	/**
+	 * Command to add a tag to a task based on the task number shown in the list and the tag name.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {string} tag The tag to add to the task.
+	 */
+	addTaskTag(taskNum, tag) {
+		const taskIdx = taskNum - 1
+
+		ToDoListPage.addTag(taskIdx, tag)
+	},
+	/**
+	 * Command to add multiple tasks using a fixture file. The fixture file should have an array of tasks with their description, priority, and tags.
+	 * The command will read the fixture file and add each task in the array to the list.
+	 * @param {string} fixtureFile The fixture file name with the array of tasks.
+	 */
+	addMultipleTasks(fixtureFile) {
+		const fixtureDir = 'custom_to_do_list/'
+
+		cy.fixture(`${fixtureDir}${fixtureFile}`).then((tasks) => {
+			cy.wrap(tasks).each((task) => {
+				// Check for omitted priority and tags in the fixture file and set them to empty string or empty array if not provided.
+				if (!task.priority) {
+					task.priority = ''
+				}
+				if (!task.tags) {
+					task.tags = []
+				}
+
+				cy.addTask(task.task, task.priority, task.tags)
+			})
+		})
+	},
+	/**
+	 * Command to delete a task based on its task number shown in the list.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 */
+	deleteTask(taskNum) {
+		const taskIdx = taskNum - 1
+
+		ToDoListPage.clickDeleteTask(taskIdx)
+	},
+	/**
+	 * Command to delete a tag from a task based on the task number and tag number shown in the list.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {number} tagNum The number of the tag in the list, starting from 1.
+	 */
+	deleteTaskTag(taskNum, tagNum) {
+		const taskIdx = taskNum - 1
+		const tagIdx = tagNum - 1
+
+		ToDoListPage.clickRemoveTag(taskIdx, tagIdx)
+	},
+	/**
+	 * Command to verify the number of tasks shown in the list.
+	 * @param {number} expectedCount The expected number of tasks in the list.
+	 */
+	verifyTaskCount(expectedCount) {
+		ToDoListPage.allTasks.should('have.length', expectedCount)
+	},
+	/**
+	 * Command to verify the number of search results shown after searching for a keyword and that each search result contains the keyword in its description regardless of case.
+	 * @param {number} expectedCount The expected number of search results shown after searching for the keyword.
+	 * @param {string} keyword The keyword that should be contained in each search result's description.
+	 */
+	verifyTaskCountAfterSearch(expectedCount, keyword) {
+		const lowerWord = keyword.toLowerCase()
+
+		ToDoListPage.allTasks.should('have.length', expectedCount)
+		ToDoListPage.allTaskDescriptions.each((taskDesc) => {
+			// Get the description text and convert it to lower case for case-insensitive comparison.
+			cy.wrap(taskDesc)
+				.invoke('val')
+				.then((descText) => {
+					cy.wrap(descText.toLowerCase()).should('contain', lowerWord)
+				})
+		})
+	},
+	/**
+	 * Command to verify that tasks are sorted by priority and task description.
+	 * @param {string} fixtureFile The fixture file name with the array of unsorted tasks to be sorted and verified.
+	 * @param {'asc' | 'desc'} sortOrder The order to verify the tasks are sorted in. Use "asc" for lowest to highest priority and "desc" for highest to lowest priority.
+	 * The tasks should be sorted by priority level first and then by task description alphabetically for tasks with the same priority level.
+	 */
+	verifySortedTasks(fixtureFile, sortOrder = 'asc') {
+		// Get the fixture data for the unsorted tasks to be sorted later
+		cy.fixture(`${customWebsiteToDoFixtureDir}${fixtureFile}`).then(
+			(taskJson) => {
+				// Sort the fixture data by priority level from highest to lowest alphabetically to get the expected order of task descriptions after sorting.
+				taskJson.sort((a, b) => {
+					const priorities = { Low: 1, Medium: 2, High: 3, Critical: 4 }
+					if (priorities[a.priority] === priorities[b.priority]) {
+						return a.task.localeCompare(b.task)
+					}
+					return sortOrder === 'asc'
+						? priorities[a.priority] - priorities[b.priority]
+						: priorities[b.priority] - priorities[a.priority]
+				})
+
+				// Get the descriptions of the tasks shown in the list and verify they are in the expected order after sorting.
+				ToDoListPage.allTaskDescriptions.each((taskDesc, index) => {
+					cy.wrap(taskDesc)
+						.invoke('val')
+						.then((descText) => {
+							cy.wrap(descText).should('equal', taskJson[index].task)
+						})
+				})
+
+				// Get the priority levels of the tasks shown in the list and verify they are in the expected order after sorting.
+				ToDoListPage.allTaskPriorities.each((taskPriority, index) => {
+					cy.wrap(taskPriority)
+						.invoke('val')
+						.then((priorityText) => {
+							cy.wrap(priorityText).should('equal', taskJson[index].priority)
+						})
+				})
+			}
+		)
+	},
+	/**
+	 * Command to verify that the downloaded to do list JSON file is exactly the same as the fixture file used for adding the tasks to the list.
+	 *
+	 * @param {string} filename The name of the downloaded file.
+	 * @param {string} fixtureFile The name of the fixture file.
+	 */
+	verifyToDoListDownload(filename, fixtureFile) {
+		// The file name is either the default file name "to_do_list.json" or the custom file name provided for downloading the to do list.
+		const expectedFileName = filename || 'to_do_list.json'
+		const filePath = `${cyDownloadsFolder}/${expectedFileName}`
+
+		cy.readFile(filePath, { timeout: 5000 }).then((fileContent) => {
+			cy.fixture(`${customWebsiteToDoFixtureDir}${fixtureFile}`).then(
+				(expectedToDoList) => {
+					cy.wrap(fileContent).should('deep.equal', expectedToDoList)
+				}
+			)
+		})
+	},
+	/**
+	 * Command to verify that tasks are reordered in the list based on dragging a task from its original position to a new position.
+	 * The expected order of task descriptions, tags, and priorities after reordering should be provided from the data in the original fixture file.
+	 * @param {string} fixtureFile The original fixture file name with the array of tasks before reordering.
+	 * The data in this fixture file will be used to determine the expected order of task descriptions, tags, and priorities after reordering
+	 * based on the original position and new position of the dragged task.
+	 * @param {string} expectedOrder The expected order of the tasks after reordering.
+	 * This is a string of numbers separated by spaces. Each number represents the original position of the task in the fixture file
+	 * that should be in that position in the list after reordering.
+	 * For example, "2 1 3" means the task that was originally in position 2 in the fixture file should now be in position 1 in the list, the task
+	 * that was originally in position 1 should now be in position 2, and the task that was originally in position 3 should still be in position 3.
+	 */
+	verifyTaskReordering(fixtureFile, expectedOrder) {
+		cy.fixture(`${customWebsiteToDoFixtureDir}${fixtureFile}`).then(
+			(originalTasks) => {
+				const expectedOrderArr = expectedOrder
+					.split(' ')
+					.map((numStr) => parseInt(numStr))
+
+				ToDoListPage.allTasks.each((task, index) => {
+					const originalTask = originalTasks[expectedOrderArr[index] - 1]
+					const expectedDesc = originalTask.task
+					const expectedPriority = originalTask.priority || 'Low'
+					const expectedTags = originalTask.tags || []
+
+					// Verify the task description, priority, and tags are in the expected order after reordering based on the original fixture data.
+					if (expectedTags.length > 0) {
+						// If there are tags expected for the task, verify the tags shown for the task match the expected tags.
+						cy.wrap(task)
+							.startByCy(`tag-${index}-`)
+							.then(($tags) => {
+								// childNodes[0] grabs the first element inside the span, which is the text, and ignoring the cancel button.
+								const tagsText = Array.from($tags).map((tagEl) =>
+									tagEl.childNodes[0].textContent.trim()
+								)
+								cy.wrap(tagsText).should('deep.equal', expectedTags)
+							})
+					} else {
+						// If there are no tags expected for the task, verify that no tags are shown for the task.
+						cy.wrap(task).startByCy(`tag-${index}-`).should('have.length', 0)
+					}
+					cy.wrap(task)
+						.getByCy(`desc-input-${index}`)
+						.invoke('val')
+						.should('equal', expectedDesc)
+					cy.wrap(task)
+						.getByCy(`priority-select-${index}`)
+						.invoke('val')
+						.should('equal', expectedPriority)
+				})
+			}
+		)
+	},
+	/**
+	 * Command to verify a task is shown in the list with the expected task number, description, and priority.
+	 * @param {number} taskNum The index of the task in the list, starting from 0.
+	 * @param {string} desc The expected description of the task.
+	 * @param {string} priority The expected priority level which can be "Low", "Medium", "High", or "Critical".
+	 */
+	verifyToDoTask(taskNum, desc, priority) {
+		const taskIdx = taskNum - 1
+
+		ToDoListPage.selectTaskNumber(taskIdx)
+			.invoke('text')
+			.should('equal', `${taskNum}`)
+		ToDoListPage.selectTaskDescription(taskIdx).should('have.value', desc)
+		ToDoListPage.selectTaskPriority(taskIdx).should('have.value', priority)
+	},
+	/**
+	 * Command to verify the tags shown for a task.
+	 * @param {number} taskNum The index of the task in the list, starting from 0.
+	 * @param {string[]} [expectedTags = []] An array of expected tags shown for the task.
+	 */
+	verifyTags(taskNum, expectedTags = []) {
+		const taskIdx = taskNum - 1
+
+		cy.wrap(expectedTags).each((tag, idx) => {
+			ToDoListPage.selectTaskTag(taskIdx, idx).then(($el) => {
+				// childNodes[0] grabs the first element inside the span, which is the text
+				const tagText = $el[0].childNodes[0].textContent.trim()
+
+				cy.wrap(tagText).should('equal', tag)
+			})
+		})
+	},
+	/**
+	 * Command to verify that at least one task in the list contains the search term as a tag regardless of case and ignoring the hashtag symbol.
+	 * @param {string} tag The tag to search for.
+	 */
+	verifyTasksContainTag(tag) {
+		// Remove the hashtag symbol and convert the tag to lower case for case-insensitive comparison.
+		const cleanTag = tag.replace('#', '').toLowerCase()
+
+		ToDoListPage.allTasks.each((task) => {
+			// Get the tags text in an array, remove the hashtag symbols, and convert them to lower case for case-insensitive comparison.
+			cy.wrap(task)
+				.startByCy('tag-')
+				.then(($tags) => {
+					// childNodes[0] grabs the first element inside the span, which is the text, and ignoring the cancel button.
+					const tagsText = Array.from($tags).map((tagEl) =>
+						tagEl.childNodes[0].textContent
+							.trim()
+							.replace('#', '')
+							.toLowerCase()
+					)
+
+					// Assert that at least one of the tags for the task matches the text for the searched tag.
+					const hasMatchingTag = tagsText.some((tagText) =>
+						tagText.includes(cleanTag)
+					)
+					cy.wrap(hasMatchingTag).should('equal', true)
+				})
+		})
+	},
+	/**
+	 * Command to verify the "Add Task" button is either enabled or disabled based on the number of tasks in the list.
+	 * @param {boolean} shouldBeEnabled Set to true to verify the button is enabled. Set to false to verify the button is disabled.
+	 */
+	verifyAddButtonStatus(shouldBeEnabled) {
+		if (shouldBeEnabled) {
+			ToDoListPage.addTaskButton.should('be.enabled')
+
+			// Also verify that there are less than 20 tasks in the list.
+			ToDoListPage.todoList
+				.children()
+				.should('have.length.lessThan', ToDoListPage.maxTasks)
+		} else {
+			ToDoListPage.addTaskButton.should('be.disabled')
+
+			// Also verify that there are 20 tasks in the list.
+			ToDoListPage.todoList
+				.children()
+				.should('have.length', ToDoListPage.maxTasks)
+		}
+	},
+	/**
+	 * Command to verify the "Add Tag" button for a task is either enabled or disabled based on whether the maximum number of tags has been added for that item.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {boolean} shouldBeEnabled Set to true to verify the button is enabled. Set to false to verify the button is disabled.
+	 */
+	verifyAddTagButtonStatus(taskNum, shouldBeEnabled) {
+		const taskIdx = taskNum - 1
+
+		if (shouldBeEnabled) {
+			ToDoListPage.selectTaskAddTagButton(taskIdx).should('be.enabled')
+		} else {
+			ToDoListPage.selectTaskAddTagButton(taskIdx).should('be.disabled')
+		}
+	},
+	/**
+	 * Command to verify a task is deleted from the list based on its task number and/or description.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {string} [desc = ''] The description of the task, which is optional to verify if the task number is not sufficient to identify the deleted item.
+	 */
+	verifyTaskDeleted(taskNum, desc = '') {
+		const taskIdx = taskNum - 1
+
+		if (desc) {
+			ToDoListPage.selectTaskDescription(taskIdx).should('not.have.value', desc)
+		} else {
+			ToDoListPage.selectTaskNumber(taskIdx).should('not.exist')
+		}
+	},
+	/**
+	 * Command to verify the "Reset List" button is either visible or not based on whether there are any tasks in the list.
+	 * @param {boolean} shouldBeEnabled Set to true to verify the button is visible. Set to false to verify the button is not visible.
+	 */
+	verifyResetButtonStatus(shouldBeEnabled) {
+		if (shouldBeEnabled) {
+			ToDoListPage.resetButton.should('be.visible')
+		} else {
+			ToDoListPage.resetButton.should('not.be.visible')
+		}
 	}
 })

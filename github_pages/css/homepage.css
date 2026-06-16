@@ -21,6 +21,7 @@ button:hover {
 /* Test Pages Button List */
 .test-pages-list {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 20px;
 	list-style-type: none;
 	padding: 0;

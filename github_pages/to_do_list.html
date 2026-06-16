@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>To Do List</title>
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="css/to_do_list.css">
+	<script src="scripts/dist/all_pages.js" defer></script>
+	<script src="scripts/dist/to_do_list.js" defer></script>
+</head>
+
+<body>
+	<div class="content-wrapper">
+		<header>
+			<!-- Navigation links for the website -->
+			<nav>
+				<a href="index.html" data-cy="todo-nav-home-link">Home</a>
+				<a href="calculator.html" data-cy="todo-nav-calc-link">Calculator</a>
+				<a href="text_to_file.html" data-cy="todo-nav-text-link">Text to File</a>
+				<a href="less_or_more.html" data-cy="todo-nav-lm-link">Less or More</a>
+				<a href="to_do_list.html" data-cy="todo-nav-todo-link">To Do List</a>
+
+				<!-- Dropdown menu for smaller screens -->
+				<button id="dropdown-btn" aria-haspopup="true" aria-expanded="false" data-cy="todo-nav-dropdown-btn">Menu
+					▼</button>
+				<ul id="dropdown-menu" data-cy="todo-dropdown-menu">
+					<li><a href="calculator.html" data-cy="todo-nav-calc-menu-link">Calculator</a></li>
+					<li><a href="text_to_file.html" data-cy="todo-nav-text-menu-link">Text to File</a></li>
+					<li><a href="less_or_more.html" data-cy="todo-nav-lm-menu-link">Less or More</a></li>
+					<li><a href="to_do_list.html" data-cy="todo-nav-todo-menu-link">To Do List</a></li>
+				</ul>
+			</nav>
+
+			<!-- Website title and tagline -->
+			<hgroup>
+				<h1 data-cy="todo-header">To Do List</h1>
+				<p data-cy="todo-tagline">A simple to do list application!</p>
+			</hgroup>
+		</header>
+
+		<main>
+			<!-- A two by three grid containing the search bar, clear search button, add task button, sort buttons, filename input, and download button -->
+			<section class="todo-top-grid">
+				<input type="text" id="search-bar" placeholder="Search tasks or #tag" data-cy="search-bar" />
+				<button id="clear-search-btn" data-cy="clear-search-btn">Clear Search</button>
+				<button id="add-task-btn" data-cy="add-task-btn">Add Task</button>
+				<span id="sort-section">
+					<span id="sort-label" data-cy="sort-label">Sort by Priority:</span>
+					<button id="sort-highest-btn" data-cy="sort-highest-btn" title="Sort by Highest Priority">⬆️</button>
+					<button id="sort-lowest-btn" data-cy="sort-lowest-btn" title="Sort by Lowest Priority">⬇️</button>
+				</span>
+				<input type="text" id="filename-input" maxlength="30" placeholder="Enter file name like 'to_do_list.json'"
+					data-cy="filename-input" />
+				<button id="download-btn" data-cy="download-btn">Download</button>
+			</section>
+
+			<!-- Unordered list of tasks and the reset button -->
+			<ul id="todo-list" data-cy="todo-list"></ul>
+			<button id="reset-btn" data-cy="reset-btn" style="display:none;">Reset</button>
+
+			<!-- Reset confirmation popup -->
+			<div id="reset-popup" class="reset-popup" style="display:none;">
+				<div class="reset-popup-bg"></div>
+				<div class="reset-popup-dialog">
+					<p data-cy="reset-popup-text">Are you sure you want to reset all tasks?</p>
+					<button id="confirm-reset-btn" data-cy="confirm-reset-btn">Yes</button>
+					<button id="cancel-reset-btn" data-cy="cancel-reset-btn">No</button>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<footer>
+		<!-- Footer text -->
+		<p id="footer-text" data-cy="todo-footer-text">© 2025 by Alben Trang<br><a href="mailto:albentrang@gmail.com"
+				id="footer-email" data-cy="todo-footer-email">albentrang@gmail.com</a></p>
+
+		<!-- Social media links -->
+		<ul class="socials">
+			<li>
+				<a href="https://www.linkedin.com/in/albentrang/" target="_blank" id="linkedin-link"
+					data-cy="todo-footer-linkedin-link">
+					<img src="img/icons/LI-In-Bug-57x48.png" srcset="img/icons/LI-In-Bug-127x108.png 2x"
+						alt="LinkedIn icon that links to my LinkedIn profile" width="57" height="48" />
+				</a>
+			</li>
+			<li>
+				<a href="https://github.com/albentrang/cypress-portfolio" target="_blank" id="github-link"
+					data-cy="todo-footer-github-link">
+					<img src="img/icons/github-mark-48x48.png" srcset="img/icons/github-mark-108x108.png 2x"
+						alt="GitHub icon that links to this website's GitHub repository" width="48" height="48" />
+				</a>
+			</li>
+		</ul>
+	</footer>
+</body>
+
+</html>
