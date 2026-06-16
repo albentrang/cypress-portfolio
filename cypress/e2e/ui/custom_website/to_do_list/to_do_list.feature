@@ -187,7 +187,25 @@ Feature: To Do List
       | tasks_backup                   |
       | abcdefghijabcdefghijabcdefghij |
 
-# Scenario: Drag and drop to reorder tasks
-#   When I add tasks based on the fixture "drag_tasks.json"
-#   And I drag the task with the description "Task 3" and drop it above the task with the description "Task 1"
-#   Then I should see that "Task 3" is now above "Task 1" in the list of tasks, and the task numbers should update accordingly to reflect the new order of the tasks
+  Scenario Outline: Drag and drop to reorder tasks
+    When I add tasks based on the fixture "drag_tasks.json"
+    And I drag task <sourceTaskNum> and drop it above task <targetTaskNum>
+    Then I should see the tasks from "drag_tasks.json" in this new order: "<expectedOrder>"
+    Examples:
+      | sourceTaskNum | targetTaskNum | expectedOrder |
+      | 1             | 1             | 1 2 3 4       |
+      | 1             | 2             | 2 1 3 4       |
+      | 1             | 3             | 2 3 1 4       |
+      | 1             | 4             | 2 3 4 1       |
+      | 2             | 1             | 2 1 3 4       |
+      | 2             | 2             | 1 2 3 4       |
+      | 2             | 3             | 1 3 2 4       |
+      | 2             | 4             | 1 3 4 2       |
+      | 3             | 1             | 3 1 2 4       |
+      | 3             | 2             | 1 3 2 4       |
+      | 3             | 3             | 1 2 3 4       |
+      | 3             | 4             | 1 2 4 3       |
+      | 4             | 1             | 4 1 2 3       |
+      | 4             | 2             | 1 4 2 3       |
+      | 4             | 3             | 1 2 4 3       |
+      | 4             | 4             | 1 2 3 4       |

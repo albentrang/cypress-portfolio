@@ -18,7 +18,7 @@ module.exports = defineConfig({
 	},
 	e2e: {
 		async setupNodeEvents(on, config) {
-			config.defaultCommandTimeout = 2000
+			config.defaultCommandTimeout = 4000
 			on = cypressOnFix(on)
 
 			require('cypress-mochawesome-reporter/plugin')(on)

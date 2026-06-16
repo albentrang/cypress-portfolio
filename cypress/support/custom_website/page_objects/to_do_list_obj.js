@@ -333,14 +333,19 @@ class ToDoListPage {
 
 	/**
 	 * Drags a task from one position to another.
-	 * @param {number} fromTaskNum - The task number to drag from.
-	 * @param {number} toTaskNum - The task number to drag to.
+	 * @param {number} fromTaskIdx - The task index starting at 0 for the task to drag from.
+	 * @param {number} toTaskIdx - The task index starting at 0 for the task to drag to.
 	 */
-	dragAndDropTask(fromTaskNum, toTaskNum) {
-		this.selectDragHandle(fromTaskNum).trigger('mousedown', { which: 1 })
-		this.selectTask(toTaskNum)
-			.trigger('mousemove')
-			.trigger('mouseup', { force: true })
+	dragAndDropTask(fromTaskIdx, toTaskIdx) {
+		// Create a dataTransfer object to mimic browser behavior
+		const dataTransfer = new DataTransfer()
+
+		// Trigger dragstart on the source element
+		this.selectDragHandle(fromTaskIdx).trigger('dragstart', { dataTransfer })
+
+		// Trigger drop and dragend on the target element
+		this.selectDragHandle(toTaskIdx).trigger('drop', { dataTransfer })
+		this.selectDragHandle(toTaskIdx).trigger('dragend', { dataTransfer })
 	}
 
 	/**

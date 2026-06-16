@@ -100,7 +100,7 @@ This document plans the positive and negative test cases when for my [custom web
 - [x] The task number is automatically generated based on the order of the tasks in the list, starting from 1 for the first task, and updates accordingly when tasks are added, moved, or deleted.
 - [x] The task description is a text input field that allows the user to edit the task directly in the list, with placeholder text "Enter task description here" and a maximum of 50 characters.
 - [x] The priority level is a dropdown menu with four options: "Low", "Medium", "High", and "Critical", and the background of each task item is colored based on its priority level.
-- [ ] The list items can be dragged up and down by clicking and dragging the drag handle on the left of each item, which is a small icon that visually indicates that the item can be dragged.
+- [x] The list items can be dragged up and down by clicking and dragging the drag handle on the left of each item, which is a small icon that visually indicates that the item can be dragged.
 - [x] There is a section for tags under the item description and priority level where the user can add multiple tags to each task, with each tag starting with a hash symbol (#) followed by the tag name.
 - [x] There is a delete button to the right of each task item that removes the task from the list when clicked, with task numbers updating accordingly when a task is deleted.
 - [x] List items persist even after refreshing the page.

@@ -1,0 +1,22 @@
+[
+	{
+		"task": "Task 1",
+		"priority": "High",
+		"tags": ["#shopping", "#errands"]
+	},
+	{
+		"task": "Task 2",
+		"priority": "Low",
+		"tags": []
+	},
+	{
+		"task": "Task 3",
+		"priority": "Medium",
+		"tags": ["#work"]
+	},
+	{
+		"task": "Task 4",
+		"priority": "Critical",
+		"tags": ["#home", "#chores"]
+	}
+]

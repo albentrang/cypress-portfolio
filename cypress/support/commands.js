@@ -1255,6 +1255,17 @@ Cypress.Commands.addAll({
 		ToDoListPage.downloadToDoList(filename, clear)
 	},
 	/**
+	 * Command to drag and drop a task from one position in the list to another based on their task numbers shown in the list.
+	 * @param {number} sourceTaskNum The number of the source task in the list, starting from 1.
+	 * @param {number} targetTaskNum The number of the target task in the list, starting from 1.
+	 */
+	dragTask(sourceTaskNum, targetTaskNum) {
+		const taskIdx = sourceTaskNum - 1
+		const targetTaskIdx = targetTaskNum - 1
+
+		ToDoListPage.dragAndDropTask(taskIdx, targetTaskIdx)
+	},
+	/**
 	 * Command to add a tag to a task based on the task number shown in the list and the tag name.
 	 * @param {number} taskNum The number of the task in the list, starting from 1.
 	 * @param {string} tag The tag to add to the task.
@@ -1295,6 +1306,11 @@ Cypress.Commands.addAll({
 
 		ToDoListPage.clickDeleteTask(taskIdx)
 	},
+	/**
+	 * Command to delete a tag from a task based on the task number and tag number shown in the list.
+	 * @param {number} taskNum The number of the task in the list, starting from 1.
+	 * @param {number} tagNum The number of the tag in the list, starting from 1.
+	 */
 	deleteTaskTag(taskNum, tagNum) {
 		const taskIdx = taskNum - 1
 		const tagIdx = tagNum - 1
@@ -1385,6 +1401,59 @@ Cypress.Commands.addAll({
 				}
 			)
 		})
+	},
+	/**
+	 * Command to verify that tasks are reordered in the list based on dragging a task from its original position to a new position.
+	 * The expected order of task descriptions, tags, and priorities after reordering should be provided from the data in the original fixture file.
+	 * @param {string} fixtureFile The original fixture file name with the array of tasks before reordering.
+	 * The data in this fixture file will be used to determine the expected order of task descriptions, tags, and priorities after reordering
+	 * based on the original position and new position of the dragged task.
+	 * @param {string} expectedOrder The expected order of the tasks after reordering.
+	 * This is a string of numbers separated by spaces. Each number represents the original position of the task in the fixture file
+	 * that should be in that position in the list after reordering.
+	 * For example, "2 1 3" means the task that was originally in position 2 in the fixture file should now be in position 1 in the list, the task
+	 * that was originally in position 1 should now be in position 2, and the task that was originally in position 3 should still be in position 3.
+	 */
+	verifyTaskReordering(fixtureFile, expectedOrder) {
+		cy.fixture(`${customWebsiteToDoFixtureDir}${fixtureFile}`).then(
+			(originalTasks) => {
+				const expectedOrderArr = expectedOrder
+					.split(' ')
+					.map((numStr) => parseInt(numStr))
+
+				ToDoListPage.allTasks.each((task, index) => {
+					const originalTask = originalTasks[expectedOrderArr[index] - 1]
+					const expectedDesc = originalTask.task
+					const expectedPriority = originalTask.priority || 'Low'
+					const expectedTags = originalTask.tags || []
+
+					// Verify the task description, priority, and tags are in the expected order after reordering based on the original fixture data.
+					if (expectedTags.length > 0) {
+						// If there are tags expected for the task, verify the tags shown for the task match the expected tags.
+						cy.wrap(task)
+							.startByCy(`tag-${index}-`)
+							.then(($tags) => {
+								// childNodes[0] grabs the first element inside the span, which is the text, and ignoring the cancel button.
+								const tagsText = Array.from($tags).map((tagEl) =>
+									tagEl.childNodes[0].textContent.trim()
+								)
+								cy.wrap(tagsText).should('deep.equal', expectedTags)
+							})
+					} else {
+						// If there are no tags expected for the task, verify that no tags are shown for the task.
+						cy.wrap(task).startByCy(`tag-${index}-`).should('have.length', 0)
+					}
+					cy.wrap(task)
+						.getByCy(`desc-input-${index}`)
+						.invoke('val')
+						.should('equal', expectedDesc)
+					cy.wrap(task)
+						.getByCy(`priority-select-${index}`)
+						.invoke('val')
+						.should('equal', expectedPriority)
+				})
+			}
+		)
 	},
 	/**
 	 * Command to verify a task is shown in the list with the expected task number, description, and priority.

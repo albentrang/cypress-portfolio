@@ -286,3 +286,17 @@ When(
 		cy.downloadTasks(fileName)
 	}
 )
+
+// Scenario Outline: Drag and drop to reorder tasks
+When(
+	'I drag task {int} and drop it above task {int}',
+	(taskNum, targetTaskNum) => {
+		cy.dragTask(taskNum, targetTaskNum)
+	}
+)
+Then(
+	'I should see the tasks from {string} in this new order: {string}',
+	(fixtureFile, expectedOrder) => {
+		cy.verifyTaskReordering(fixtureFile, expectedOrder)
+	}
+)
