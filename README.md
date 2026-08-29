@@ -2,15 +2,13 @@
 
 Welcome to my portfolio that showcases personal Cypress projects. Please feel free to look through any files to see my work that uses JavaScript and Cypress automated testing.
 
-## Current Project
+## Finished Projects
 
-Custom website by me showcasing various elements and interactions that will be tested. The work will be done in the custom_website branch of this repository.
+Custom website by me showcasing various elements and interactions that can be tested. The work was done in the custom-website branch of this repository. In the future, I could add more pages on the website, test another project, or try a different testing framework.
 
 - My [custom website](https://albentrang.github.io/cypress-portfolio/) will be hosted on GitHub Pages, and it will contain the test results for the finished projects, including the [test results for that custom website](https://albentrang.github.io/cypress-portfolio/custom-report.html).
 
-## Finished Projects
-
-Automated REST API tests on the [Deck of Cards API](https://www.deckofcardsapi.com/) by Chase Roberts.
+Automated REST API tests on the [Deck of Cards API](https://www.deckofcardsapi.com/) by Chase Roberts. The work was done in the deck-of-cards-api branch of this repository.
 
 - View the [Mochawesome test report](https://albentrang.github.io/cypress-portfolio/deck-report.html) that shows the list of passing test cases.
 
